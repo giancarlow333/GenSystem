@@ -15,6 +15,7 @@ int main () {
 	int seed = 333;  // non-random seed for testing
 	default_random_engine engine(seed);
 
+	// mass of the primary star
 	double baseMass = initialMassFunction(engine);
 
 	cout << "The base mass is: " << baseMass << endl << endl;
@@ -26,6 +27,16 @@ int main () {
  * FUNCTION DEFINITIONS
  */
 
+/* initialMassFunction
+ * This generates the *base* mass of the primary star
+ * This is based on Kroupa (2002)
+ * A random "basis" number is generated, based on the piecewise integral for the cumulative
+ * distribution function for mass.  This number is a real number between 0 and 4.7511, the
+ * area under the curve for masses between 0.01 and 2.18 solar masses (the latter being class
+ * A0 V).  This basis is used to determine which mass category the star falls into, i.e.
+ * which sub-equation to use.  A "second" real number is generated on a uniform distribution,
+ * and this produces the mass of the star.
+ */
 double initialMassFunction (default_random_engine & e) {
 	uniform_real_distribution<> baseGen(0, 4.7511);
 	double basis = baseGen(e);
