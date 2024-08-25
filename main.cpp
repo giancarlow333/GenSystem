@@ -5,11 +5,12 @@ using namespace std;
 // Function declarations
 double initialMassFunction (default_random_engine & e);
 bool isSystemMultiple (double mass, default_random_engine & e);
+int generateSystemMultiplicity(default_random_engine & e);
 
 /* MAIN */
 int main () {
 	cout << "Hello!\n\n";
-	cout << "Welcome to GenSystem Version 0.01!" << endl;
+	cout << "Welcome to GenSystem Version 0.1!" << endl;
 	cout << "(c) 2024 Giancarlo Whitaker" << endl << endl;
 
 	// construct random engine
@@ -30,8 +31,11 @@ int main () {
 
 	isMultiple = true; // For testing
 
-
-
+	// If the star is multiple, determine components
+	if (isMultiple) {
+		int multiplicity =  generateSystemMultiplicity(engine);
+		cout << "multiplicity: " << multiplicity << endl << endl;
+	}
 
 	return 0;
 }
@@ -93,6 +97,7 @@ double initialMassFunction (default_random_engine & e) {
 bool isSystemMultiple (double mass, default_random_engine & e) {
 	uniform_real_distribution<> rUnif(0, 1);
 	double randomU = rUnif(e);
+	cout << "randomU: " << randomU << endl;
 
 	bool isMult = false;
 
@@ -110,4 +115,21 @@ bool isSystemMultiple (double mass, default_random_engine & e) {
 	}
 
 	return isMult;
+}
+
+
+/* generateSystemMultiplicity
+ * If the system generated is multiple, determine how many stars it consists of.
+ * Currently only binary, trinary, and quaternary systems are supported.
+ * This is based on TK
+ * TK
+ */
+int generateSystemMultiplicity(default_random_engine & e) {
+	uniform_real_distribution<> rUnif(0, 1);
+	double randomU = rUnif(e);
+	cout << "randomU: " << randomU << endl;
+
+	if (randomU <= 0.75) { return 2; }
+	else if (randomU <= 0.95) { return 3; }
+	else { return 4; }
 }
