@@ -4,6 +4,7 @@ using namespace std;
 
 // Function declarations
 double initialMassFunction (default_random_engine & e);
+bool isSystemMultiple (double mass, default_random_engine & e);
 
 /* MAIN */
 int main () {
@@ -19,6 +20,18 @@ int main () {
 	double baseMass = initialMassFunction(engine);
 
 	cout << "The base mass is: " << baseMass << endl << endl;
+
+	bool isMultiple = isSystemMultiple(baseMass, engine);
+
+	cout << "The system ";
+	if (isMultiple) { cout << "IS"; }
+	else { cout << "IS NOT"; }
+	cout << " multiple!" << endl << endl;
+
+	isMultiple = true; // For testing
+
+
+
 
 	return 0;
 }
@@ -69,4 +82,32 @@ double initialMassFunction (default_random_engine & e) {
 	}
 
 	return mass;
+}
+
+
+/* isSystemMultiple
+ * Randomly determines if the system is multiple
+ * This is based on Duchene & Kraus (2013)
+ * TK
+ */
+bool isSystemMultiple (double mass, default_random_engine & e) {
+	uniform_real_distribution<> rUnif(0, 1);
+	double randomU = rUnif(e);
+
+	bool isMult = false;
+
+	if (mass <= 0.1) {
+		if (randomU <= 0.22) { isMult = true; };
+	}
+	else if (mass <= 0.5) {
+		if (randomU <= 0.26) { isMult = true; };
+	}
+	else if (mass <= 1.3) {
+		if (randomU <= 0.44) { isMult = true; };
+	}
+	else {
+		if (randomU <= 0.55) { isMult = true; };
+	}
+
+	return isMult;
 }
