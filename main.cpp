@@ -16,6 +16,7 @@ double generateDistanceBetweenStars(default_random_engine & e, double primaryMas
 double generateMultipleStarEccentricity(default_random_engine & e, double separation);
 double generateSystemAge (default_random_engine & e);
 double generateMetallicity (default_random_engine & e, double age);
+double getLuminosityFromMass (double mass);
 
 
 
@@ -49,11 +50,13 @@ int main () {
 
 	// Create star system
 	StarSystem mainSystem;
+	StarSystem farSystem; // for trinaries and quaternaries
 	mainSystem.SetSingleStar(starA);
 
 	// If the star is multiple, determine components
+	int multiplicity;
 	if (isMultiple) {
-		int multiplicity =  generateSystemMultiplicity(engine);
+		multiplicity = generateSystemMultiplicity(engine);
 		cout << "multiplicity: " << multiplicity << endl << endl;
 		multiplicity = 2; // for testing
 
@@ -86,7 +89,6 @@ int main () {
 
 				mainSystem.SetSingleStar(starB);
 
-				StarSystem farSystem;
 				farSystem.SetSingleStar(starC);
 
 				double separationAB =  generateDistanceBetweenStars(engine, baseMass);
@@ -116,7 +118,6 @@ int main () {
 				Star starB(baseMass * massRatioAB);
 				Star starC(baseMass * massRatioAB * massRatioBC);
 
-				StarSystem farSystem;
 				farSystem.SetSingleStar(starB);
 				farSystem.SetSingleStar(starC);
 
@@ -181,20 +182,6 @@ int main () {
 		}
 	} // END IS_MULTIPLE
 
-	/* cout << "ALL_SYSTEMS:\n";
-	vector<Star> x = mainSystem.firstSystem.GetStars();
-	cout << "assigned\n";
-	for (int i = 0; i < 2; i++) {
-		cout << x[i].GetMass() << endl;
-	}
-	x = mainSystem.secondSystem.GetStars();
-	for (int i = 0; i < 2; i++) {
-		cout << x[i].GetMass() << endl;
-	} */
-
-	//for (int i = 0; i < 2000; i++)
-		//cout << generateDistanceBetweenStars(engine, 0.3) << endl;
-
 	// Age
 	double systemAge = generateSystemAge(engine);
 	cout << "Age: " << systemAge << " Ga" << endl << endl;
@@ -202,6 +189,21 @@ int main () {
 	// Metallicity
 	double metallicity = generateMetallicity(engine, systemAge);
 	cout << "Metallicity: " << metallicity << " x Sol" << endl << endl;
+
+	// Luminosity
+	// Using a simple relation right now
+	starA.SetLuminosity(getLuminosityFromMass(starA.GetMass()));
+	cout << "A Luminosity: " << starA.GetLuminosity() << endl;
+	if (isMultiple) {
+		if (multiplicity == 2) {
+			mainSystem.SetLuminosity(getLuminosityFromMass(starB.GetMass()));
+			cout << "B Luminosity: " << starB.GetLuminosity() << endl;
+		}
+		else if (multiplicity == 3) {
+		}
+		else {
+		}
+	}
 
 	return 0;
 }
@@ -258,7 +260,6 @@ double initialMassFunction (default_random_engine & e) {
 bool isSystemMultiple (double mass, default_random_engine & e) {
 	uniform_real_distribution<> rUnif(0, 1);
 	double randomU = rUnif(e);
-	cout << "randomU: " << randomU << endl;
 
 	bool isMult = false;
 
@@ -383,4 +384,18 @@ double generateMetallicity (default_random_engine & e, double age) {
 	int roll = diceRoll(e) + diceRoll(e) + diceRoll(e);
 	
 	return (roll / 10) * (1.2 - age / 13.5);
+}
+
+/*
+ */
+double getLuminosityFromMass (double mass) {
+	if (mass < 0.43) {
+		return 0.23 * pow(mass, 2.3);
+	}
+	else if (mass < 2) {
+		return pow(mass, 4.0);
+	}
+	else {
+		return 1.4 * pow(mass, 3.5);
+	}
 }
