@@ -53,7 +53,7 @@ int main () {
 	if (isMultiple) {
 		int multiplicity =  generateSystemMultiplicity(engine);
 		cout << "multiplicity: " << multiplicity << endl << endl;
-		multiplicity = 4; // for testing
+		multiplicity = 2; // for testing
 
 		if (multiplicity == 2) {
 			double massRatio = generateMassRatio(engine);
@@ -89,9 +89,10 @@ int main () {
 
 				double separationAB =  generateDistanceBetweenStars(engine, baseMass);
 				mainSystem.SetSeparation(separationAB);
-			cout << "Separation, AB: " << separationAB << " AU\n";
+				cout << "Separation, AB: " << separationAB << " AU\n";
 				double eccenAB = generateMultipleStarEccentricity(engine, separationAB);
-			cout << "Eccentricity, AB: " << eccenAB << "\n\n";
+				cout << "Eccentricity, AB: " << eccenAB << "\n\n";
+				mainSystem.SetEccentricity(eccenAB);
 
 				// Set separation of (AB)C
 				double separationABC =  generateDistanceBetweenStars(engine, baseMass);
@@ -100,8 +101,10 @@ int main () {
 					separationABC =  generateDistanceBetweenStars(engine, baseMass);
 				}
 				cout << "Separation, (AB)C: " << separationABC << " AU\n";
+				farSystem.SetSeparation(separationABC);
 				double eccenABC = generateMultipleStarEccentricity(engine, separationABC);
-			cout << "Eccentricity, (AB)C: " << eccenABC << "\n\n";
+				cout << "Eccentricity, (AB)C: " << eccenABC << "\n\n";
+				farSystem.SetEccentricity(eccenABC);
 			}
 			// A orbits close pair BC
 			else {
@@ -128,8 +131,10 @@ int main () {
 					separationABC =  generateDistanceBetweenStars(engine, baseMass);
 				}
 				cout << "Separation, A(BC): " << separationABC << " AU\n\n";
+				mainSystem.SetSeparation(separationABC);
 				double eccenABC = generateMultipleStarEccentricity(engine, separationABC);
 				cout << "Eccentricity, A(BC): " << eccenABC << "\n\n";
+				mainSystem.SetEccentricity(eccenABC);
 			}
 		} // close trinary
 		else { // quaternary
@@ -208,31 +213,26 @@ int main () {
 double initialMassFunction (default_random_engine & e) {
 	uniform_real_distribution<> baseGen(0, 4.7511);
 	double basis = baseGen(e);
-	cout << "basis: " << basis << endl;
 	double mass;
 	
 	if (basis <= 0.1869) {
 		uniform_real_distribution<> secondGen(2.1334, 3.9811);
 		double second = secondGen(e);
-		cout << "second: " << second << endl;
 		mass = pow(second, 1 / -0.3);
 	}
 	else if (basis <= 3.1944) {
 		uniform_real_distribution<> secondGen(2.4623, 26.6675);
 		double second = secondGen(e);
-		cout << "second: " << second << endl;
 		mass = pow(second, 1 / -1.3);
 	}
 	else if (basis <= 4.3192) {
 		uniform_real_distribution<> secondGen(1, 4.9246);
 		double second = secondGen(e);
-		cout << "second: " << second << endl;
 		mass = pow(second, 1 / -2.3);
 	}
 	else {
 		uniform_real_distribution<> secondGen(0.1219, 1);
 		double second = secondGen(e);
-		cout << "second: " << second << endl;
 		mass = pow(second, 1 / -2.7);
 	}
 
@@ -278,7 +278,6 @@ bool isSystemMultiple (double mass, default_random_engine & e) {
 int generateSystemMultiplicity(default_random_engine & e) {
 	uniform_real_distribution<> rUnif(0, 1);
 	double randomU = rUnif(e);
-	cout << "randomU: " << randomU << endl;
 
 	if (randomU <= 0.75) { return 2; }
 	else if (randomU <= 0.95) { return 3; }
@@ -288,7 +287,6 @@ int generateSystemMultiplicity(default_random_engine & e) {
 double generateMassRatio(default_random_engine & e) {
 	uniform_real_distribution<> rUnif(0.05, 1);
 	double randomU = rUnif(e);
-	cout << "randomU: " << randomU << endl;
 
 	return randomU;
 }
@@ -296,7 +294,6 @@ double generateMassRatio(default_random_engine & e) {
 double generateHeavyMassRatio(default_random_engine & e) {
 	uniform_real_distribution<> rUnif(0.35, 1);
 	double randomU = rUnif(e);
-	cout << "randomU: " << randomU << endl;
 
 	return randomU;
 }
@@ -331,7 +328,6 @@ double generateMultipleStarEccentricity(default_random_engine & e, double separa
 	else {
 		normal_distribution<> generator(0.4, 0.1);
 		double eccentricity = generator(e);
-		cout << "eccentricity: " << eccentricity << endl;
 		if (eccentricity < 0) { return 0.0; }
 		else if (eccentricity > 0.9) { return 0.9; }
 		else { return eccentricity; }
