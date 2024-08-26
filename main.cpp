@@ -39,6 +39,10 @@ int main () {
 	Star starA;
 	starA.SetMass(baseMass);
 
+	// Create star system
+	StarSystem starSys;
+	starSys.SetSingleStar(starA);
+
 	// If the star is multiple, determine components
 	if (isMultiple) {
 		int multiplicity =  generateSystemMultiplicity(engine);
@@ -47,8 +51,15 @@ int main () {
 		double massRatio = generateMassRatio(engine);
 		cout << "Mass ratio: " << massRatio << endl;
 		cout << "B mass: " << baseMass * massRatio << endl << endl;
+
+		Star starB(baseMass * massRatio);
+		starSys.SetSingleStar(starB);
 	}
 
+	vector<Star> theStars = starSys.GetStars();
+	for (int i = 0; i < 2; i++) {
+		cout << theStars[i].GetMass() << endl;
+	}
 	return 0;
 }
 
