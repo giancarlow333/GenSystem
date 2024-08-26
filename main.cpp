@@ -3,6 +3,7 @@
 #include "StarSystem.h"
 #include "Star.h"
 #include "Planet.h"
+#include "useful.cpp"
 using namespace std;
 
 // Function declarations
@@ -212,6 +213,7 @@ int main () {
 
 	starA.SetRadius(getStellarRadius(starA.GetLuminosity(), starA.GetTemperature()));
 	cout << "A Radius: " << starA.GetRadius() << endl;
+	cout << "A Type: " << GetSpectralClass(starA.GetTemperature()) << endl;
 	if (multiplicity == 2) {
 		starB.SetAge(systemAge);
 		starB.SetMetallicity(metallicity);
@@ -232,6 +234,7 @@ int main () {
 
 		starB.SetRadius(getStellarRadius(starB.GetLuminosity(), starB.GetTemperature()));
 		cout << "B Radius: " << starB.GetRadius() << endl;
+		cout << "B Type: " << GetSpectralClass(starB.GetTemperature()) << endl;
 
 		mainSystem.SetPrimaryStar(starA);
 		mainSystem.SetSecondaryStar(starB);
