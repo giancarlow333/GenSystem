@@ -88,7 +88,7 @@ int main () {
 				for (int i = 0; i < 2; i++) {
 					cout << theStars[i].GetMass() << endl;
 				}
-				allSystems.firstSystem = starSys;
+				allSystems.firstSystem.SetStars(theStars);
 
 				//allSystems.secondSystem.SetSingleStar(starC);
 
@@ -96,7 +96,6 @@ int main () {
 				vector<Star> x = allSystems.firstSystem.GetStars();
 				cout << "assigned\n";
 				for (int i = 0; i < 2; i++) {
-					cout << "loop: " << i << endl;
 					cout << x[i].GetMass() << endl;
 				}
 				/*x = allSystems.secondSystem.GetStars();
@@ -108,10 +107,6 @@ int main () {
 		}
 	}
 
-	vector<Star> theStars = starSys.GetStars();
-	for (int i = 0; i < 2; i++) {
-		cout << theStars[i].GetMass() << endl;
-	}
 	return 0;
 }
 
