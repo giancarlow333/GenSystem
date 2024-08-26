@@ -13,13 +13,13 @@ class StarSystem {
 		StarSystem();
 		StarSystem(const StarSystem & other);
 		// Accessors
-		vector<Star> GetStars ();
+		Star GetPrimaryStar ();
+		Star GetSecondaryStar ();
 		double GetSeparation ();
 		double GetEccentricity ();
-		int GetNumberOfStars ();
 		// Mutators
-		void SetSingleStar (Star s);
-		void SetStars (vector<Star> vs);
+		void SetPrimaryStar (Star s);
+		void SetSecondaryStar (Star s);
 		void SetSeparation (double s);
 		void SetEccentricity (double e);
 		// Operators
@@ -27,8 +27,9 @@ class StarSystem {
 		//bool operator==(StarSystem a, StarSystem b)
 	protected:
 	private:
-		vector<Star> stars;
-		vector<Planet> planets; // planets orbit *all* stars in system!
+		Star primaryStar;
+		Star secondaryStar;
+		vector<Planet> planets; // planets that orbit *all* stars in system!
 		// Relationship between stars
 		double separation;
 		double eccentricity;
