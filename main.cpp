@@ -11,6 +11,12 @@ bool isSystemMultiple (double mass, default_random_engine & e);
 int generateSystemMultiplicity(default_random_engine & e);
 double generateMassRatio(default_random_engine & e);
 
+// struct for trinary and quaternary systems
+struct MultipleSystem {
+	StarSystem firstSystem;
+	StarSystem secondSystem;
+};
+
 /* MAIN */
 int main () {
 	cout << "Hello!\n\n";
@@ -48,12 +54,17 @@ int main () {
 		int multiplicity =  generateSystemMultiplicity(engine);
 		cout << "multiplicity: " << multiplicity << endl << endl;
 
-		double massRatio = generateMassRatio(engine);
-		cout << "Mass ratio: " << massRatio << endl;
-		cout << "B mass: " << baseMass * massRatio << endl << endl;
+		if (multiplicity == 2) {
+			double massRatio = generateMassRatio(engine);
+			cout << "Mass ratio: " << massRatio << endl;
+			cout << "B mass: " << baseMass * massRatio << endl << endl;
 
-		Star starB(baseMass * massRatio);
-		starSys.SetSingleStar(starB);
+			Star starB(baseMass * massRatio);
+			starSys.SetSingleStar(starB);
+		}
+		else if (multiplicity == 3) {
+			MultipleSystem allSystems;
+		}
 	}
 
 	vector<Star> theStars = starSys.GetStars();

@@ -24,6 +24,7 @@ class StarSystem {
 	private:
 		vector<Star> stars;
 		vector<Planet> planets;
+		// Relationship between stars
 };
 
 #endif // STARSYSTEM_H
