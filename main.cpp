@@ -21,6 +21,7 @@ double getInitialLuminosity (double mass);
 double getStellarLifespan (double mass);
 double getInitialTemperature (double mass);
 double getStellarRadius (double lum, double temp);
+void evolveStar (Star & s, default_random_engine & e);
 
 // struct for overall separation
 struct OverallSeparation {
@@ -480,3 +481,108 @@ double getInitialTemperature (double mass) {
 double getStellarRadius (double lum, double temp) {
 	return pow(lum, 0.5) / pow(temp / 5772.0, 2.0);
 }
+
+/* evolveStar
+ * When invoked, age and mass need to have been calculated!
+ */
+void evolveStar (Star & s, default_random_engine & e) {
+	double systemAge = s.GetAge();
+	double starMass = s.GetMass();
+
+	if (starMass < 0.08) { // it's a brown dwarf
+		double upper = pow(mass, 0.83);
+		double lower = pow(systemAge, 0.32);
+		double temp = 18600 * upper / lower;
+		s.SetTemperature(temp);
+
+		s.SetLuminosity(pow(temp, 4.0) / 1.1e17);
+
+		return;
+	}
+	
+	double lifespan = getStellarLifespan(starMass);
+
+	if (systemAge <= lifespan) { // main sequence
+		double initLum = getInitialLuminosity(starMass);
+		double lum = initLum * pow(2.2, systemAge / lifespan);
+		s.SetLuminosity(lum);
+
+		double temp = getInitialTemperature(starMass);
+		s.SetTemperature(temp);
+
+		double radius = getStellarRadius(lum, temp);
+		s.SetRadius(radius);
+	}
+	else if (systemAge <= 1.15 * lifespan) {
+		uniform_int_distribution<> diceRoll(1, 100);
+		int roll = diceRoll(e);
+
+		if (roll <= 60) { // subgiant
+			uniform_real_distribution<> newLumRatio(2.0, 2.4);
+			
+			double initLum = getInitialLuminosity(starMass);
+			s.SetLuminosity(newLumRatio(e) * initLum);
+
+			double initTemp = getInitialTemperature(starMass);
+			uniform_real_distribution<> newTemp(5000, initTemp);
+			double newTemperature = newTemp(e);
+			s.SetTemperature(newTemperature);
+
+			double radius = getStellarRadius(newLumRatio(e) * initLum, newTemperature);
+			s.SetRadius(radius);
+		}
+		else if (roll <= 90) { // red giant branch
+			uniform_real_distribution<> randomU(0, 1);
+			double randomNumber = randomU(e);
+
+			s.SetTemperature(5000 - randomNumber * 2000);
+			s.SetLuminosity(pow(50, 1 + randomNumber);
+			s.SetRadius(getStellarRadius(s.GetLuminosity(), s.GetTemperature()));
+		}
+		else { // Horizontal branch
+			uniform_real_distribution<> randomLum(50, 100);
+			s.SetLuminosity(randomLum(e));
+
+			normal_distribution<> randomTemp(5000, 50);
+			s.SetTemperature(randomTemp(e));
+
+			s.SetRadius(getStellarRadius(s.GetLuminosity(), s.GetTemperature()));
+		}
+	} // close 1.15 * lifespan
+	else { // white dwarf
+		double newMass = 0.43 + starMass / 10.4;
+		s.SetMass(newMass);
+
+		double postLifespan = systemAge - (1.15 * lifespan);
+		double upper = pow(newMass, 0.25);
+		double lower = pow(postLifespan, 0.35);
+		double temp = 13500 * upper / lower;
+		s.SetTemperature(temp);
+
+		double radiusKM = 5500 / pow(newMass, 1 / 3);
+		double radius = radiusKM / 695700;
+		s.SetRadius(radius);
+
+		s.SetLuminosity(pow(radius, 2) * pow(temp / 5772, 4));
+	}
+
+	return;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
