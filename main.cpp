@@ -9,7 +9,9 @@ using namespace std;
 double initialMassFunction (default_random_engine & e);
 bool isSystemMultiple (double mass, default_random_engine & e);
 int generateSystemMultiplicity(default_random_engine & e);
+double generateHeavyMassRatio(default_random_engine & e);
 double generateMassRatio(default_random_engine & e);
+bool flipCoin(default_random_engine & e);
 
 // struct for trinary and quaternary systems
 struct MultipleSystem {
@@ -22,6 +24,9 @@ int main () {
 	cout << "Hello!\n\n";
 	cout << "Welcome to GenSystem Version 0.1!" << endl;
 	cout << "(c) 2024 Giancarlo Whitaker" << endl << endl;
+
+	//
+	MultipleSystem allSystems;
 
 	// construct random engine
 	int seed = 333;  // non-random seed for testing
@@ -53,6 +58,7 @@ int main () {
 	if (isMultiple) {
 		int multiplicity =  generateSystemMultiplicity(engine);
 		cout << "multiplicity: " << multiplicity << endl << endl;
+		multiplicity = 3;
 
 		if (multiplicity == 2) {
 			double massRatio = generateMassRatio(engine);
@@ -63,7 +69,42 @@ int main () {
 			starSys.SetSingleStar(starB);
 		}
 		else if (multiplicity == 3) {
-			MultipleSystem allSystems;
+			// flip coin; if heads, C orbits AB, else BC orbits A
+			bool systemArrangement = flipCoin(engine);
+			cout << "systemArrangement: " << systemArrangement << endl;
+			systemArrangement = 1;
+
+			// C orbits close pair AB
+			if (systemArrangement) {
+				double massRatioAB = generateHeavyMassRatio(engine);
+				double massRatioAC = generateMassRatio(engine);
+
+				Star starB(baseMass * massRatioAB);
+				Star starC(baseMass * massRatioAC);
+
+				starSys.SetSingleStar(starB);
+				vector<Star> theStars = starSys.GetStars();
+				cout << "starSys:\n";
+				for (int i = 0; i < 2; i++) {
+					cout << theStars[i].GetMass() << endl;
+				}
+				allSystems.firstSystem = starSys;
+
+				//allSystems.secondSystem.SetSingleStar(starC);
+
+				cout << "ALL_SYSTEMS:\n";
+				vector<Star> x = allSystems.firstSystem.GetStars();
+				cout << "assigned\n";
+				for (int i = 0; i < 2; i++) {
+					cout << "loop: " << i << endl;
+					cout << x[i].GetMass() << endl;
+				}
+				/*x = allSystems.secondSystem.GetStars();
+				for (int i = 0; i < 2; i++) {
+					cout << x[i].GetMass() << endl;
+				}*/
+			}
+			else { cout << "Hello!" << endl; }
 		}
 	}
 
@@ -174,4 +215,18 @@ double generateMassRatio(default_random_engine & e) {
 	cout << "randomU: " << randomU << endl;
 
 	return randomU;
+}
+
+double generateHeavyMassRatio(default_random_engine & e) {
+	uniform_real_distribution<> rUnif(0.35, 1);
+	double randomU = rUnif(e);
+	cout << "randomU: " << randomU << endl;
+
+	return randomU;
+}
+
+bool flipCoin(default_random_engine & e) {
+	discrete_distribution<int> coinFlipper(0, 1);
+
+	return coinFlipper(e);
 }
