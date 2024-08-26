@@ -14,7 +14,7 @@ Planet::Planet(const Planet & other) {
 }
 
 //alternate constructor
-Star::Star(double d) {
+Planet::Planet(double d) {
 	distance = d;
 }
 
@@ -22,7 +22,7 @@ Star::Star(double d) {
 // ACCESSORS
 ///////////////////////////////////////
 
-double Star::GetMass () {
+double Planet::GetMass () {
 	return mass;
 }
 
@@ -30,7 +30,7 @@ double Star::GetMass () {
 // MUTATORS
 ///////////////////////////////////////
 
-void Star::SetMass (double m) {
+void Planet::SetMass (double m) {
 	mass = m;
 }
 
@@ -49,10 +49,10 @@ Planet & Planet::operator=(const Planet & rhs) {
 }
 
 /*
-ostream& operator<<(ostream & outs, const Star & star)
+ostream& operator<<(ostream & outs, const Planet & Planet)
 {
     //string L =
-    outs << star.GetSpectralClass();
-    outs << star.GetSubClass();
-    outs << star.GetLuminosityClass();
+    outs << Planet.GetSpectralClass();
+    outs << Planet.GetSubClass();
+    outs << Planet.GetLuminosityClass();
 }*/

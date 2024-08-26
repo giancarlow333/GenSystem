@@ -28,7 +28,7 @@ class Star
 		void SetRadius (double r);
 		// Operators
 		Star & operator=(const Star & rhs);
-		bool operator==(Star a, Star b)
+		//bool operator==(Star a, Star b)
 	protected:
 	private:
 		double mass;

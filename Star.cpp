@@ -130,7 +130,7 @@ Star & Star::operator=(const Star & rhs) {
 	return *this;
 }
 
-bool operator==(Star a, Star b) {
+/*bool operator==(Star a, Star b) {
 	return (a.mass == b.mass) && (a.age == b.age) && (a.metallicity == b.metallicity) && (a.temperature == b.temperature) && (a.luminosity == b.luminosity) && (a.radius == b.radius);
 }
 

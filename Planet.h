@@ -17,7 +17,7 @@ class Planet
 		void SetMass (double m);
 		// Operators
 		Planet & operator=(const Planet & rhs);
-		bool operator==(Planet a, Planet b)
+		bool operator==(Planet b);
 	protected:
 	private:
 		double distance; // distance from star in AU
