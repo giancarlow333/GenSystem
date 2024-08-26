@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include "Star.h"
+#include "Planet.h"
 using namespace std;
 
 Star::Star()
@@ -50,6 +51,10 @@ double Star::GetLuminosity () {
 
 double Star::GetRadius () {
 	return radius;
+}
+
+vector<Planet> Star::GetPlanets () {
+	return planets;
 }
 
 /*char Star::GetSpectralClass () const
@@ -119,6 +124,15 @@ void Star::SetLuminosity (double l) {
 void Star::SetRadius (double r) {
 	radius = r;
 }
+
+void Star::SetPlanet (Planet p) {
+	planets.push_back(p);
+}
+
+void Star::SetPlanets (vector<Planet> vp) {
+	planets = vp;
+}
+
 
 ///////////////////////////////////////
 // OPERATORS

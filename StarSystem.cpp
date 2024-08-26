@@ -7,11 +7,15 @@ using namespace std;
 
 StarSystem::StarSystem() {
 	//ctor
+	separation = 0;
+	eccentricity = 0;
 }
 
 StarSystem::StarSystem(const StarSystem& other) {
 	stars = other.stars;
 	planets = other.planets;
+	separation = other.separation;
+	eccentricity = other.eccentricity;
 }
 ///////////////////////////////////////
 // ACCESSORS
@@ -27,6 +31,10 @@ double StarSystem::GetSeparation () {
 
 double StarSystem::GetEccentricity () {
 	return eccentricity;
+}
+
+int StarSystem::GetNumberOfStars () {
+	return stars.size();
 }
 
 ///////////////////////////////////////

@@ -1,8 +1,9 @@
 #ifndef STAR_H
 #define STAR_H
 
-#include <string>
+#include <vector>
 #include <iostream>
+#include "Planet.h"
 using namespace std;
 
 class Star
@@ -19,6 +20,7 @@ class Star
 		double GetTemperature ();
 		double GetLuminosity ();
 		double GetRadius ();
+		vector<Planet> GetPlanets ();
 		// Mutators
 		void SetMass (double m);
 		void SetAge (double a);
@@ -26,6 +28,8 @@ class Star
 		void SetTemperature (double t);
 		void SetLuminosity (double l);
 		void SetRadius (double r);
+		void SetPlanet (Planet p);
+		void SetPlanets (vector<Planet> vp);
 		// Operators
 		Star & operator=(const Star & rhs);
 		//bool operator==(Star a, Star b)
@@ -36,7 +40,8 @@ class Star
 		double metallicity;
 		double temperature;
 		double luminosity;
-		double radius;		
+		double radius;
+		vector<Planet> planets;
 };
 
 #endif // STAR_H
