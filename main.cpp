@@ -17,9 +17,9 @@ double generateDistanceBetweenStars(default_random_engine & e, double primaryMas
 double generateMultipleStarEccentricity(default_random_engine & e, double separation);
 double generateSystemAge (default_random_engine & e);
 double generateMetallicity (default_random_engine & e, double age);
-double getLuminosityFromMass (double mass);
+double getInitialLuminosity (double mass);
 double getStellarLifespan (double mass);
-double getStellarTemperature (double mass);
+double getInitialTemperature (double mass);
 double getStellarRadius (double lum, double temp);
 
 // struct for overall separation
@@ -197,7 +197,7 @@ int main () {
 	starA.SetAge(systemAge);
 	starA.SetMetallicity(metallicity);
 
-	double baseLuminosityA = getLuminosityFromMass(starA.GetMass());
+	double baseLuminosityA = getInitialLuminosity(starA.GetMass());
 	double lifespanA = getStellarLifespan(starA.GetMass());
 	double currentLuminosityA;
 	if (systemAge < lifespanA) {
@@ -208,7 +208,7 @@ int main () {
 	starA.SetLuminosity(currentLuminosityA);
 	cout << "A Luminosity: " << starA.GetLuminosity() << endl;
 
-	starA.SetTemperature(getStellarTemperature(starA.GetMass()));
+	starA.SetTemperature(getInitialTemperature(starA.GetMass()));
 	cout << "A Temperature: " << starA.GetTemperature() << endl;
 
 	starA.SetRadius(getStellarRadius(starA.GetLuminosity(), starA.GetTemperature()));
@@ -218,7 +218,7 @@ int main () {
 		starB.SetAge(systemAge);
 		starB.SetMetallicity(metallicity);
 
-		double baseLuminosityB = getLuminosityFromMass(starB.GetMass());
+		double baseLuminosityB = getInitialLuminosity(starB.GetMass());
 		double lifespanB = getStellarLifespan(starB.GetMass());
 		double currentLuminosityB;
 		if (systemAge < lifespanB) {
@@ -229,7 +229,7 @@ int main () {
 
 		cout << "B Luminosity: " << starB.GetLuminosity() << endl;
 
-		starB.SetTemperature(getStellarTemperature(starB.GetMass()));
+		starB.SetTemperature(getInitialTemperature(starB.GetMass()));
 		cout << "B Temperature: " << starB.GetTemperature() << endl;
 
 		starB.SetRadius(getStellarRadius(starB.GetLuminosity(), starB.GetTemperature()));
@@ -427,17 +427,18 @@ double generateMetallicity (default_random_engine & e, double age) {
 	return (roll / 10) * (1.2 - age / 13.5);
 }
 
-/* getLuminosityFromMass
+/* getInitialLuminosity
+ * Get the luminosity the star had at formation
+ * I derived this equation by doing two regressions on the table found in
+ * "Architect of Worlds 0.8," which is ultimately from Mamajek (2016) and
+ * Townsend (2016).
  */
-double getLuminosityFromMass (double mass) {
-	if (mass < 0.43) {
-		return 0.23 * pow(mass, 2.3);
-	}
-	else if (mass < 2) {
-		return pow(mass, 4.0);
+double getInitialLuminosity (double mass) {
+	if (mass < 0.5) {
+		return 0.2106 * pow(mass, 2.3357);
 	}
 	else {
-		return 1.4 * pow(mass, 3.5);
+		return 0.7329 * pow(mass, 4.6128);
 	}
 }
 
@@ -455,10 +456,23 @@ double getStellarLifespan (double mass) {
 	}
 }
 
-/* getStellarTemperature
+/* getInitialTemperature
+ * Get the temperature the star had at formation
+ * I derived this equation by doing multiple regressions on the table found in
+ * "Architect of Worlds 0.8," which is ultimately from Mamajek (2016) and
+ * Townsend (2016).  This equation is very ugly but it avoid a table at least!
  */
-double getStellarTemperature (double mass) {
-	return 5772.0 * pow(mass, 0.505);
+double getInitialTemperature (double mass) {
+	if (mass < 0.5) {
+		return 4335.95 + 684.72 * log (mass);
+	}
+	else if (mass < 1.3) {
+		double denominator = 1 + 4.2427 * exp(-2.914 * mass);
+		return 7007.56 / denominator;
+	}
+	else {
+		return 2857.576 * mass + 2537.984;
+	}
 }
 
 /* getStellarRadius
