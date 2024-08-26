@@ -14,9 +14,13 @@ class StarSystem {
 		StarSystem(const StarSystem & other);
 		// Accessors
 		vector<Star> GetStars ();
+		double GetSeparation ();
+		double GetEccentricity ();
 		// Mutators
 		void SetSingleStar (Star s);
 		void SetStars (vector<Star> vs);
+		void SetSeparation (double s);
+		void SetEccentricity (double e);
 		// Operators
 		StarSystem & operator=(const StarSystem & rhs);
 		//bool operator==(StarSystem a, StarSystem b)
@@ -25,6 +29,8 @@ class StarSystem {
 		vector<Star> stars;
 		vector<Planet> planets;
 		// Relationship between stars
+		double separation;
+		double eccentricity;
 };
 
 #endif // STARSYSTEM_H

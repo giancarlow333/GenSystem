@@ -21,6 +21,14 @@ vector<Star> StarSystem::GetStars () {
 	return stars;
 }
 
+double StarSystem::GetSeparation () {
+	return separation;
+}
+
+double StarSystem::GetEccentricity () {
+	return eccentricity;
+}
+
 ///////////////////////////////////////
 // MUTATORS
 ///////////////////////////////////////
@@ -31,6 +39,14 @@ void StarSystem::SetSingleStar (Star s) {
 
 void StarSystem::SetStars (vector<Star> vs) {
 	stars = vs;
+}
+
+void StarSystem::SetSeparation (double s) {
+	separation = s;
+}
+
+void StarSystem::SetEccentricity (double e) {
+	eccentricity = e;
 }
 
 ///////////////////////////////////////

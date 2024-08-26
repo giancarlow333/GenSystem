@@ -12,6 +12,7 @@ int generateSystemMultiplicity(default_random_engine & e);
 double generateHeavyMassRatio(default_random_engine & e);
 double generateMassRatio(default_random_engine & e);
 bool flipCoin(default_random_engine & e);
+double generateDistanceBetweenStars(default_random_engine & e, double primaryMass);
 
 // struct for trinary and quaternary systems
 struct MultipleSystem {
@@ -66,8 +67,11 @@ int main () {
 
 			Star starB(baseMass * massRatio);
 
-			// determine if its close first!
-			//allSystems.firstSystem.SetSingleStar(starB);
+			double separation = generateDistanceBetweenStars(engine, baseMass);
+			cout << "Separation: " << separation << " AU\n\n";
+
+			allSystems.firstSystem.SetSingleStar(starB);
+			allSystems.firstSystem.SetSeparation(separation);
 		}
 		else if (multiplicity == 3) {
 			// flip coin; if heads, C orbits AB, else BC orbits A
@@ -125,6 +129,9 @@ int main () {
 	for (int i = 0; i < 2; i++) {
 		cout << x[i].GetMass() << endl;
 	} */
+
+	//for (int i = 0; i < 2000; i++)
+		//cout << generateDistanceBetweenStars(engine, 0.3) << endl;
 
 	return 0;
 }
@@ -243,4 +250,21 @@ bool flipCoin(default_random_engine & e) {
 	discrete_distribution<int> coinFlipper(0, 1);
 
 	return coinFlipper(e);
+}
+
+// I can't make sense of the paper
+// The paper makes me think that 45 AU is the *mode*, in which case the mean is ln(45 - sigma^2) or 3.68.  Keeping the stdev of 2.3 seems to match the upper end of the distro (4.6% above 1500 AU), but not the lower end!
+double generateDistanceBetweenStars(default_random_engine & e, double primaryMass) {
+	if (primaryMass <= 0.1) {
+		lognormal_distribution<> generator(1.45, 0.5);
+		return generator(e);
+	}
+	else if (primaryMass <= 0.5) {
+		lognormal_distribution<> generator(1.28, 1.3);
+		return generator(e);
+	}
+	else {
+		lognormal_distribution<> generator(3.68, 2.3);
+		return generator(e);
+	}
 }
