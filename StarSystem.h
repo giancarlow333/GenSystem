@@ -16,6 +16,7 @@ class StarSystem {
 		vector<Star> GetStars ();
 		double GetSeparation ();
 		double GetEccentricity ();
+		int GetNumberOfStars ();
 		// Mutators
 		void SetSingleStar (Star s);
 		void SetStars (vector<Star> vs);
@@ -27,7 +28,7 @@ class StarSystem {
 	protected:
 	private:
 		vector<Star> stars;
-		vector<Planet> planets;
+		vector<Planet> planets; // planets orbit *all* stars in system!
 		// Relationship between stars
 		double separation;
 		double eccentricity;
