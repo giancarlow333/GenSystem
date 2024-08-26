@@ -198,42 +198,21 @@ int main () {
 	starA.SetAge(systemAge);
 	starA.SetMetallicity(metallicity);
 
-	double baseLuminosityA = getInitialLuminosity(starA.GetMass());
-	double lifespanA = getStellarLifespan(starA.GetMass());
-	double currentLuminosityA;
-	if (systemAge < lifespanA) {
-		currentLuminosityA = baseLuminosityA * pow(2.2, systemAge / lifespanA);
-	}
-	else {cout << "A is too old!\n\n";}
+	// evolve Star A
+	evolveStar(starA, engine);
 
-	starA.SetLuminosity(currentLuminosityA);
 	cout << "A Luminosity: " << starA.GetLuminosity() << endl;
-
-	starA.SetTemperature(getInitialTemperature(starA.GetMass()));
 	cout << "A Temperature: " << starA.GetTemperature() << endl;
-
-	starA.SetRadius(getStellarRadius(starA.GetLuminosity(), starA.GetTemperature()));
 	cout << "A Radius: " << starA.GetRadius() << endl;
 	cout << "A Type: " << GetSpectralClass(starA.GetTemperature()) << endl;
 	if (multiplicity == 2) {
 		starB.SetAge(systemAge);
 		starB.SetMetallicity(metallicity);
 
-		double baseLuminosityB = getInitialLuminosity(starB.GetMass());
-		double lifespanB = getStellarLifespan(starB.GetMass());
-		double currentLuminosityB;
-		if (systemAge < lifespanB) {
-			currentLuminosityB = baseLuminosityB * pow(2.2, systemAge / lifespanB);
-		}
-		else {cout << "B is too old!\n\n";}
-		starB.SetLuminosity(currentLuminosityB);
+		evolveStar(starB, engine);
 
 		cout << "B Luminosity: " << starB.GetLuminosity() << endl;
-
-		starB.SetTemperature(getInitialTemperature(starB.GetMass()));
 		cout << "B Temperature: " << starB.GetTemperature() << endl;
-
-		starB.SetRadius(getStellarRadius(starB.GetLuminosity(), starB.GetTemperature()));
 		cout << "B Radius: " << starB.GetRadius() << endl;
 		cout << "B Type: " << GetSpectralClass(starB.GetTemperature()) << endl;
 
@@ -490,7 +469,7 @@ void evolveStar (Star & s, default_random_engine & e) {
 	double starMass = s.GetMass();
 
 	if (starMass < 0.08) { // it's a brown dwarf
-		double upper = pow(mass, 0.83);
+		double upper = pow(starMass, 0.83);
 		double lower = pow(systemAge, 0.32);
 		double temp = 18600 * upper / lower;
 		s.SetTemperature(temp);
@@ -536,7 +515,7 @@ void evolveStar (Star & s, default_random_engine & e) {
 			double randomNumber = randomU(e);
 
 			s.SetTemperature(5000 - randomNumber * 2000);
-			s.SetLuminosity(pow(50, 1 + randomNumber);
+			s.SetLuminosity(pow(50, 1 + randomNumber));
 			s.SetRadius(getStellarRadius(s.GetLuminosity(), s.GetTemperature()));
 		}
 		else { // Horizontal branch
