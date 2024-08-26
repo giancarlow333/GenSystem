@@ -51,14 +51,13 @@ int main () {
 	starA.SetMass(baseMass);
 
 	// Create star system
-	StarSystem starSys;
-	starSys.SetSingleStar(starA);
+	allSystems.firstSystem.SetSingleStar(starA);
 
 	// If the star is multiple, determine components
 	if (isMultiple) {
 		int multiplicity =  generateSystemMultiplicity(engine);
 		cout << "multiplicity: " << multiplicity << endl << endl;
-		multiplicity = 4;
+		// multiplicity = 4; // for testing
 
 		if (multiplicity == 2) {
 			double massRatio = generateMassRatio(engine);
@@ -66,7 +65,9 @@ int main () {
 			cout << "B mass: " << baseMass * massRatio << endl << endl;
 
 			Star starB(baseMass * massRatio);
-			starSys.SetSingleStar(starB);
+
+			// determine if its close first!
+			//allSystems.firstSystem.SetSingleStar(starB);
 		}
 		else if (multiplicity == 3) {
 			// flip coin; if heads, C orbits AB, else BC orbits A
@@ -81,10 +82,10 @@ int main () {
 				Star starB(baseMass * massRatioAB);
 				Star starC(baseMass * massRatioAC);
 
-				starSys.SetSingleStar(starB);
-				vector<Star> theStars = starSys.GetStars();
-				allSystems.firstSystem.SetStars(theStars);
-				allSystems.secondSystem.SetSingleStar(starC);
+				//allSystems.firstSystem.SetSingleStar(starB);
+				//vector<Star> theStars = allSystems.firstSystem.GetStars();
+				//allSystems.firstSystem.SetStars(theStars);
+				//allSystems.secondSystem.SetSingleStar(starC);
 			}
 			// A orbits close pair BC
 			else {
@@ -93,29 +94,28 @@ int main () {
 
 				Star starB(baseMass * massRatioAB);
 				Star starC(baseMass * massRatioAB * massRatioBC);
-				allSystems.firstSystem.SetSingleStar(starA);
-				allSystems.secondSystem.SetSingleStar(starB);
-				allSystems.secondSystem.SetSingleStar(starC);
+				//allSystems.firstSystem.SetSingleStar(starA);
+				//allSystems.secondSystem.SetSingleStar(starB);
+				//allSystems.secondSystem.SetSingleStar(starC);
 			}
 		} // close trinary
 		else { // quaternary
 			double massRatioAB = generateHeavyMassRatio(engine);
 			Star starB(baseMass * massRatioAB);
-			starSys.SetSingleStar(starB);
-			allSystems.firstSystem.SetSingleStar(starA);
-			allSystems.firstSystem.SetSingleStar(starB);
+			//allSystems.firstSystem.SetSingleStar(starA);
+			//allSystems.firstSystem.SetSingleStar(starB);
 
 			double massRatioAC = generateMassRatio(engine);
 			Star starC(baseMass * massRatioAC);
-			allSystems.secondSystem.SetSingleStar(starC);
+			//allSystems.secondSystem.SetSingleStar(starC);
 
 			double massRatioCD = generateHeavyMassRatio(engine);
 			Star starD(baseMass * massRatioAC * massRatioCD);
-			allSystems.secondSystem.SetSingleStar(starD);
+			//allSystems.secondSystem.SetSingleStar(starD);
 		}
 	}
 
-	cout << "ALL_SYSTEMS:\n";
+	/* cout << "ALL_SYSTEMS:\n";
 	vector<Star> x = allSystems.firstSystem.GetStars();
 	cout << "assigned\n";
 	for (int i = 0; i < 2; i++) {
@@ -124,7 +124,7 @@ int main () {
 	x = allSystems.secondSystem.GetStars();
 	for (int i = 0; i < 2; i++) {
 		cout << x[i].GetMass() << endl;
-	}
+	} */
 
 	return 0;
 }
