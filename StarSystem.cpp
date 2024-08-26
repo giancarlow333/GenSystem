@@ -12,7 +12,8 @@ StarSystem::StarSystem() {
 }
 
 StarSystem::StarSystem(const StarSystem& other) {
-	stars = other.stars;
+	primaryStar = other.primaryStar;
+	secondaryStar = other.secondaryStar;
 	planets = other.planets;
 	separation = other.separation;
 	eccentricity = other.eccentricity;
@@ -21,8 +22,12 @@ StarSystem::StarSystem(const StarSystem& other) {
 // ACCESSORS
 ///////////////////////////////////////
 
-vector<Star> StarSystem::GetStars () {
-	return stars;
+Star StarSystem::GetPrimaryStar () {
+	return primaryStar;
+}
+
+Star StarSystem::GetSecondaryStar () {
+	return secondaryStar;
 }
 
 double StarSystem::GetSeparation () {
@@ -33,20 +38,16 @@ double StarSystem::GetEccentricity () {
 	return eccentricity;
 }
 
-int StarSystem::GetNumberOfStars () {
-	return stars.size();
-}
-
 ///////////////////////////////////////
 // MUTATORS
 ///////////////////////////////////////
 
-void StarSystem::SetSingleStar (Star s) {
-	stars.push_back(s);
+void StarSystem::SetPrimaryStar (Star s) {
+	primaryStar = s;
 }
 
-void StarSystem::SetStars (vector<Star> vs) {
-	stars = vs;
+void StarSystem::SetSecondaryStar (Star s) {
+	secondaryStar = s;
 }
 
 void StarSystem::SetSeparation (double s) {

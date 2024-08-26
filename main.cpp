@@ -16,8 +16,16 @@ double generateDistanceBetweenStars(default_random_engine & e, double primaryMas
 double generateMultipleStarEccentricity(default_random_engine & e, double separation);
 double generateSystemAge (default_random_engine & e);
 double generateMetallicity (default_random_engine & e, double age);
+double getLuminosityFromMass (double mass);
+double getStellarLifespan (double mass);
+double getStellarTemperature (double mass);
+double getStellarRadius (double lum, double temp);
 
-
+// struct for overall separation
+struct OverallSeparation {
+	double separation;
+	double eccentricity;
+};
 
 /* MAIN */
 int main () {
@@ -41,19 +49,20 @@ int main () {
 	else { cout << "IS NOT"; }
 	cout << " multiple!" << endl << endl;
 
-	//isMultiple = true; // For testing
+	isMultiple = true; // For testing
 
 	// Create star
-	Star starA;
+	Star starA, starB, starC, starD;
 	starA.SetMass(baseMass);
 
-	// Create star system
-	StarSystem mainSystem;
-	mainSystem.SetSingleStar(starA);
+	// Create star systems
+	StarSystem mainSystem, farSystem; // for trinaries and quaternaries
+	OverallSeparation overallSeparation;
 
 	// If the star is multiple, determine components
+	int multiplicity;
 	if (isMultiple) {
-		int multiplicity =  generateSystemMultiplicity(engine);
+		multiplicity = generateSystemMultiplicity(engine);
 		cout << "multiplicity: " << multiplicity << endl << endl;
 		multiplicity = 2; // for testing
 
@@ -62,13 +71,17 @@ int main () {
 			cout << "Mass ratio: " << massRatio << endl;
 			cout << "B mass: " << baseMass * massRatio << endl << endl;
 
-			Star starB(baseMass * massRatio);
+			starB.SetMass(baseMass * massRatio);
 
 			double separation = generateDistanceBetweenStars(engine, baseMass);
 			cout << "Separation: " << separation << " AU\n\n";
+			double eccen = generateMultipleStarEccentricity(engine, separation);
+			cout << "Eccentricity: " << eccen << "\n\n";
 
-			mainSystem.SetSingleStar(starB);
+			mainSystem.SetPrimaryStar(starA);
+			mainSystem.SetSecondaryStar(starB);
 			mainSystem.SetSeparation(separation);
+			mainSystem.SetEccentricity(eccen);
 		}
 		else if (multiplicity == 3) {
 			// flip coin; if heads, C orbits AB, else BC orbits A
@@ -81,15 +94,12 @@ int main () {
 				double massRatioAB = generateHeavyMassRatio(engine);
 				double massRatioAC = generateMassRatio(engine);
 
-				Star starB(baseMass * massRatioAB);
-				Star starC(baseMass * massRatioAC);
+				starB.SetMass(baseMass * massRatioAB);
+				starC.SetMass(baseMass * massRatioAC);
 
-				mainSystem.SetSingleStar(starB);
+				mainSystem.SetSecondaryStar(starB);
 
-				StarSystem farSystem;
-				farSystem.SetSingleStar(starC);
-
-				double separationAB =  generateDistanceBetweenStars(engine, baseMass);
+				double separationAB = generateDistanceBetweenStars(engine, baseMass);
 				mainSystem.SetSeparation(separationAB);
 				cout << "Separation, AB: " << separationAB << " AU\n";
 				double eccenAB = generateMultipleStarEccentricity(engine, separationAB);
@@ -103,22 +113,21 @@ int main () {
 					separationABC =  generateDistanceBetweenStars(engine, baseMass);
 				}
 				cout << "Separation, (AB)C: " << separationABC << " AU\n";
-				farSystem.SetSeparation(separationABC);
+				overallSeparation.separation = separationABC;
 				double eccenABC = generateMultipleStarEccentricity(engine, separationABC);
 				cout << "Eccentricity, (AB)C: " << eccenABC << "\n\n";
-				farSystem.SetEccentricity(eccenABC);
+				overallSeparation.eccentricity = eccenABC;
 			}
 			// A orbits close pair BC
 			else {
 				double massRatioAB = generateMassRatio(engine);
 				double massRatioBC = generateHeavyMassRatio(engine);
 
-				Star starB(baseMass * massRatioAB);
-				Star starC(baseMass * massRatioAB * massRatioBC);
+				starB.SetMass(baseMass * massRatioAB);
+				starC.SetMass(baseMass * massRatioAB * massRatioBC);
 
-				StarSystem farSystem;
-				farSystem.SetSingleStar(starB);
-				farSystem.SetSingleStar(starC);
+				farSystem.SetPrimaryStar(starB);
+				farSystem.SetSecondaryStar(starC);
 
 				double separationBC =  generateDistanceBetweenStars(engine, baseMass * massRatioAB);
 				farSystem.SetSeparation(separationBC);
@@ -133,29 +142,27 @@ int main () {
 					separationABC =  generateDistanceBetweenStars(engine, baseMass);
 				}
 				cout << "Separation, A(BC): " << separationABC << " AU\n\n";
-				mainSystem.SetSeparation(separationABC);
+				overallSeparation.separation = separationABC;
 				double eccenABC = generateMultipleStarEccentricity(engine, separationABC);
 				cout << "Eccentricity, A(BC): " << eccenABC << "\n\n";
-				mainSystem.SetEccentricity(eccenABC);
+				overallSeparation.eccentricity = eccenABC;
 			}
 		} // close trinary
 		else { // quaternary
 			double massRatioAB = generateHeavyMassRatio(engine);
-			Star starB(baseMass * massRatioAB);
-			//mainSystem.firstSystem.SetSingleStar(starA);
-			//mainSystem.firstSystem.SetSingleStar(starB);
+			starB.SetMass(baseMass * massRatioAB);
 
 			double separationAB =  generateDistanceBetweenStars(engine, baseMass);
 			cout << "Separation, AB: " << separationAB << " AU\n";
-				double eccenAB = generateMultipleStarEccentricity(engine, separationAB);
+			double eccenAB = generateMultipleStarEccentricity(engine, separationAB);
 			cout << "Eccentricity, AB: " << eccenAB << "\n\n";
 
 			double massRatioAC = generateMassRatio(engine);
-			Star starC(baseMass * massRatioAC);
+			starC.SetMass(baseMass * massRatioAC);
 			//mainSystem.secondSystem.SetSingleStar(starC);
 
 			double massRatioCD = generateHeavyMassRatio(engine);
-			Star starD(baseMass * massRatioAC * massRatioCD);
+			starD.SetMass(baseMass * massRatioAC * massRatioCD);
 			//mainSystem.secondSystem.SetSingleStar(starD);
 
 			double separationCD =  generateDistanceBetweenStars(engine, baseMass * massRatioAC);
@@ -181,27 +188,60 @@ int main () {
 		}
 	} // END IS_MULTIPLE
 
-	/* cout << "ALL_SYSTEMS:\n";
-	vector<Star> x = mainSystem.firstSystem.GetStars();
-	cout << "assigned\n";
-	for (int i = 0; i < 2; i++) {
-		cout << x[i].GetMass() << endl;
-	}
-	x = mainSystem.secondSystem.GetStars();
-	for (int i = 0; i < 2; i++) {
-		cout << x[i].GetMass() << endl;
-	} */
-
-	//for (int i = 0; i < 2000; i++)
-		//cout << generateDistanceBetweenStars(engine, 0.3) << endl;
-
-	// Age
+	// Age, Metallicity, Luminosity, Lifespan
 	double systemAge = generateSystemAge(engine);
 	cout << "Age: " << systemAge << " Ga" << endl << endl;
-
-	// Metallicity
 	double metallicity = generateMetallicity(engine, systemAge);
 	cout << "Metallicity: " << metallicity << " x Sol" << endl << endl;
+	starA.SetAge(systemAge);
+	starA.SetMetallicity(metallicity);
+
+	double baseLuminosityA = getLuminosityFromMass(starA.GetMass());
+	double lifespanA = getStellarLifespan(starA.GetMass());
+	double currentLuminosityA;
+	if (systemAge < lifespanA) {
+		currentLuminosityA = baseLuminosityA * pow(2.2, systemAge / lifespanA);
+	}
+	else {cout << "A is too old!\n\n";}
+
+	starA.SetLuminosity(currentLuminosityA);
+	cout << "A Luminosity: " << starA.GetLuminosity() << endl;
+
+	starA.SetTemperature(getStellarTemperature(starA.GetMass()));
+	cout << "A Temperature: " << starA.GetTemperature() << endl;
+
+	starA.SetRadius(getStellarRadius(starA.GetLuminosity(), starA.GetTemperature()));
+	cout << "A Radius: " << starA.GetRadius() << endl;
+	if (multiplicity == 2) {
+		starB.SetAge(systemAge);
+		starB.SetMetallicity(metallicity);
+
+		double baseLuminosityB = getLuminosityFromMass(starB.GetMass());
+		double lifespanB = getStellarLifespan(starB.GetMass());
+		double currentLuminosityB;
+		if (systemAge < lifespanB) {
+			currentLuminosityB = baseLuminosityB * pow(2.2, systemAge / lifespanB);
+		}
+		else {cout << "B is too old!\n\n";}
+		starB.SetLuminosity(currentLuminosityB);
+
+		cout << "B Luminosity: " << starB.GetLuminosity() << endl;
+
+		starB.SetTemperature(getStellarTemperature(starB.GetMass()));
+		cout << "B Temperature: " << starB.GetTemperature() << endl;
+
+		starB.SetRadius(getStellarRadius(starB.GetLuminosity(), starB.GetTemperature()));
+		cout << "B Radius: " << starB.GetRadius() << endl;
+
+		mainSystem.SetPrimaryStar(starA);
+		mainSystem.SetSecondaryStar(starB);
+	}
+	else if (multiplicity == 3) {
+		cout << "Not yet implemented!\n\n";
+	}
+	else {
+		cout << "Not yet implemented!\n\n";
+	}
 
 	return 0;
 }
@@ -258,7 +298,6 @@ double initialMassFunction (default_random_engine & e) {
 bool isSystemMultiple (double mass, default_random_engine & e) {
 	uniform_real_distribution<> rUnif(0, 1);
 	double randomU = rUnif(e);
-	cout << "randomU: " << randomU << endl;
 
 	bool isMult = false;
 
@@ -383,4 +422,44 @@ double generateMetallicity (default_random_engine & e, double age) {
 	int roll = diceRoll(e) + diceRoll(e) + diceRoll(e);
 	
 	return (roll / 10) * (1.2 - age / 13.5);
+}
+
+/* getLuminosityFromMass
+ */
+double getLuminosityFromMass (double mass) {
+	if (mass < 0.43) {
+		return 0.23 * pow(mass, 2.3);
+	}
+	else if (mass < 2) {
+		return pow(mass, 4.0);
+	}
+	else {
+		return 1.4 * pow(mass, 3.5);
+	}
+}
+
+/* getStellarLifespan
+ */
+double getStellarLifespan (double mass) {
+	if (mass < 0.43) {
+		return 43.0 * pow(mass, -1.3);
+	}
+	else if (mass < 2) {
+		return 10.0 * pow(mass, -3.0);
+	}
+	else {
+		return 7.1 * pow(mass, -2.5);
+	}
+}
+
+/* getStellarTemperature
+ */
+double getStellarTemperature (double mass) {
+	return 5772.0 * pow(mass, 0.505);
+}
+
+/* getStellarRadius
+ */
+double getStellarRadius (double lum, double temp) {
+	return pow(lum, 0.5) / pow(temp / 5772.0, 2.0);
 }
