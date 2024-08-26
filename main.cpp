@@ -58,7 +58,7 @@ int main () {
 	if (isMultiple) {
 		int multiplicity =  generateSystemMultiplicity(engine);
 		cout << "multiplicity: " << multiplicity << endl << endl;
-		multiplicity = 3;
+		multiplicity = 4;
 
 		if (multiplicity == 2) {
 			double massRatio = generateMassRatio(engine);
@@ -97,6 +97,21 @@ int main () {
 				allSystems.secondSystem.SetSingleStar(starB);
 				allSystems.secondSystem.SetSingleStar(starC);
 			}
+		} // close trinary
+		else { // quaternary
+			double massRatioAB = generateHeavyMassRatio(engine);
+			Star starB(baseMass * massRatioAB);
+			starSys.SetSingleStar(starB);
+			allSystems.firstSystem.SetSingleStar(starA);
+			allSystems.firstSystem.SetSingleStar(starB);
+
+			double massRatioAC = generateMassRatio(engine);
+			Star starC(baseMass * massRatioAC);
+			allSystems.secondSystem.SetSingleStar(starC);
+
+			double massRatioCD = generateHeavyMassRatio(engine);
+			Star starD(baseMass * massRatioAC * massRatioCD);
+			allSystems.secondSystem.SetSingleStar(starD);
 		}
 	}
 
