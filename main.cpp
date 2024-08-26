@@ -17,6 +17,9 @@ double generateMultipleStarEccentricity(default_random_engine & e, double separa
 double generateSystemAge (default_random_engine & e);
 double generateMetallicity (default_random_engine & e, double age);
 double getLuminosityFromMass (double mass);
+double getStellarLifespan (double mass);
+double getStellarTemperature (double mass);
+double getStellarRadius (double lum, double temp);
 
 // struct for overall separation
 struct OverallSeparation {
@@ -185,28 +188,51 @@ int main () {
 		}
 	} // END IS_MULTIPLE
 
-	// Age
+	// Age, Metallicity, Luminosity, Lifespan
 	double systemAge = generateSystemAge(engine);
 	cout << "Age: " << systemAge << " Ga" << endl << endl;
-	starA.SetAge(systemAge);
-	if (multiplicity == 2) {
-		starB.SetAge(systemAge);
-		mainSystem.SetPrimaryStar(starA);
-		mainSystem.SetSecondaryStar(starB);
-	}
-	else if (multiplicity == 3) {
-		cout << "Not yet implemented!\n\n";
-	}
-	else {
-		cout << "Not yet implemented!\n\n";
-	}
-
-	// Metallicity
 	double metallicity = generateMetallicity(engine, systemAge);
 	cout << "Metallicity: " << metallicity << " x Sol" << endl << endl;
+	starA.SetAge(systemAge);
 	starA.SetMetallicity(metallicity);
+
+	double baseLuminosityA = getLuminosityFromMass(starA.GetMass());
+	double lifespanA = getStellarLifespan(starA.GetMass());
+	double currentLuminosityA;
+	if (systemAge < lifespanA) {
+		currentLuminosityA = baseLuminosityA * pow(2.2, systemAge / lifespanA);
+	}
+	else {cout << "A is too old!\n\n";}
+
+	starA.SetLuminosity(currentLuminosityA);
+	cout << "A Luminosity: " << starA.GetLuminosity() << endl;
+
+	starA.SetTemperature(getStellarTemperature(starA.GetMass()));
+	cout << "A Temperature: " << starA.GetTemperature() << endl;
+
+	starA.SetRadius(getStellarRadius(starA.GetLuminosity(), starA.GetTemperature()));
+	cout << "A Radius: " << starA.GetRadius() << endl;
 	if (multiplicity == 2) {
+		starB.SetAge(systemAge);
 		starB.SetMetallicity(metallicity);
+
+		double baseLuminosityB = getLuminosityFromMass(starB.GetMass());
+		double lifespanB = getStellarLifespan(starB.GetMass());
+		double currentLuminosityB;
+		if (systemAge < lifespanB) {
+			currentLuminosityB = baseLuminosityB * pow(2.2, systemAge / lifespanB);
+		}
+		else {cout << "B is too old!\n\n";}
+		starB.SetLuminosity(currentLuminosityB);
+
+		cout << "B Luminosity: " << starB.GetLuminosity() << endl;
+
+		starB.SetTemperature(getStellarTemperature(starB.GetMass()));
+		cout << "B Temperature: " << starB.GetTemperature() << endl;
+
+		starB.SetRadius(getStellarRadius(starB.GetLuminosity(), starB.GetTemperature()));
+		cout << "B Radius: " << starB.GetRadius() << endl;
+
 		mainSystem.SetPrimaryStar(starA);
 		mainSystem.SetSecondaryStar(starB);
 	}
@@ -216,27 +242,6 @@ int main () {
 	else {
 		cout << "Not yet implemented!\n\n";
 	}
-
-	// Luminosity
-	// Using a simple relation right now
-	starA.SetLuminosity(getLuminosityFromMass(starA.GetMass()));
-	cout << "A Luminosity: " << starA.GetLuminosity() << endl;
-	if (isMultiple) {
-		if (multiplicity == 2) {
-			starB.SetLuminosity(getLuminosityFromMass(starB.GetMass()));
-			cout << "B Luminosity: " << starB.GetLuminosity() << endl;
-			mainSystem.SetPrimaryStar(starA);
-			mainSystem.SetSecondaryStar(starB);
-		}
-		else if (multiplicity == 3) {
-			cout << "Not yet implemented!\n\n";
-		}
-		else {
-			cout << "Not yet implemented!\n\n";
-		}
-	}
-
-	// find lifespans for all stars
 
 	return 0;
 }
@@ -419,7 +424,7 @@ double generateMetallicity (default_random_engine & e, double age) {
 	return (roll / 10) * (1.2 - age / 13.5);
 }
 
-/*
+/* getLuminosityFromMass
  */
 double getLuminosityFromMass (double mass) {
 	if (mass < 0.43) {
@@ -431,4 +436,30 @@ double getLuminosityFromMass (double mass) {
 	else {
 		return 1.4 * pow(mass, 3.5);
 	}
+}
+
+/* getStellarLifespan
+ */
+double getStellarLifespan (double mass) {
+	if (mass < 0.43) {
+		return 43.0 * pow(mass, -1.3);
+	}
+	else if (mass < 2) {
+		return 10.0 * pow(mass, -3.0);
+	}
+	else {
+		return 7.1 * pow(mass, -2.5);
+	}
+}
+
+/* getStellarTemperature
+ */
+double getStellarTemperature (double mass) {
+	return 5772.0 * pow(mass, 0.505);
+}
+
+/* getStellarRadius
+ */
+double getStellarRadius (double lum, double temp) {
+	return pow(lum, 0.5) / pow(temp / 5772.0, 2.0);
 }
