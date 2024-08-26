@@ -11,7 +11,7 @@ class Star
 		// Constructors
 		Star();
 		Star(double m);
-		Star(const StarData & other);
+		Star(const Star & other);
 		// Accessors
 		double GetMass ();
 		double GetAge ();
