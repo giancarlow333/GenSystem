@@ -16,6 +16,7 @@ double generateDistanceBetweenStars(default_random_engine & e, double primaryMas
 double generateMultipleStarEccentricity(default_random_engine & e, double separation);
 
 
+
 /* MAIN */
 int main () {
 	cout << "Hello!\n\n";
@@ -52,7 +53,7 @@ int main () {
 	if (isMultiple) {
 		int multiplicity =  generateSystemMultiplicity(engine);
 		cout << "multiplicity: " << multiplicity << endl << endl;
-		multiplicity = 3; // for testing
+		multiplicity = 4; // for testing
 
 		if (multiplicity == 2) {
 			double massRatio = generateMassRatio(engine);
@@ -116,9 +117,9 @@ int main () {
 
 				double separationBC =  generateDistanceBetweenStars(engine, baseMass * massRatioAB);
 				farSystem.SetSeparation(separationBC);
-			cout << "Separation, BC: " << separationBC << " AU\n\n";
+				cout << "Separation, BC: " << separationBC << " AU\n\n";
 				double eccenBC = generateMultipleStarEccentricity(engine, separationBC);
-			cout << "Eccentricity, BC: " << eccenBC << "\n\n";
+				cout << "Eccentricity, BC: " << eccenBC << "\n\n";
 
 				// Set separation of A(BC)
 				double separationABC =  generateDistanceBetweenStars(engine, baseMass);
@@ -128,7 +129,7 @@ int main () {
 				}
 				cout << "Separation, A(BC): " << separationABC << " AU\n\n";
 				double eccenABC = generateMultipleStarEccentricity(engine, separationABC);
-			cout << "Eccentricity, A(BC): " << eccenABC << "\n\n";
+				cout << "Eccentricity, A(BC): " << eccenABC << "\n\n";
 			}
 		} // close trinary
 		else { // quaternary
@@ -137,6 +138,11 @@ int main () {
 			//mainSystem.firstSystem.SetSingleStar(starA);
 			//mainSystem.firstSystem.SetSingleStar(starB);
 
+			double separationAB =  generateDistanceBetweenStars(engine, baseMass);
+			cout << "Separation, AB: " << separationAB << " AU\n";
+				double eccenAB = generateMultipleStarEccentricity(engine, separationAB);
+			cout << "Eccentricity, AB: " << eccenAB << "\n\n";
+
 			double massRatioAC = generateMassRatio(engine);
 			Star starC(baseMass * massRatioAC);
 			//mainSystem.secondSystem.SetSingleStar(starC);
@@ -144,6 +150,27 @@ int main () {
 			double massRatioCD = generateHeavyMassRatio(engine);
 			Star starD(baseMass * massRatioAC * massRatioCD);
 			//mainSystem.secondSystem.SetSingleStar(starD);
+
+			double separationCD =  generateDistanceBetweenStars(engine, baseMass * massRatioAC);
+			cout << "Separation, CD: " << separationCD << " AU\n";
+			double eccenCD = generateMultipleStarEccentricity(engine, separationCD);
+			cout << "Eccentricity, CD: " << eccenCD << "\n\n";
+
+			double maxAB = separationAB * (1 + eccenAB);
+			double maxCD = separationCD * (1 + eccenCD);
+
+			double maxSep;
+			if (maxAB > maxCD) { maxSep = maxAB; }
+			else { maxSep = maxCD; }
+
+			double separationABCD = generateDistanceBetweenStars(engine, baseMass + baseMass * massRatioAC);
+				while (separationABCD < 3 * maxSep) {
+					cout << "Looping...\n";
+					separationABCD =  generateDistanceBetweenStars(engine, baseMass + baseMass * massRatioAC);
+				}
+			cout << "Separation, (AB)(CD): "  << separationABCD << " AU\n";
+			double eccenABCD = generateMultipleStarEccentricity(engine, separationABCD);
+			cout << "Eccentricity, (AB)(CD): " << eccenABCD << "\n\n";
 		}
 	} // END IS_MULTIPLE
 
