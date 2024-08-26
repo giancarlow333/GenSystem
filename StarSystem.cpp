@@ -1,10 +1,11 @@
 #include <vector>
 #include <iostream>
+#include "StarSystem.h"
 #include "Star.h"
-#include "Planet.g"
+#include "Planet.h"
 using namespace std;
 
-Star::StarSystem() {
+StarSystem::StarSystem() {
 	//ctor
 }
 
@@ -24,11 +25,11 @@ vector<Star> StarSystem::GetStars () {
 // MUTATORS
 ///////////////////////////////////////
 
-void StarSystem::SetStar (Star s) {
+void StarSystem::SetSingleStar (Star s) {
 	stars.push_back(s);
 }
 
-void StarSystem::SetStar (vector<Star> vs) {
+void StarSystem::SetStars (vector<Star> vs) {
 	stars = vs;
 }
 

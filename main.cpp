@@ -1,5 +1,8 @@
 #include <iostream>
 #include <random>
+#include "StarSystem.h"
+#include "Star.h"
+#include "Planet.h"
 using namespace std;
 
 // Function declarations
@@ -31,6 +34,10 @@ int main () {
 	cout << " multiple!" << endl << endl;
 
 	isMultiple = true; // For testing
+
+	// Create star
+	Star starA;
+	starA.SetMass(baseMass);
 
 	// If the star is multiple, determine components
 	if (isMultiple) {

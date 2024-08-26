@@ -15,7 +15,7 @@ class StarSystem {
 		// Accessors
 		vector<Star> GetStars ();
 		// Mutators
-		void SetStar (Star s);
+		void SetSingleStar (Star s);
 		void SetStars (vector<Star> vs);
 		// Operators
 		StarSystem & operator=(const StarSystem & rhs);
