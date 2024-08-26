@@ -14,6 +14,8 @@ double generateMassRatio(default_random_engine & e);
 bool flipCoin(default_random_engine & e);
 double generateDistanceBetweenStars(default_random_engine & e, double primaryMass);
 double generateMultipleStarEccentricity(default_random_engine & e, double separation);
+double generateSystemAge (default_random_engine & e);
+double generateMetallicity (default_random_engine & e, double age);
 
 
 
@@ -39,7 +41,7 @@ int main () {
 	else { cout << "IS NOT"; }
 	cout << " multiple!" << endl << endl;
 
-	isMultiple = true; // For testing
+	//isMultiple = true; // For testing
 
 	// Create star
 	Star starA;
@@ -193,6 +195,14 @@ int main () {
 	//for (int i = 0; i < 2000; i++)
 		//cout << generateDistanceBetweenStars(engine, 0.3) << endl;
 
+	// Age
+	double systemAge = generateSystemAge(engine);
+	cout << "Age: " << systemAge << " Ga" << endl << endl;
+
+	// Metallicity
+	double metallicity = generateMetallicity(engine, systemAge);
+	cout << "Metallicity: " << metallicity << " x Sol" << endl << endl;
+
 	return 0;
 }
 
@@ -332,4 +342,45 @@ double generateMultipleStarEccentricity(default_random_engine & e, double separa
 		else if (eccentricity > 0.9) { return 0.9; }
 		else { return eccentricity; }
 	}
+}
+
+/* generateSystemAge
+ * Procedure taken from "Architect of Worlds 0.8"
+ */
+double generateSystemAge (default_random_engine & e) {
+	uniform_int_distribution<> percentileRoll(1, 100);
+	uniform_real_distribution<> randU(0, 1);
+
+	int roll = percentileRoll(e);
+	double age;
+
+	if (roll <= 5) { // Extreme Population I
+		return 0.0 + randU(e) * 0.5;
+	}
+	else if (roll <= 31) { // Young Population I
+		return 0.5 + randU(e) * 2.5;
+	}
+	else if (roll <= 82) { // Intermediate Population I
+		return 3.0 + randU(e) * 5.0;
+	}
+	else if (roll <= 97) { // Disk Population
+		return 8.0 + randU(e) * 1.5;
+	}
+	else if (roll <= 99) { // Intermediate Population II
+		return 9.5 + randU(e) * 2.5;
+	}
+	else { // Extreme Population II
+		return 12.0 + randU(e) * 1.5;
+	}
+}
+
+/* generateMetallicity
+ * Procedure taken from "Architect of Worlds 0.8"
+ */
+double generateMetallicity (default_random_engine & e, double age) {
+	uniform_int_distribution<> diceRoll(1, 6);
+
+	int roll = diceRoll(e) + diceRoll(e) + diceRoll(e);
+	
+	return (roll / 10) * (1.2 - age / 13.5);
 }
