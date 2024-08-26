@@ -6,6 +6,7 @@ using namespace std;
 double initialMassFunction (default_random_engine & e);
 bool isSystemMultiple (double mass, default_random_engine & e);
 int generateSystemMultiplicity(default_random_engine & e);
+double generateMassRatio(default_random_engine & e);
 
 /* MAIN */
 int main () {
@@ -35,6 +36,10 @@ int main () {
 	if (isMultiple) {
 		int multiplicity =  generateSystemMultiplicity(engine);
 		cout << "multiplicity: " << multiplicity << endl << endl;
+
+		double massRatio = generateMassRatio(engine);
+		cout << "Mass ratio: " << massRatio << endl;
+		cout << "B mass: " << baseMass * massRatio << endl << endl;
 	}
 
 	return 0;
@@ -132,4 +137,12 @@ int generateSystemMultiplicity(default_random_engine & e) {
 	if (randomU <= 0.75) { return 2; }
 	else if (randomU <= 0.95) { return 3; }
 	else { return 4; }
+}
+
+double generateMassRatio(default_random_engine & e) {
+	uniform_real_distribution<> rUnif(0.05, 1);
+	double randomU = rUnif(e);
+	cout << "randomU: " << randomU << endl;
+
+	return randomU;
 }
