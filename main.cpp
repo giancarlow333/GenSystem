@@ -72,7 +72,6 @@ int main () {
 			// flip coin; if heads, C orbits AB, else BC orbits A
 			bool systemArrangement = flipCoin(engine);
 			cout << "systemArrangement: " << systemArrangement << endl;
-			systemArrangement = 1;
 
 			// C orbits close pair AB
 			if (systemArrangement) {
@@ -84,27 +83,32 @@ int main () {
 
 				starSys.SetSingleStar(starB);
 				vector<Star> theStars = starSys.GetStars();
-				cout << "starSys:\n";
-				for (int i = 0; i < 2; i++) {
-					cout << theStars[i].GetMass() << endl;
-				}
 				allSystems.firstSystem.SetStars(theStars);
-
-				//allSystems.secondSystem.SetSingleStar(starC);
-
-				cout << "ALL_SYSTEMS:\n";
-				vector<Star> x = allSystems.firstSystem.GetStars();
-				cout << "assigned\n";
-				for (int i = 0; i < 2; i++) {
-					cout << x[i].GetMass() << endl;
-				}
-				/*x = allSystems.secondSystem.GetStars();
-				for (int i = 0; i < 2; i++) {
-					cout << x[i].GetMass() << endl;
-				}*/
+				allSystems.secondSystem.SetSingleStar(starC);
 			}
-			else { cout << "Hello!" << endl; }
+			// A orbits close pair BC
+			else {
+				double massRatioAB = generateMassRatio(engine);
+				double massRatioBC = generateHeavyMassRatio(engine);
+
+				Star starB(baseMass * massRatioAB);
+				Star starC(baseMass * massRatioAB * massRatioBC);
+				allSystems.firstSystem.SetSingleStar(starA);
+				allSystems.secondSystem.SetSingleStar(starB);
+				allSystems.secondSystem.SetSingleStar(starC);
+			}
 		}
+	}
+
+	cout << "ALL_SYSTEMS:\n";
+	vector<Star> x = allSystems.firstSystem.GetStars();
+	cout << "assigned\n";
+	for (int i = 0; i < 2; i++) {
+		cout << x[i].GetMass() << endl;
+	}
+	x = allSystems.secondSystem.GetStars();
+	for (int i = 0; i < 2; i++) {
+		cout << x[i].GetMass() << endl;
 	}
 
 	return 0;
