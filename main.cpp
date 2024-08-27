@@ -25,6 +25,7 @@ void evolveStar (Star & s, default_random_engine & e);
 double generateDiskMassFactor (default_random_engine & e);
 double generateMigrationFactor (default_random_engine & e, double diskMassFactor);
 double getOuterSystemProperties(Planet & p, int mod, int pNumber, default_random_engine & e);
+double getInnerOrbitalExclusionZone (double pMass, double sMass, double separation, double eccentricity);
 
 // constants
 const string VERSION_NUMBER = "0.5";
@@ -533,7 +534,7 @@ int main () {
 	// Remove eliminated orbits
 	vector<Planet> starAPlanets2;
 	for (int i = 0; i < starAPlanets.size(); i++) {
-		if (!starAPlanets[i].orbitDisrupted && !starAPlanets[i].planetEjected) {
+		if (!starAPlanets[i].orbitDisrupted && !starAPlanets[i].planetEjected && starAPlanets[i].planet.GetPlanetClass() != NONE) {
 			starAPlanets2.push_back(starAPlanets[i].planet);
 		}
 	}
@@ -1050,4 +1051,14 @@ double getOuterSystemProperties(Planet & p, int mod, int pNumber, default_random
 	}
 
 	return 0.0;
+}
+
+double getInnerOrbitalExclusionZone (double pMass, double sMass, double separation, double eccentricity) {
+	double combinedMass = pMass + sMass;
+	double bMassFraction = sMass / combinedMass;
+	double massRatio = pMass / sMass;
+
+	double r1Egg = separation * (0.49 * pow(massRatio, 2/3)) / (0.6 * pow(massRatio, 2/3) + log(1 + pow(massRatio, 1/3)));
+
+	return r1Egg * (0.733 * pow((1 - eccentricity), 1.2) * pow(bMassFraction, 0.07));
 }
