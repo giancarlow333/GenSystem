@@ -32,7 +32,7 @@ class Planet
 		void SetDistance (double d);
 		void SetMass (double m);
 		void SetRadius (double r);
-		void SetClass (PlanetClass pc);
+		void SetPlanetClass (PlanetClass pc);
 		// Operators
 		Planet & operator=(const Planet & rhs);
 		bool operator==(Planet b);

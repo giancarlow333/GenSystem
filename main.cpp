@@ -24,6 +24,7 @@ double getStellarRadius (double lum, double temp);
 void evolveStar (Star & s, default_random_engine & e);
 double generateDiskMassFactor (default_random_engine & e);
 double generateMigrationFactor (default_random_engine & e, double diskMassFactor);
+double getOuterSystemProperties(Planet & p, int mod, int pNumber, default_random_engine & e);
 
 // constants
 const string VERSION_NUMBER = "0.4";
@@ -318,10 +319,18 @@ int main () {
 	}
 
 	// Outer Planetary System
+	double massToInnerSystem;
 	for (int i = 5; i < 12; i++) {
 		double planetesimalMass = starAPlanets[i].GetMass();
-	}
 
+		int accretionModifier = getAccretionModifier(planetesimalMass);
+		// modifier if close to slow accretion line
+		double temp = getOuterSystemProperties(starAPlanets[i], accretionModifier, i, engine);
+		if (i == 5) {
+			massToInnerSystem = temp;
+		}
+	}
+	cout << "massToInnerSystem: " << massToInnerSystem << endl << endl;
 
 
 
@@ -730,4 +739,129 @@ double generateMigrationFactor (default_random_engine & e, double diskMassFactor
 	else if (roll == 14) { return 0.8; }
 	else if (roll == 15) { return 0.9; }
 	else { return 1.0; } // roll >= 16
+}
+
+double getOuterSystemProperties(Planet & p, int mod, int pNumber, default_random_engine & e) {
+	uniform_int_distribution<> diceRoll(1, 6);
+	int roll = diceRoll(e) + diceRoll(e) + diceRoll(e) + mod;
+	double pMass = p.GetMass();
+
+	if (roll <= 14) {
+		p.SetPlanetClass(NONE);
+		p.SetMass(0);
+		if (pNumber == 5) {
+			return 0.25; // mass from middle zone sent to inner zone
+		}
+	}
+	else if (roll <= 18) {
+		p.SetPlanetClass(NONE);
+		p.SetMass(0);
+		if (pNumber == 5) {
+			return 0.20;
+		}
+	}
+	else if (roll <= 20) {
+		p.SetPlanetClass(FAILED_CORE);
+		uniform_real_distribution<> unifRoll(1, 6);
+		p.SetMass((unifRoll(e) + 3) * 0.25);
+		if (pNumber == 5) {
+			return 0.175;
+		}
+	}
+	else if (roll <= 22) {
+		p.SetPlanetClass(FAILED_CORE);
+		uniform_real_distribution<> unifRoll(1, 6);
+		p.SetMass((unifRoll(e) + 6) * 0.25);
+		if (pNumber == 5) {
+			return 0.15;
+		}
+	}
+	else if (roll <= 24) {
+		p.SetPlanetClass(FAILED_CORE);
+		uniform_real_distribution<> unifRoll(1, 6);
+		p.SetMass((unifRoll(e) + 9) * 0.25);
+		if (pNumber == 5) {
+			return 0.125;
+		}
+	}
+	else if (roll <= 26) {
+		p.SetPlanetClass(FAILED_CORE);
+		uniform_real_distribution<> unifRoll(1, 6);
+		p.SetMass((unifRoll(e) + 12) * 0.25);
+		if (pNumber == 5) {
+			return 0.125;
+		}
+	}
+	else if (roll <= 28) {
+		p.SetPlanetClass(SMALL_GAS_GIANT);
+		p.SetMass(1.1 * pMass);
+		if (pNumber == 5) {
+			return 0.1;
+		}
+	}
+	else if (roll <= 30) {
+		p.SetPlanetClass(SMALL_GAS_GIANT);
+		p.SetMass(1.6 * pMass);
+		if (pNumber == 5) {
+			return 0.1;
+		}
+	}
+	else if (roll <= 32) {
+		p.SetPlanetClass(SMALL_GAS_GIANT);
+		p.SetMass(2.4 * pMass);
+		if (pNumber == 5) {
+			return 0.075;
+		}
+	}
+	else if (roll <= 34) {
+		p.SetPlanetClass(SMALL_GAS_GIANT);
+		p.SetMass(3.6 * pMass);
+		if (pNumber == 5) {
+			return 0.075;
+		}
+	}
+	else if (roll <= 36) {
+		p.SetPlanetClass(MEDIUM_GAS_GIANT);
+		p.SetMass(5 * pMass);
+		if (pNumber == 5) {
+			return 0.05;
+		}
+	}
+	else if (roll <= 38) {
+		p.SetPlanetClass(MEDIUM_GAS_GIANT);
+		p.SetMass(6 * pMass);
+		if (pNumber == 5) {
+			return 0.05;
+		}
+	}
+	else if (roll <= 40) {
+		p.SetPlanetClass(MEDIUM_GAS_GIANT);
+		p.SetMass(7 * pMass);
+	}
+	else if (roll <= 42) {
+		p.SetPlanetClass(MEDIUM_GAS_GIANT);
+		p.SetMass(8.5 * pMass);
+	}
+	else if (roll <= 44) {
+		p.SetPlanetClass(LARGE_GAS_GIANT);
+		p.SetMass(10.0 * pMass);
+	}
+	else if (roll <= 46) {
+		p.SetPlanetClass(LARGE_GAS_GIANT);
+		p.SetMass(12.0 * pMass);
+	}
+	else if (roll <= 48) {
+		p.SetPlanetClass(LARGE_GAS_GIANT);
+		p.SetMass(14.0 * pMass);
+	}
+	else if (roll <= 50) {
+		p.SetPlanetClass(LARGE_GAS_GIANT);
+		p.SetMass(17.0 * pMass);
+	}
+	else {
+		p.SetPlanetClass(LARGE_GAS_GIANT);
+		p.SetMass(20.0 * pMass);
+	}
+
+	return 0.0;
 }

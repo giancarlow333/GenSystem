@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include "Planet.h"
 using namespace std;
 
 string GetSpectralClass (double temp) {
@@ -109,3 +110,5 @@ int getAccretionModifier (double pMass) {
 		return 40 + 8 * (log2pMass - 6);
 	}
 }
+
+

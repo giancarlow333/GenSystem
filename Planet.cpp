@@ -59,7 +59,7 @@ void Planet::SetRadius (double r) {
 	radius = r;
 }
 
-void Planet::SetClass (PlanetClass pc) {
+void Planet::SetPlanetClass (PlanetClass pc) {
 	classOfPlanet = pc;
 }
 ///////////////////////////////////////
