@@ -30,7 +30,7 @@ double getOuterOrbitalExclusionZone (double pMass, double sMass, double separati
 vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbiddenZone, bool starIsCircumbinary, double initialLuminosity, double innerExclusionZone);
 
 // constants
-const string VERSION_NUMBER = "0.6";
+const string VERSION_NUMBER = "0.7";
 
 // struct for overall separation
 struct OverallSeparation {
