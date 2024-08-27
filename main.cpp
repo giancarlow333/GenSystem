@@ -331,6 +331,9 @@ int main () {
 			dummyStar.SetMetallicity(starA.GetMetallicity());
 		}
 	}
+	else if (multiplicity == 4) {
+		cout << "Not yet implemented!\n\n";
+	}
 	else { // single star
 		dummyStar.SetMass(starA.GetMass());
 		dummyStar.SetLuminosity(starA.GetLuminosity());
