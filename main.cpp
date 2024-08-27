@@ -73,7 +73,7 @@ int main () {
 	else { cout << "IS NOT"; }
 	cout << " multiple!" << endl << endl;
 
-	isMultiple = true; // For testing
+	isMultiple = false; // For testing
 
 	// Create star
 	Star starA, starB, starC, starD;
@@ -84,7 +84,7 @@ int main () {
 	OverallSeparation overallSeparation;
 
 	// If the star is multiple, determine components
-	int multiplicity;
+	int multiplicity = 0;
 	bool systemArrangement;
 	if (isMultiple) {
 		multiplicity = generateSystemMultiplicity(engine);
