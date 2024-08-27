@@ -35,6 +35,13 @@ struct OverallSeparation {
 	double eccentricity;
 };
 
+// struct for planet formation
+struct FormingPlanet {
+	Planet planet;
+	bool isDominantGasGiant;
+	bool inExclusionZone;
+};
+
 /* MAIN */
 int main () {
 	cout << "Hello!\n\n";
@@ -260,65 +267,89 @@ int main () {
 	// determine if planets orbit A directly here
 
 
-	vector<Planet> starAPlanets;
+	vector<FormingPlanet> starAPlanets;
 
 	// place inner planets
 	double planet0Distance = 0.6 * sqrt(getInitialLuminosity(starA.GetMass()));
-	Planet temp0(planet0Distance, 0.08 * innerFormationZone);
+	FormingPlanet temp0;
+	temp0.planet.SetDistance(planet0Distance);
+	temp0.planet.SetMass(0.08 * innerFormationZone);
 	starAPlanets.push_back(temp0);
 
 	double planet1Distance = 0.8 * sqrt(getInitialLuminosity(starA.GetMass()));
-	Planet temp1(planet1Distance, 0.4 * innerFormationZone);
+	FormingPlanet temp1;
+	temp1.planet.SetDistance(planet1Distance);
+	temp1.planet.SetMass(0.4 * innerFormationZone);
 	starAPlanets.push_back(temp1);
 
 	double planet2Distance = 1.2 * sqrt(getInitialLuminosity(starA.GetMass()));
-	Planet temp2(planet2Distance, 0.4 * innerFormationZone);
+	FormingPlanet temp2;
+	temp2.planet.SetDistance(planet2Distance);
+	temp2.planet.SetMass(0.4 * innerFormationZone);
 	starAPlanets.push_back(temp2);
 
 	double planet3Distance = 1.8 * sqrt(getInitialLuminosity(starA.GetMass()));
-	Planet temp3(planet3Distance, 0.08 * innerFormationZone);
+	FormingPlanet temp3;
+	temp3.planet.SetDistance(planet3Distance);
+	temp3.planet.SetMass(0.08 * innerFormationZone);
 	starAPlanets.push_back(temp3);
 	
 	double planet4Distance = 2.7 * sqrt(getInitialLuminosity(starA.GetMass()));
-	Planet temp4(planet4Distance, 0.04 * innerFormationZone);
+	FormingPlanet temp4;
+	temp4.planet.SetDistance(planet4Distance);
+	temp4.planet.SetMass(0.04 * innerFormationZone);
 	starAPlanets.push_back(temp4);
 
 	// place middle planets
 	double planet5Distance = 4.0 * sqrt(getInitialLuminosity(starA.GetMass()));
-	Planet temp5(planet5Distance, 0.4 * middleFormationZone);
+	FormingPlanet temp5;
+	temp5.planet.SetDistance(planet5Distance);
+	temp5.planet.SetMass(0.4 * middleFormationZone);
 	starAPlanets.push_back(temp5);
 
 	double planet6Distance = 6.0 * sqrt(getInitialLuminosity(starA.GetMass()));
-	Planet temp6(planet6Distance, 0.25 * middleFormationZone);
+	FormingPlanet temp6;
+	temp6.planet.SetDistance(planet6Distance);
+	temp6.planet.SetMass(0.25 * middleFormationZone);
 	starAPlanets.push_back(temp6);
 
 	double planet7Distance = 9.0 * sqrt(getInitialLuminosity(starA.GetMass()));
-	Planet temp7(planet7Distance, 0.175 * middleFormationZone);
+	FormingPlanet temp7;
+	temp7.planet.SetDistance(planet7Distance);
+	temp7.planet.SetMass(0.175 * middleFormationZone);
 	starAPlanets.push_back(temp7);
 
 	double planet8Distance = 13.5 * sqrt(getInitialLuminosity(starA.GetMass()));
-	Planet temp8(planet8Distance, 0.175 * middleFormationZone);
+	FormingPlanet temp8;
+	temp8.planet.SetDistance(planet8Distance);
+	temp8.planet.SetMass(0.175 * middleFormationZone);
 	starAPlanets.push_back(temp8);
 
 	// place outer planets
 	double planet9Distance = 20.0 * sqrt(getInitialLuminosity(starA.GetMass()));
-	Planet temp9(planet9Distance, 0.6 * outerFormationZone);
+	FormingPlanet temp9;
+	temp9.planet.SetDistance(planet9Distance);
+	temp9.planet.SetMass(0.6 * outerFormationZone);
 	starAPlanets.push_back(temp9);
 
 	double planet10Distance = 30.0 * sqrt(getInitialLuminosity(starA.GetMass()));
-	Planet temp10(planet10Distance, 0.3 * outerFormationZone);
+	FormingPlanet temp10;
+	temp10.planet.SetDistance(planet10Distance);
+	temp10.planet.SetMass(0.3 * outerFormationZone);
 	starAPlanets.push_back(temp10);
 
 	double planet11Distance = 45.0 * sqrt(getInitialLuminosity(starA.GetMass()));
-	Planet temp11(planet11Distance, 0.1 * outerFormationZone);
+	FormingPlanet temp11;
+	temp11.planet.SetDistance(planet11Distance);
+	temp11.planet.SetMass(0.1 * outerFormationZone);
 	starAPlanets.push_back(temp11);
 
 	// print for testing
 	for (int i = 0; i < starAPlanets.size(); i++) {
-		cout << i << ": " << starAPlanets[i].GetDistance() << " AU; mass " << starAPlanets[i].GetMass() << endl;
+		cout << i << ": " << starAPlanets[i].planet.GetDistance() << " AU; mass " << starAPlanets[i].planet.GetMass() << endl;
 	}
 
-	// Outer Planetary System
+	/* Outer Planetary System
 	double massToInnerSystem;
 	for (int i = 5; i < 12; i++) {
 		double planetesimalMass = starAPlanets[i].GetMass();
@@ -331,8 +362,10 @@ int main () {
 		}
 	}
 	cout << "massToInnerSystem: " << massToInnerSystem << endl << endl;
+	middleFormationZone *= (1 - massToInnerSystem);
+	innerFormationZone += (massToInnerSystem * middleFormationZone);
 
-
+	// Dominant Gas Giant Inward Migration
 
 
 
@@ -358,7 +391,7 @@ int main () {
 	cout << "Modified:\n\n";
 	for (int i = 0; i < starAPlanets_excluded.size(); i++) {
 		cout << i << ": " << starAPlanets_excluded[i].GetDistance() << " AU; mass " << starAPlanets_excluded[i].GetMass() << endl;
-	}
+	}*/
 
 	return 0;
 }
