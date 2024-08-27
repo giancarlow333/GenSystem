@@ -40,6 +40,8 @@ struct FormingPlanet {
 	Planet planet;
 	bool isDominantGasGiant;
 	bool inExclusionZone;
+	bool lastBeforeSlowAccretion;
+	bool penultBeforeSlowAccretion;
 };
 
 /* MAIN */
@@ -349,14 +351,49 @@ int main () {
 		cout << i << ": " << starAPlanets[i].planet.GetDistance() << " AU; mass " << starAPlanets[i].planet.GetMass() << endl;
 	}
 
-	/* Outer Planetary System
+	// work exclusion zones
+	for (int i = 0; i < starAPlanets.size(); i++) {
+		double distance = starAPlanets[i].planet.GetDistance();
+		if (distance < diskInnerEdge || distance > slowAccretionLine) {
+			cout << "Planet " << i << " is out of bounds!\n";
+			starAPlanets[i].inExclusionZone = true;
+		}
+		/*if (i + 1 < starAPlanets.size()) {
+			if (distance < slowAccretionLine && starAPlanets[i + 1].planet.GetDistance() > slowAccretionLine) {
+				starAPlanets[i].lastBeforeSlowAccretion = true;
+				cout << "lastBeforeSlowAccretion = true\n\n";
+			}
+		}*/
+	}
+	// Mark last before slow accretion
+	for (int i = 0; i < starAPlanets.size(); i++) {
+		double distance = starAPlanets[i].planet.GetDistance();
+		if (i + 1 < starAPlanets.size()) {
+			if (distance < slowAccretionLine && starAPlanets[i + 1].planet.GetDistance() > slowAccretionLine) {
+				starAPlanets[i].lastBeforeSlowAccretion = true;
+				cout << "lastBeforeSlowAccretion: " << i << "\n\n";
+				starAPlanets[i - 1].penultBeforeSlowAccretion = true;
+				break;
+			}
+		}
+		else {
+			starAPlanets[i].lastBeforeSlowAccretion = true;
+			cout << "lastBeforeSlowAccretion: " << i << endl << endl;
+			starAPlanets[i - 1].penultBeforeSlowAccretion = true;
+		}
+	}
+	
+
+	// Outer Planetary System
 	double massToInnerSystem;
 	for (int i = 5; i < 12; i++) {
-		double planetesimalMass = starAPlanets[i].GetMass();
+		double planetesimalMass = starAPlanets[i].planet.GetMass();
 
 		int accretionModifier = getAccretionModifier(planetesimalMass);
+
 		// modifier if close to slow accretion line
-		double temp = getOuterSystemProperties(starAPlanets[i], accretionModifier, i, engine);
+
+		double temp = getOuterSystemProperties(starAPlanets[i].planet, accretionModifier, i, engine);
 		if (i == 5) {
 			massToInnerSystem = temp;
 		}
@@ -375,10 +412,10 @@ int main () {
 
 
 
-	// work exclusion zones here
+	/* work exclusion zones here
 	vector<Planet> starAPlanets_excluded;
 	for (int i = 0; i < starAPlanets.size(); i++) {
-		double distance = starAPlanets[i].GetDistance();
+		double distance = starAPlanets[i].planet.GetDistance();
 		if (distance < diskInnerEdge || distance > slowAccretionLine) {
 			cout << "Planet " << i << " is out of bounds!\n";
 		}
