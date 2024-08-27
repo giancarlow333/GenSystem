@@ -48,6 +48,7 @@ struct FormingPlanet {
 	bool orbitDisrupted = false;
 	bool triggeredGrandTack = false;
 	bool planetEjected = false;
+	bool finalPlacement = false;
 };
 
 /* MAIN */
@@ -73,7 +74,7 @@ int main () {
 	else { cout << "IS NOT"; }
 	cout << " multiple!" << endl << endl;
 
-	isMultiple = true; // For testing
+	isMultiple = false; // For testing
 
 	// Create star
 	Star starA, starB, starC, starD;
@@ -89,7 +90,7 @@ int main () {
 	if (isMultiple) {
 		multiplicity = generateSystemMultiplicity(engine);
 		cout << "multiplicity: " << multiplicity << endl << endl;
-		multiplicity = 3; // for testing
+		//multiplicity = 3; // for testing
 
 		if (multiplicity == 2) {
 			double massRatio = generateMassRatio(engine);
@@ -135,7 +136,7 @@ int main () {
 				double exclusionZoneAB = getOuterOrbitalExclusionZone(baseMass, baseMass * massRatioAB, separationAB, eccenAB);
 				cout << "Exclusion zone around AB: " << exclusionZoneAB << endl;
 				double separationABC =  generateDistanceBetweenStars(engine, baseMass);
-				separationABC = 25; // for testing
+				//separationABC = 25; // for testing
 				double eccenABC = generateMultipleStarEccentricity(engine, separationABC);
 				while ((1 - eccenABC) * separationABC < exclusionZoneAB) {
 					cout << "Looping...\n";
@@ -927,7 +928,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	double diskMassFactor = generateDiskMassFactor(e);
 	cout << "diskMassFactor: " << diskMassFactor << endl;
 	double migrationFactor = generateMigrationFactor(e, diskMassFactor);
-	migrationFactor = 0.001; // for testing
+	//migrationFactor = 0.001; // for testing
 	cout << "migrationFactor: " << migrationFactor << endl << endl;
 	cout << "s.GetMass(): " << s.GetMass() << endl;
 
@@ -1025,7 +1026,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	// print for testing
 	for (int i = 0; i < sPlanets.size(); i++) {
 		cout << i << ": " << sPlanets[i].planet.GetDistance() << " AU; mass " << sPlanets[i].planet.GetMass();
-		cout << "; disrupted " << sPlanets[i].orbitDisrupted << endl;
+		cout << /*"; disrupted " << sPlanets[i].orbitDisrupted <<*/ endl;
 	}
 
 	// work exclusion zones
@@ -1110,8 +1111,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 					cout << "There was inward migration!\n";
 					sPlanets[i].planet.SetDistance(orbitAfterInwardMigration);
 				}
-				else if (orbitAfterInwardMigration < diskInnerEdge && starIsCircumbinary) { 
-					// TBD: Account for circumbinary zones!
+				else if (orbitAfterInwardMigration < diskInnerEdge && starIsCircumbinary) {
 					thereWasInwardMigration = true;
 					cout << "There was inward migration!\n";
 					if (orbitAfterInwardMigration < innerExclusionZone) {
@@ -1197,8 +1197,36 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	}
 
 	// Orbital resonances
+	// Dominant and outer-most gas giant should have final placement now
+	sPlanets[dominantGasGiantIndex].finalPlacement = true;
+	int finalPlanetIndex = 12;
+	for (int i = 12; i > 5; i--) {
+		if (!sPlanets[i].planetEjected && sPlanets[i].planet.GetPlanetClass() != NONE) {
+			sPlanets[i].finalPlacement = true;
+			finalPlanetIndex = i;
+			break;
+		}
+	}
+	int countToBePlaced = 0;
+	for (int i = 6; i < 12; i++) {
+		if (!sPlanets[i].finalPlacement) { countToBePlaced++; }
+		else { break; }
+	}
+	cout << "countToBePlaced: " << countToBePlaced << endl;
+	double expectedRatio = pow(sPlanets[finalPlanetIndex].planet.GetDistance() / sPlanets[dominantGasGiantIndex].planet.GetDistance(), 1.0 / (countToBePlaced + 1));
+	cout << "expectedRatio: " << expectedRatio << endl;
 
-
+	normal_distribution<> randomOrbitalRatio(1.025, 0.22); // TBD AOW p. 48
+	for (int i = dominantGasGiantIndex + 1; i < finalPlanetIndex; i++) {
+		// place planet
+		double baseOrbitRatio = randomOrbitalRatio(e);
+		double finalOrbitRatio = expectedRatio * baseOrbitRatio;
+		double lastDistance = sPlanets[i - 1].planet.GetDistance();
+		sPlanets[i].planet.SetDistance(finalOrbitRatio * lastDistance);
+		sPlanets[i].finalPlacement = true;
+		cout << "finalOrbitRatio " << i << ": " << finalOrbitRatio << endl;
+		// TBD: orbital resonance
+	}
 
 	// print for testing
 	cout << "After Nice event (if any)...:\n";
@@ -1208,7 +1236,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		cout << "; disrupted? " << sPlanets[i].orbitDisrupted;
 		cout << "; ejected? " << sPlanets[i].planetEjected;
 		cout << "; class " << sPlanets[i].planet.GetPlanetClass();
-		cout << "; last? " << sPlanets[i].lastBeforeSlowAccretion << endl;
+		cout << "; placed? " << sPlanets[i].finalPlacement << endl;
 	}
 
 
