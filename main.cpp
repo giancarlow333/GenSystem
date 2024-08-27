@@ -243,6 +243,8 @@ int main () {
 	double diskInnerEdge = 0.005 * pow(starA.GetMass(), 1 / 3);
 	double formationIceLine = 4.0 * sqrt(getInitialLuminosity(starA.GetMass()));
 	double slowAccretionLine = 20 * pow(starA.GetMass(), 1 / 3);
+	slowAccretionLine = 8;
+	diskInnerEdge = 0.2;
 	cout << "diskInnerEdge: " << diskInnerEdge << endl;
 	cout << "formationIceLine: " << formationIceLine << endl;
 	cout << "slowAccretionLine: " << slowAccretionLine << endl << endl;
@@ -258,10 +260,10 @@ int main () {
 
 	// determine if planets orbit A directly here
 
-	// place inner planets
 
 	vector<Planet> starAPlanets;
 
+	// place inner planets
 	double planet0Distance = 0.6 * sqrt(getInitialLuminosity(starA.GetMass()));
 	Planet temp0(planet0Distance, 0.08 * innerFormationZone);
 	starAPlanets.push_back(temp0);
@@ -282,12 +284,58 @@ int main () {
 	Planet temp4(planet4Distance, 0.04 * innerFormationZone);
 	starAPlanets.push_back(temp4);
 
+	// place middle planets
+	double planet5Distance = 4.0 * sqrt(getInitialLuminosity(starA.GetMass()));
+	Planet temp5(planet5Distance, 0.4 * middleFormationZone);
+	starAPlanets.push_back(temp5);
+
+	double planet6Distance = 6.0 * sqrt(getInitialLuminosity(starA.GetMass()));
+	Planet temp6(planet6Distance, 0.25 * middleFormationZone);
+	starAPlanets.push_back(temp6);
+
+	double planet7Distance = 9.0 * sqrt(getInitialLuminosity(starA.GetMass()));
+	Planet temp7(planet7Distance, 0.175 * middleFormationZone);
+	starAPlanets.push_back(temp7);
+
+	double planet8Distance = 13.5 * sqrt(getInitialLuminosity(starA.GetMass()));
+	Planet temp8(planet8Distance, 0.175 * middleFormationZone);
+	starAPlanets.push_back(temp8);
+
+	// place outer planets
+	double planet9Distance = 20.0 * sqrt(getInitialLuminosity(starA.GetMass()));
+	Planet temp9(planet9Distance, 0.6 * outerFormationZone);
+	starAPlanets.push_back(temp9);
+
+	double planet10Distance = 30.0 * sqrt(getInitialLuminosity(starA.GetMass()));
+	Planet temp10(planet10Distance, 0.3 * outerFormationZone);
+	starAPlanets.push_back(temp10);
+
+	double planet11Distance = 45.0 * sqrt(getInitialLuminosity(starA.GetMass()));
+	Planet temp11(planet11Distance, 0.1 * outerFormationZone);
+	starAPlanets.push_back(temp11);
+
 	// print for testing
 	for (int i = 0; i < starAPlanets.size(); i++) {
 		cout << i << ": " << starAPlanets[i].GetDistance() << " AU; mass " << starAPlanets[i].GetMass() << endl;
 	}
 
 	// work exclusion zones here
+	vector<Planet> starAPlanets2;
+	for (int i = 0; i < starAPlanets.size(); i++) {
+		double distance = starAPlanets[i].GetDistance();
+		if (distance < diskInnerEdge || distance > slowAccretionLine) {
+			cout << "Planet " << i << " is out of bounds!\n";
+		}
+		else {
+			starAPlanets2.push_back(starAPlanets[i]);
+		}
+	}
+
+	// print for testing
+	cout << "Modified:\n\n";
+	for (int i = 0; i < starAPlanets2.size(); i++) {
+		cout << i << ": " << starAPlanets2[i].GetDistance() << " AU; mass " << starAPlanets2[i].GetMass() << endl;
+	}
 
 	return 0;
 }
