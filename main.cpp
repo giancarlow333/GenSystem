@@ -27,6 +27,7 @@ double generateMigrationFactor (default_random_engine & e, double diskMassFactor
 double getOuterSystemProperties(Planet & p, int mod, int pNumber, default_random_engine & e);
 double getInnerOrbitalExclusionZone (double pMass, double sMass, double separation, double eccentricity);
 double getOuterOrbitalExclusionZone (double pMass, double sMass, double separation, double eccentricity);
+vector<Planet> formPlanets (Star & s, default_random_engine & e, double diskMassFactor, double diskInnerEdge, double slowAccretionLine, double migrationFactor, double forbiddenZone);
 
 // constants
 const string VERSION_NUMBER = "0.5";
@@ -134,9 +135,10 @@ int main () {
 				double exclusionZoneAB = getOuterOrbitalExclusionZone(baseMass, baseMass * massRatioAB, separationAB, eccenAB);
 				cout << "Exclusion zone around AB: " << exclusionZoneAB << endl;
 				double separationABC =  generateDistanceBetweenStars(engine, baseMass);
+				separationABC = 25; // for testing
 				double eccenABC = generateMultipleStarEccentricity(engine, separationABC);
 				while ((1 - eccenABC) * separationABC < exclusionZoneAB) {
-					cout << "Looping.../n";
+					cout << "Looping...\n";
 					separationABC =  generateDistanceBetweenStars(engine, baseMass);
 				}
 				cout << "Separation, (AB)C: " << separationABC << " AU\n";
@@ -361,289 +363,27 @@ int main () {
 		forbiddenZone = getInnerOrbitalExclusionZone (starA.GetMass() + starB.GetMass(), starC.GetMass(), overallSeparation.separation, overallSeparation.eccentricity);
 	}
 
-	double innerFormationZone = 2.5 * dummyStar.GetMass() * dummyStar.GetMetallicity() * diskMassFactor;
-	double middleFormationZone = 80.0 * dummyStar.GetMass() * dummyStar.GetMetallicity() * diskMassFactor;
-	double outerFormationZone = 18.0 * dummyStar.GetMass() * dummyStar.GetMetallicity() * diskMassFactor;
-	cout << "innerFormationZone: " << innerFormationZone << endl;
-	cout << "middleFormationZone: " << middleFormationZone << endl;
-	cout << "outerFormationZone: " << outerFormationZone << endl;
-
-	vector<FormingPlanet> dummyStarPlanets;
-
-	// place inner planets
-	double planet0Distance = 0.6 * sqrt(getInitialLuminosity(dummyStar.GetMass()));
-	FormingPlanet temp0;
-	temp0.planet.SetDistance(planet0Distance);
-	temp0.planet.SetMass(0.08 * innerFormationZone);
-	dummyStarPlanets.push_back(temp0);
-
-	double planet1Distance = 0.8 * sqrt(getInitialLuminosity(dummyStar.GetMass()));
-	FormingPlanet temp1;
-	temp1.planet.SetDistance(planet1Distance);
-	temp1.planet.SetMass(0.41 * innerFormationZone);
-	dummyStarPlanets.push_back(temp1);
-
-	double planet2Distance = 1.2 * sqrt(getInitialLuminosity(dummyStar.GetMass()));
-	FormingPlanet temp2;
-	temp2.planet.SetDistance(planet2Distance);
-	temp2.planet.SetMass(0.39 * innerFormationZone);
-	dummyStarPlanets.push_back(temp2);
-
-	double planet3Distance = 1.8 * sqrt(getInitialLuminosity(dummyStar.GetMass()));
-	FormingPlanet temp3;
-	temp3.planet.SetDistance(planet3Distance);
-	temp3.planet.SetMass(0.08 * innerFormationZone);
-	dummyStarPlanets.push_back(temp3);
-	
-	double planet4Distance = 2.7 * sqrt(getInitialLuminosity(dummyStar.GetMass()));
-	FormingPlanet temp4;
-	temp4.planet.SetDistance(planet4Distance);
-	temp4.planet.SetMass(0.04 * innerFormationZone);
-	dummyStarPlanets.push_back(temp4);
-
-	// place middle planets
-	double planet5Distance = 4.0 * sqrt(getInitialLuminosity(dummyStar.GetMass()));
-	FormingPlanet temp5;
-	temp5.planet.SetDistance(planet5Distance);
-	temp5.planet.SetMass(0.4 * middleFormationZone);
-	dummyStarPlanets.push_back(temp5);
-
-	double planet6Distance = 6.0 * sqrt(getInitialLuminosity(dummyStar.GetMass()));
-	FormingPlanet temp6;
-	temp6.planet.SetDistance(planet6Distance);
-	temp6.planet.SetMass(0.25 * middleFormationZone);
-	dummyStarPlanets.push_back(temp6);
-
-	double planet7Distance = 9.0 * sqrt(getInitialLuminosity(dummyStar.GetMass()));
-	FormingPlanet temp7;
-	temp7.planet.SetDistance(planet7Distance);
-	temp7.planet.SetMass(0.18 * middleFormationZone);
-	dummyStarPlanets.push_back(temp7);
-
-	double planet8Distance = 13.5 * sqrt(getInitialLuminosity(dummyStar.GetMass()));
-	FormingPlanet temp8;
-	temp8.planet.SetDistance(planet8Distance);
-	temp8.planet.SetMass(0.17 * middleFormationZone);
-	dummyStarPlanets.push_back(temp8);
-
-	// place outer planets
-	double planet9Distance = 20.0 * sqrt(getInitialLuminosity(dummyStar.GetMass()));
-	FormingPlanet temp9;
-	temp9.planet.SetDistance(planet9Distance);
-	temp9.planet.SetMass(0.6 * outerFormationZone);
-	dummyStarPlanets.push_back(temp9);
-
-	double planet10Distance = 30.0 * sqrt(getInitialLuminosity(dummyStar.GetMass()));
-	FormingPlanet temp10;
-	temp10.planet.SetDistance(planet10Distance);
-	temp10.planet.SetMass(0.3 * outerFormationZone);
-	dummyStarPlanets.push_back(temp10);
-
-	double planet11Distance = 45.0 * sqrt(getInitialLuminosity(dummyStar.GetMass()));
-	FormingPlanet temp11;
-	temp11.planet.SetDistance(planet11Distance);
-	temp11.planet.SetMass(0.1 * outerFormationZone);
-	dummyStarPlanets.push_back(temp11);
-
-	// print for testing
-	for (int i = 0; i < dummyStarPlanets.size(); i++) {
-		cout << i << ": " << dummyStarPlanets[i].planet.GetDistance() << " AU; mass " << dummyStarPlanets[i].planet.GetMass() << endl;
-	}
-
-	// work exclusion zones
-	cout << "forbiddenZone: " << forbiddenZone << endl;
-	for (int i = 0; i < dummyStarPlanets.size(); i++) {
-		double distance = dummyStarPlanets[i].planet.GetDistance();
-		if (distance < diskInnerEdge || distance > slowAccretionLine || distance > forbiddenZone) {
-			cout << "Planet " << i << " is out of bounds!\n";
-			dummyStarPlanets[i].inExclusionZone = true;
-		}
-		/*if (i + 1 < dummyStarPlanets.size()) {
-			if (distance < slowAccretionLine && dummyStarPlanets[i + 1].planet.GetDistance() > slowAccretionLine) {
-				dummyStarPlanets[i].lastBeforeSlowAccretion = true;
-				cout << "lastBeforeSlowAccretion = true\n\n";
-			}
-		}*/
-	}
-	// Mark last before slow accretiong
-	for (int i = 0; i < dummyStarPlanets.size(); i++) {
-		double distance = dummyStarPlanets[i].planet.GetDistance();
-		if (i + 1 < dummyStarPlanets.size()) {
-			if (distance < slowAccretionLine && dummyStarPlanets[i + 1].planet.GetDistance() > slowAccretionLine) {
-				dummyStarPlanets[i].lastBeforeSlowAccretion = true;
-				cout << "lastBeforeSlowAccretion: " << i << "\n\n";
-				dummyStarPlanets[i - 1].penultBeforeSlowAccretion = true;
-				break;
-			}
-		}
-		else {
-			dummyStarPlanets[i].lastBeforeSlowAccretion = true;
-			cout << "lastBeforeSlowAccretion: " << i << endl << endl;
-			dummyStarPlanets[i - 1].penultBeforeSlowAccretion = true;
-		}
-	}
-	
-
-	// Outer Planetary System
-	double massToInnerSystem;
-	for (int i = 5; i < 12; i++) {
-		double planetesimalMass = dummyStarPlanets[i].planet.GetMass();
-
-		int accretionModifier = getAccretionModifier(planetesimalMass);
-
-		// modifier if close to slow accretion line
-		if (dummyStarPlanets[i].penultBeforeSlowAccretion) { accretionModifier -= 8; }
-		if (dummyStarPlanets[i].lastBeforeSlowAccretion) { accretionModifier -= 16; }
-
-		double temp = getOuterSystemProperties(dummyStarPlanets[i].planet, accretionModifier, i, engine);
-		if (i == 5) {
-			massToInnerSystem = temp;
-		}
-	}
-	cout << "massToInnerSystem: " << massToInnerSystem << endl << endl;
-	middleFormationZone *= (1 - massToInnerSystem);
-	innerFormationZone += (massToInnerSystem * middleFormationZone);
-
-	// Find dominant gas giant
-	bool thereIsADominantGasGiant = false;
-	int gasGiantCount = 0;
-	int dominantGasGiantIndex = -1;
-	for (int i = 5; i < 12; i++) {
-		PlanetClass theClass = dummyStarPlanets[i].planet.GetPlanetClass();
-		if (theClass == SMALL_GAS_GIANT || theClass == MEDIUM_GAS_GIANT || theClass == LARGE_GAS_GIANT) {
-			dummyStarPlanets[i].isDominantGasGiant = true;
-			thereIsADominantGasGiant = true;
-			dominantGasGiantIndex = i;
-			break;
-		}
-	}
-	for (int i = 5; i < 12; i++) {
-		PlanetClass theClass = dummyStarPlanets[i].planet.GetPlanetClass();
-		if (theClass == SMALL_GAS_GIANT || theClass == MEDIUM_GAS_GIANT || theClass == LARGE_GAS_GIANT) {
-			gasGiantCount++;
-		}
-	}
-
-	// Dominant Gas Giant Inward Migration
-	bool thereWasInwardMigration = false;
-	double orbitAfterInwardMigration = 0;
-	double formationRadius = 0;
-	if (thereIsADominantGasGiant) {
-		for (int i = 5; i < 12; i++) {
-			if (dummyStarPlanets[i].isDominantGasGiant) {
-				formationRadius = dummyStarPlanets[i].planet.GetDistance();
-				orbitAfterInwardMigration = formationRadius * migrationFactor;
-				cout << "orbitAfterInwardMigration: " << orbitAfterInwardMigration << endl;
-				if (orbitAfterInwardMigration < diskInnerEdge) { // gas giant migrates inwards
-					thereWasInwardMigration = true;
-					cout << "There was inward migration!\n";
-					dummyStarPlanets[i].planet.SetDistance(orbitAfterInwardMigration);
-				}
-				break;
-			}
-		}
-	}
-	if (thereWasInwardMigration) { // mark orbits as disturbed
-		for (int i = 0; i < dummyStarPlanets.size(); i++) {
-			if (dummyStarPlanets[i].planet.GetDistance() > orbitAfterInwardMigration && dummyStarPlanets[i].planet.GetDistance() < formationRadius) {
-				dummyStarPlanets[i].orbitDisrupted = true;
-			}
-		}
-	}
-
-	// Grand Tack
-	bool thereIsAGrandTack = false;
-	cout << "gasGiantCount: " << gasGiantCount << endl;
-	if (thereIsADominantGasGiant && gasGiantCount > 1) {
-		PlanetClass nextPlanet = dummyStarPlanets[dominantGasGiantIndex].planet.GetPlanetClass();
-		if (nextPlanet == SMALL_GAS_GIANT || nextPlanet == MEDIUM_GAS_GIANT || nextPlanet == LARGE_GAS_GIANT) { // Grand Tack is *possible*
-			uniform_int_distribution<> diceRoll(1, 6);
-			int tackRoll = diceRoll(engine) + diceRoll(engine) + diceRoll(engine);
-			if (tackRoll >= 12) {
-				int tackDistanceRoll = diceRoll(engine) + diceRoll(engine) + diceRoll(engine);
-				double finalDistance = (1 + tackDistanceRoll / 10.0) * dummyStarPlanets[dominantGasGiantIndex].planet.GetDistance();
-				dummyStarPlanets[dominantGasGiantIndex].planet.SetDistance(finalDistance);
-				dummyStarPlanets[dominantGasGiantIndex].triggeredGrandTack = true;
-				thereIsAGrandTack = true;
-			}
-		}
-	}
-	if (thereIsAGrandTack) {
-		for (int i = dominantGasGiantIndex + 1; i < dummyStarPlanets.size(); i++) {
-			double priorFinalOrbitalRadius = dummyStarPlanets[i - 1].planet.GetDistance();
-			double currentOrbitalRadius = dummyStarPlanets[i].planet.GetDistance();
-			dummyStarPlanets[i].triggeredGrandTack = true;
-			if (priorFinalOrbitalRadius * 1.3 > currentOrbitalRadius) {
-				dummyStarPlanets[i].planet.SetDistance(priorFinalOrbitalRadius * 1.3);
-			}
-			else {
-				break;
-			}
-		}
-	}
-
-	// Nice Event
-	if (thereIsAGrandTack) { // depends on forbidden zones per AOW p. 47
-		cout << "Nice event!\n";
-
-		bool aPlanetIsEjected = false;
-		for (int i = 5; i < 12; i++) {
-			if (dummyStarPlanets[i].triggeredGrandTack == false) {
-				uniform_int_distribution<> diceRoll(1, 6);
-				int niceRoll = diceRoll(engine) + diceRoll(engine) + diceRoll(engine);
-				if (niceRoll >= 12) {
-					dummyStarPlanets[i].planetEjected = true;
-					aPlanetIsEjected = true;
-					cout << aPlanetIsEjected << endl;
-					cout << "Planet " << i << " ejected\n";			
-				}
-			}
-		}
-		// find last surviving planet and multiply orbit by 50%
-		if (aPlanetIsEjected) {
-			for (int i = 12; i > 5; i--) {
-				if (dummyStarPlanets[i].planetEjected && !dummyStarPlanets[i - 1].planetEjected) {
-					double oldRadius = dummyStarPlanets[i - 1].planet.GetDistance();
-					double newRadius = 1.5 * oldRadius;
-					dummyStarPlanets[i - 1].planet.SetDistance(newRadius);
-					break;
-				}
-			}
-		}
-	}
-
-	// Orbital resonances
-
-
-
-	// print for testing
-	cout << "After Nice event (if any)...:\n";
-	for (int i = 0; i < dummyStarPlanets.size(); i++) {
-		cout << i << ": " << dummyStarPlanets[i].planet.GetDistance() << " AU; mass " << dummyStarPlanets[i].planet.GetMass();
-		cout << "; dominant? " << dummyStarPlanets[i].isDominantGasGiant;
-		cout << "; disrupted? " << dummyStarPlanets[i].orbitDisrupted;
-		cout << "; ejected? " << dummyStarPlanets[i].planetEjected;
-		cout << "; class " << dummyStarPlanets[i].planet.GetPlanetClass();
-		cout << "; last? " << dummyStarPlanets[i].lastBeforeSlowAccretion << endl;
-	}
-
-	// Remove eliminated orbits
-	vector<Planet> dummyStarPlanets2;
-	for (int i = 0; i < dummyStarPlanets.size(); i++) {
-		if (!dummyStarPlanets[i].orbitDisrupted && !dummyStarPlanets[i].planetEjected && !dummyStarPlanets[i].inExclusionZone && dummyStarPlanets[i].planet.GetPlanetClass() != NONE) {
-			dummyStarPlanets2.push_back(dummyStarPlanets[i].planet);
-		}
-	}
+	// HERE!
+	vector<Planet> dummyStarPlanets = formPlanets (dummyStar, engine, diskMassFactor, diskInnerEdge, slowAccretionLine, migrationFactor, forbiddenZone);
 
 	cout << "\nFinal layout...:\n";
-	for (int i = 0; i < dummyStarPlanets2.size(); i++) {
-		cout << i << ": " << dummyStarPlanets2[i].GetDistance() << " AU; mass " << dummyStarPlanets2[i].GetMass();
-		cout << "; class " << dummyStarPlanets2[i].GetPlanetClass() << endl;
+	for (int i = 0; i < dummyStarPlanets.size(); i++) {
+		cout << i << ": " << dummyStarPlanets[i].GetDistance() << " AU; mass " << dummyStarPlanets[i].GetMass();
+		cout << "; class " << dummyStarPlanets[i].GetPlanetClass() << endl;
 	}
 
 
 	return 0;
 }
+
+// ////////////////////////////////////
+// ////////////////////////////////////
+// ////////////////////////////////////
+// ////////////////////////////////////
+// ////////////////////////////////////
+// ////////////////////////////////////
+// ////////////////////////////////////
+// ////////////////////////////////////
 
 /*
  * FUNCTION DEFINITIONS
@@ -1170,4 +910,290 @@ double getOuterOrbitalExclusionZone (double pMass, double sMass, double separati
 	double bMassFraction = sMass / combinedMass;
 
 	return 1.93 * separation * (1 + 1.01 * pow(eccentricity, 0.32)) * pow(bMassFraction * (1 - bMassFraction), 0.043);
+}
+
+// ////////////////////////////////////
+// ////////////////////////////////////
+// ////////////////////////////////////
+// ////////////////////////////////////
+// ////////////////////////////////////
+// ////////////////////////////////////
+// ////////////////////////////////////
+// ////////////////////////////////////
+
+vector<Planet> formPlanets (Star & s, default_random_engine & e, double diskMassFactor, double diskInnerEdge, double slowAccretionLine, double migrationFactor, double forbiddenZone) {
+	double innerFormationZone = 2.5 * s.GetMass() * s.GetMetallicity() * diskMassFactor;
+	double middleFormationZone = 80.0 * s.GetMass() * s.GetMetallicity() * diskMassFactor;
+	double outerFormationZone = 18.0 * s.GetMass() * s.GetMetallicity() * diskMassFactor;
+	cout << "innerFormationZone: " << innerFormationZone << endl;
+	cout << "middleFormationZone: " << middleFormationZone << endl;
+	cout << "outerFormationZone: " << outerFormationZone << endl;
+
+	vector<FormingPlanet> sPlanets;
+
+	// place inner planets
+	double planet0Distance = 0.6 * sqrt(getInitialLuminosity(s.GetMass()));
+	FormingPlanet temp0;
+	temp0.planet.SetDistance(planet0Distance);
+	temp0.planet.SetMass(0.08 * innerFormationZone);
+	sPlanets.push_back(temp0);
+
+	double planet1Distance = 0.8 * sqrt(getInitialLuminosity(s.GetMass()));
+	FormingPlanet temp1;
+	temp1.planet.SetDistance(planet1Distance);
+	temp1.planet.SetMass(0.41 * innerFormationZone);
+	sPlanets.push_back(temp1);
+
+	double planet2Distance = 1.2 * sqrt(getInitialLuminosity(s.GetMass()));
+	FormingPlanet temp2;
+	temp2.planet.SetDistance(planet2Distance);
+	temp2.planet.SetMass(0.39 * innerFormationZone);
+	sPlanets.push_back(temp2);
+
+	double planet3Distance = 1.8 * sqrt(getInitialLuminosity(s.GetMass()));
+	FormingPlanet temp3;
+	temp3.planet.SetDistance(planet3Distance);
+	temp3.planet.SetMass(0.08 * innerFormationZone);
+	sPlanets.push_back(temp3);
+	
+	double planet4Distance = 2.7 * sqrt(getInitialLuminosity(s.GetMass()));
+	FormingPlanet temp4;
+	temp4.planet.SetDistance(planet4Distance);
+	temp4.planet.SetMass(0.04 * innerFormationZone);
+	sPlanets.push_back(temp4);
+
+	// place middle planets
+	double planet5Distance = 4.0 * sqrt(getInitialLuminosity(s.GetMass()));
+	FormingPlanet temp5;
+	temp5.planet.SetDistance(planet5Distance);
+	temp5.planet.SetMass(0.4 * middleFormationZone);
+	sPlanets.push_back(temp5);
+
+	double planet6Distance = 6.0 * sqrt(getInitialLuminosity(s.GetMass()));
+	FormingPlanet temp6;
+	temp6.planet.SetDistance(planet6Distance);
+	temp6.planet.SetMass(0.25 * middleFormationZone);
+	sPlanets.push_back(temp6);
+
+	double planet7Distance = 9.0 * sqrt(getInitialLuminosity(s.GetMass()));
+	FormingPlanet temp7;
+	temp7.planet.SetDistance(planet7Distance);
+	temp7.planet.SetMass(0.18 * middleFormationZone);
+	sPlanets.push_back(temp7);
+
+	double planet8Distance = 13.5 * sqrt(getInitialLuminosity(s.GetMass()));
+	FormingPlanet temp8;
+	temp8.planet.SetDistance(planet8Distance);
+	temp8.planet.SetMass(0.17 * middleFormationZone);
+	sPlanets.push_back(temp8);
+
+	// place outer planets
+	double planet9Distance = 20.0 * sqrt(getInitialLuminosity(s.GetMass()));
+	FormingPlanet temp9;
+	temp9.planet.SetDistance(planet9Distance);
+	temp9.planet.SetMass(0.6 * outerFormationZone);
+	sPlanets.push_back(temp9);
+
+	double planet10Distance = 30.0 * sqrt(getInitialLuminosity(s.GetMass()));
+	FormingPlanet temp10;
+	temp10.planet.SetDistance(planet10Distance);
+	temp10.planet.SetMass(0.3 * outerFormationZone);
+	sPlanets.push_back(temp10);
+
+	double planet11Distance = 45.0 * sqrt(getInitialLuminosity(s.GetMass()));
+	FormingPlanet temp11;
+	temp11.planet.SetDistance(planet11Distance);
+	temp11.planet.SetMass(0.1 * outerFormationZone);
+	sPlanets.push_back(temp11);
+
+	// print for testing
+	for (int i = 0; i < sPlanets.size(); i++) {
+		cout << i << ": " << sPlanets[i].planet.GetDistance() << " AU; mass " << sPlanets[i].planet.GetMass() << endl;
+	}
+
+	// work exclusion zones
+	cout << "forbiddenZone: " << forbiddenZone << endl;
+	for (int i = 0; i < sPlanets.size(); i++) {
+		double distance = sPlanets[i].planet.GetDistance();
+		if (distance < diskInnerEdge || distance > slowAccretionLine || distance > forbiddenZone) {
+			cout << "Planet " << i << " is out of bounds!\n";
+			sPlanets[i].inExclusionZone = true;
+		}
+		/*if (i + 1 < sPlanets.size()) {
+			if (distance < slowAccretionLine && sPlanets[i + 1].planet.GetDistance() > slowAccretionLine) {
+				sPlanets[i].lastBeforeSlowAccretion = true;
+				cout << "lastBeforeSlowAccretion = true\n\n";
+			}
+		}*/
+	}
+	// Mark last before slow accretiong
+	for (int i = 0; i < sPlanets.size(); i++) {
+		double distance = sPlanets[i].planet.GetDistance();
+		if (i + 1 < sPlanets.size()) {
+			if (distance < slowAccretionLine && sPlanets[i + 1].planet.GetDistance() > slowAccretionLine) {
+				sPlanets[i].lastBeforeSlowAccretion = true;
+				cout << "lastBeforeSlowAccretion: " << i << "\n\n";
+				sPlanets[i - 1].penultBeforeSlowAccretion = true;
+				break;
+			}
+		}
+		else {
+			sPlanets[i].lastBeforeSlowAccretion = true;
+			cout << "lastBeforeSlowAccretion: " << i << endl << endl;
+			sPlanets[i - 1].penultBeforeSlowAccretion = true;
+		}
+	}
+
+	// Outer Planetary System
+	double massToInnerSystem;
+	for (int i = 5; i < 12; i++) {
+		double planetesimalMass = sPlanets[i].planet.GetMass();
+
+		int accretionModifier = getAccretionModifier(planetesimalMass);
+
+		// modifier if close to slow accretion line
+		if (sPlanets[i].penultBeforeSlowAccretion) { accretionModifier -= 8; }
+		if (sPlanets[i].lastBeforeSlowAccretion) { accretionModifier -= 16; }
+
+		double temp = getOuterSystemProperties(sPlanets[i].planet, accretionModifier, i, e);
+		if (i == 5) {
+			massToInnerSystem = temp;
+		}
+	}
+	cout << "massToInnerSystem: " << massToInnerSystem << endl << endl;
+	middleFormationZone *= (1 - massToInnerSystem);
+	innerFormationZone += (massToInnerSystem * middleFormationZone);
+
+	// Find dominant gas giant
+	bool thereIsADominantGasGiant = false;
+	int gasGiantCount = 0;
+	int dominantGasGiantIndex = -1;
+	for (int i = 5; i < 12; i++) {
+		PlanetClass theClass = sPlanets[i].planet.GetPlanetClass();
+		if (theClass == SMALL_GAS_GIANT || theClass == MEDIUM_GAS_GIANT || theClass == LARGE_GAS_GIANT) {
+			sPlanets[i].isDominantGasGiant = true;
+			thereIsADominantGasGiant = true;
+			dominantGasGiantIndex = i;
+			break;
+		}
+	}
+	for (int i = 5; i < 12; i++) {
+		PlanetClass theClass = sPlanets[i].planet.GetPlanetClass();
+		if (theClass == SMALL_GAS_GIANT || theClass == MEDIUM_GAS_GIANT || theClass == LARGE_GAS_GIANT) {
+			gasGiantCount++;
+		}
+	}
+
+	// Dominant Gas Giant Inward Migration
+	bool thereWasInwardMigration = false;
+	double orbitAfterInwardMigration = 0;
+	double formationRadius = 0;
+	if (thereIsADominantGasGiant) {
+		for (int i = 5; i < 12; i++) {
+			if (sPlanets[i].isDominantGasGiant) {
+				formationRadius = sPlanets[i].planet.GetDistance();
+				orbitAfterInwardMigration = formationRadius * migrationFactor;
+				cout << "orbitAfterInwardMigration: " << orbitAfterInwardMigration << endl;
+				if (orbitAfterInwardMigration < diskInnerEdge) { // gas giant migrates inwards
+					thereWasInwardMigration = true;
+					cout << "There was inward migration!\n";
+					sPlanets[i].planet.SetDistance(orbitAfterInwardMigration);
+				}
+				break;
+			}
+		}
+	}
+	if (thereWasInwardMigration) { // mark orbits as disturbed
+		for (int i = 0; i < sPlanets.size(); i++) {
+			if (sPlanets[i].planet.GetDistance() > orbitAfterInwardMigration && sPlanets[i].planet.GetDistance() < formationRadius) {
+				sPlanets[i].orbitDisrupted = true;
+			}
+		}
+	}
+
+	// Grand Tack
+	bool thereIsAGrandTack = false;
+	cout << "gasGiantCount: " << gasGiantCount << endl;
+	if (thereIsADominantGasGiant && gasGiantCount > 1) {
+		PlanetClass nextPlanet = sPlanets[dominantGasGiantIndex].planet.GetPlanetClass();
+		if (nextPlanet == SMALL_GAS_GIANT || nextPlanet == MEDIUM_GAS_GIANT || nextPlanet == LARGE_GAS_GIANT) { // Grand Tack is *possible*
+			uniform_int_distribution<> diceRoll(1, 6);
+			int tackRoll = diceRoll(e) + diceRoll(e) + diceRoll(e);
+			if (tackRoll >= 12) {
+				int tackDistanceRoll = diceRoll(e) + diceRoll(e) + diceRoll(e);
+				double finalDistance = (1 + tackDistanceRoll / 10.0) * sPlanets[dominantGasGiantIndex].planet.GetDistance();
+				sPlanets[dominantGasGiantIndex].planet.SetDistance(finalDistance);
+				sPlanets[dominantGasGiantIndex].triggeredGrandTack = true;
+				thereIsAGrandTack = true;
+			}
+		}
+	}
+	if (thereIsAGrandTack) {
+		for (int i = dominantGasGiantIndex + 1; i < sPlanets.size(); i++) {
+			double priorFinalOrbitalRadius = sPlanets[i - 1].planet.GetDistance();
+			double currentOrbitalRadius = sPlanets[i].planet.GetDistance();
+			sPlanets[i].triggeredGrandTack = true;
+			if (priorFinalOrbitalRadius * 1.3 > currentOrbitalRadius) {
+				sPlanets[i].planet.SetDistance(priorFinalOrbitalRadius * 1.3);
+			}
+			else {
+				break;
+			}
+		}
+	}
+
+	// Nice Event
+	if (thereIsAGrandTack) { // depends on forbidden zones per AOW p. 47
+		cout << "Nice event!\n";
+
+		bool aPlanetIsEjected = false;
+		for (int i = 5; i < 12; i++) {
+			if (sPlanets[i].triggeredGrandTack == false) {
+				uniform_int_distribution<> diceRoll(1, 6);
+				int niceRoll = diceRoll(e) + diceRoll(e) + diceRoll(e);
+				if (niceRoll >= 12) {
+					sPlanets[i].planetEjected = true;
+					aPlanetIsEjected = true;
+					cout << aPlanetIsEjected << endl;
+					cout << "Planet " << i << " ejected\n";			
+				}
+			}
+		}
+		// find last surviving planet and multiply orbit by 50%
+		if (aPlanetIsEjected) {
+			for (int i = 12; i > 5; i--) {
+				if (sPlanets[i].planetEjected && !sPlanets[i - 1].planetEjected) {
+					double oldRadius = sPlanets[i - 1].planet.GetDistance();
+					double newRadius = 1.5 * oldRadius;
+					sPlanets[i - 1].planet.SetDistance(newRadius);
+					break;
+				}
+			}
+		}
+	}
+
+	// Orbital resonances
+
+
+
+	// print for testing
+	cout << "After Nice event (if any)...:\n";
+	for (int i = 0; i < sPlanets.size(); i++) {
+		cout << i << ": " << sPlanets[i].planet.GetDistance() << " AU; mass " << sPlanets[i].planet.GetMass();
+		cout << "; dominant? " << sPlanets[i].isDominantGasGiant;
+		cout << "; disrupted? " << sPlanets[i].orbitDisrupted;
+		cout << "; ejected? " << sPlanets[i].planetEjected;
+		cout << "; class " << sPlanets[i].planet.GetPlanetClass();
+		cout << "; last? " << sPlanets[i].lastBeforeSlowAccretion << endl;
+	}
+
+	// Remove eliminated orbits
+	vector<Planet> sPlanets2;
+	for (int i = 0; i < sPlanets.size(); i++) {
+		if (!sPlanets[i].orbitDisrupted && !sPlanets[i].planetEjected && !sPlanets[i].inExclusionZone && sPlanets[i].planet.GetPlanetClass() != NONE) {
+			sPlanets2.push_back(sPlanets[i].planet);
+		}
+	}
+
+	return sPlanets2;
 }
