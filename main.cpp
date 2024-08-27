@@ -86,7 +86,7 @@ int main () {
 	if (isMultiple) {
 		multiplicity = generateSystemMultiplicity(engine);
 		cout << "multiplicity: " << multiplicity << endl << endl;
-		multiplicity = 2; // for testing
+		multiplicity = 3; // for testing
 
 		if (multiplicity == 2) {
 			double massRatio = generateMassRatio(engine);
@@ -109,7 +109,7 @@ int main () {
 			// flip coin; if heads, C orbits AB, else BC orbits A
 			bool systemArrangement = flipCoin(engine);
 			cout << "systemArrangement: " << systemArrangement << endl;
-			systemArrangement = 0; // for testing
+			systemArrangement = 1; // for testing
 
 			// C orbits close pair AB
 			if (systemArrangement) {
@@ -285,13 +285,13 @@ int main () {
 	double planet1Distance = 0.8 * sqrt(getInitialLuminosity(starA.GetMass()));
 	FormingPlanet temp1;
 	temp1.planet.SetDistance(planet1Distance);
-	temp1.planet.SetMass(0.4 * innerFormationZone);
+	temp1.planet.SetMass(0.41 * innerFormationZone);
 	starAPlanets.push_back(temp1);
 
 	double planet2Distance = 1.2 * sqrt(getInitialLuminosity(starA.GetMass()));
 	FormingPlanet temp2;
 	temp2.planet.SetDistance(planet2Distance);
-	temp2.planet.SetMass(0.4 * innerFormationZone);
+	temp2.planet.SetMass(0.39 * innerFormationZone);
 	starAPlanets.push_back(temp2);
 
 	double planet3Distance = 1.8 * sqrt(getInitialLuminosity(starA.GetMass()));
@@ -322,13 +322,13 @@ int main () {
 	double planet7Distance = 9.0 * sqrt(getInitialLuminosity(starA.GetMass()));
 	FormingPlanet temp7;
 	temp7.planet.SetDistance(planet7Distance);
-	temp7.planet.SetMass(0.175 * middleFormationZone);
+	temp7.planet.SetMass(0.18 * middleFormationZone);
 	starAPlanets.push_back(temp7);
 
 	double planet8Distance = 13.5 * sqrt(getInitialLuminosity(starA.GetMass()));
 	FormingPlanet temp8;
 	temp8.planet.SetDistance(planet8Distance);
-	temp8.planet.SetMass(0.175 * middleFormationZone);
+	temp8.planet.SetMass(0.17 * middleFormationZone);
 	starAPlanets.push_back(temp8);
 
 	// place outer planets
