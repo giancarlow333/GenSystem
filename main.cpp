@@ -256,6 +256,39 @@ int main () {
 	cout << "middleFormationZone: " << middleFormationZone << endl;
 	cout << "outerFormationZone: " << outerFormationZone << endl;
 
+	// determine if planets orbit A directly here
+
+	// place inner planets
+	double planet0Distance = 0.6 * sqrt(getInitialLuminosity(starA.GetMass()));
+	if (planet0Distance > diskInnerEdge) {
+		Planet temp(planet0Distance, 0.08 * innerFormationZone);
+		starA.SetPlanet(temp);
+	}
+
+	double planet1Distance = 0.8 * sqrt(getInitialLuminosity(starA.GetMass()));
+	if (planet1Distance > diskInnerEdge) {
+		Planet temp(planet1Distance, 0.4 * innerFormationZone);
+		starA.SetPlanet(temp);
+	}
+
+	double planet2Distance = 1.2 * sqrt(getInitialLuminosity(starA.GetMass()));
+	if (planet2Distance > diskInnerEdge) {
+		Planet temp(planet2Distance, 0.4 * innerFormationZone);
+		starA.SetPlanet(temp);
+	}
+	double planet3Distance = 1.8 * sqrt(getInitialLuminosity(starA.GetMass()));
+	if (planet3Distance > diskInnerEdge) {
+		Planet temp(planet3Distance, 0.08 * innerFormationZone);
+		starA.SetPlanet(temp);
+	}
+	double planet4Distance = 2.7 * sqrt(getInitialLuminosity(starA.GetMass()));
+	if (planet4Distance > diskInnerEdge) {
+		Planet temp(planet4Distance, 0.04 * innerFormationZone);
+		starA.SetPlanet(temp);
+	}
+
+	
+
 	return 0;
 }
 

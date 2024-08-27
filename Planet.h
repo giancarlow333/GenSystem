@@ -11,6 +11,7 @@ class Planet
 		Planet();
 		Planet(const Planet & other);
 		Planet(double d);
+		Planet(double d, double m);
 		// Accessors
 		double GetDistance ();
 		double GetMass ();

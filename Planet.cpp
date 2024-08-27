@@ -18,6 +18,12 @@ Planet::Planet(double d) {
 	distance = d;
 }
 
+//alternate constructor 2
+Planet::Planet(double d, double m) {
+	distance = d;
+	mass = m;
+}
+
 ///////////////////////////////////////
 // ACCESSORS
 ///////////////////////////////////////
