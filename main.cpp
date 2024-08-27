@@ -928,7 +928,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	double diskMassFactor = generateDiskMassFactor(e);
 	cout << "diskMassFactor: " << diskMassFactor << endl;
 	double migrationFactor = generateMigrationFactor(e, diskMassFactor);
-	//migrationFactor = 0.001; // for testing
+	migrationFactor = 0.01; // for testing
 	cout << "migrationFactor: " << migrationFactor << endl << endl;
 	cout << "s.GetMass(): " << s.GetMass() << endl;
 
@@ -1221,6 +1221,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		// place planet
 		double baseOrbitRatio = randomOrbitalRatio(e);
 		double finalOrbitRatio = expectedRatio * baseOrbitRatio;
+		if (finalOrbitRatio < 1.211) { finalOrbitRatio = 1.211; } // 4:3 resonance
 		double lastDistance = sPlanets[i - 1].planet.GetDistance();
 		sPlanets[i].planet.SetDistance(finalOrbitRatio * lastDistance);
 		sPlanets[i].finalPlacement = true;
@@ -1228,8 +1229,49 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		// TBD: orbital resonance
 	}
 
+	// INNER PLANETARY SYSTEM
+	innerFormationZone += 0;
+	for (int i = 0; i < 5; i++) {
+		double planetesimalMass = innerFormationZone * sPlanets[i].planet.GetMass();
+		if (sPlanets[i].orbitDisrupted) { planetesimalMass *= 0.5; }
+
+		normal_distribution<> randomNorm(1.05, 0.2958); // 3d6 / 10
+		double newMass = planetesimalMass * randomNorm(e);
+
+		if (newMass < 0.03) {
+			sPlanets[i].planet.SetPlanetClass(NONE);
+		}
+		else if (newMass < 0.18) {
+			if (i + 1 == dominantGasGiantIndex) {
+				sPlanets[i].planet.SetPlanetClass(LEFTOVER_OLIGARCH);
+				sPlanets[i].planet.SetMass(randomNorm(e) / 10.0);
+			}
+			else {
+				sPlanets[i].planet.SetPlanetClass(PLANETOID_BELT);
+			}
+		}
+		else {
+			sPlanets[i].planet.SetPlanetClass(TERRESTRIAL_PLANET);
+			sPlanets[i].planet.SetMass(newMass);
+		}
+	}
+
+	// Inner Planetary System Migration
+	for (int i = 0; i < 5; i++) {
+		double innermostMigrationRadius = sPlanets[i].planet.GetDistance() * migrationFactor;
+		if (innermostMigrationRadius < diskInnerEdge) {
+			uniform_int_distribution<> diceRoll(1, 6);
+			int roll = diceRoll(e);
+			if (roll <= 3) { sPlanets[i].planetEjected = true; }
+			else {
+				sPlanets[i].planet.SetDistance(diskInnerEdge);
+				break;
+			}
+		}
+	}
+
 	// print for testing
-	cout << "After Nice event (if any)...:\n";
+	cout << "After inner migration (if any)...:\n";
 	for (int i = 0; i < sPlanets.size(); i++) {
 		cout << i << ": " << sPlanets[i].planet.GetDistance() << " AU; mass " << sPlanets[i].planet.GetMass();
 		cout << "; dominant? " << sPlanets[i].isDominantGasGiant;
@@ -1238,12 +1280,6 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		cout << "; class " << sPlanets[i].planet.GetPlanetClass();
 		cout << "; placed? " << sPlanets[i].finalPlacement << endl;
 	}
-
-
-
-
-
-
 
 
 
