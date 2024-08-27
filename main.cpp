@@ -408,12 +408,14 @@ int main () {
 	// Find dominant gas giant
 	bool thereIsADominantGasGiant = false;
 	int gasGiantCount = 0;
+	int dominantGasGiantIndex = -1;
 	for (int i = 5; i < 12; i++) {
 		PlanetClass theClass = starAPlanets[i].planet.GetPlanetClass();
 		if (theClass == SMALL_GAS_GIANT || theClass == MEDIUM_GAS_GIANT || theClass == LARGE_GAS_GIANT) {
 			starAPlanets[i].isDominantGasGiant = true;
 			thereIsADominantGasGiant = true;
 			gasGiantCount++;
+			dominantGasGiantIndex = i;
 			break;
 		}
 	}
@@ -421,7 +423,7 @@ int main () {
 	// Dominant Gas Giant Inward Migration
 	bool thereWasInwardMigration = false;
 	double orbitAfterInwardMigration = 0;
-	double formationRadius;
+	double formationRadius = 0;
 	if (thereIsADominantGasGiant) {
 		for (int i = 5; i < 12; i++) {
 			if (starAPlanets[i].isDominantGasGiant) {
@@ -445,6 +447,22 @@ int main () {
 			}
 		}
 	}
+
+	// Grand Tack
+	if (thereIsADominantGasGiant && gasGiantCount > 1) {
+		PlanetClass nextPlanet = starAPlanets[dominantGasGiantIndex].planet.GetPlanetClass();
+		if (nextPlanet == SMALL_GAS_GIANT || nextPlanet == MEDIUM_GAS_GIANT || nextPlanet == LARGE_GAS_GIANT) { // Grand Tack is *possible*
+			uniform_int_distribution<> diceRoll(1, 6);
+			int tackRoll = diceRoll(engine) + diceRoll(engine) + diceRoll(engine);
+			if (tackRoll < 12) { break; } // no grand tack
+			else {
+				int tackDistanceRoll = diceRoll(engine) + diceRoll(engine) + diceRoll(engine);
+				double finalDistance = (1 + tackDistanceRoll / 10.0) * starAPlanets[dominantGasGiantIndex].planet.GetDistance();
+				starAPlanets[dominantGasGiantIndex].planet.SetDistance(finalDistance);
+			}
+		}
+	}
+	
 	
 
 
