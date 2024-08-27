@@ -43,6 +43,8 @@ struct FormingPlanet {
 	bool lastBeforeSlowAccretion = false;
 	bool penultBeforeSlowAccretion = false;
 	bool orbitDisrupted = false;
+	bool triggeredGrandTack = false;
+	bool planetEjected = false;
 };
 
 /* MAIN */
@@ -466,6 +468,7 @@ int main () {
 				int tackDistanceRoll = diceRoll(engine) + diceRoll(engine) + diceRoll(engine);
 				double finalDistance = (1 + tackDistanceRoll / 10.0) * starAPlanets[dominantGasGiantIndex].planet.GetDistance();
 				starAPlanets[dominantGasGiantIndex].planet.SetDistance(finalDistance);
+				starAPlanets[dominantGasGiantIndex].triggeredGrandTack = true;
 				thereIsAGrandTack = true;
 				cout << "There is a grand tack!\n";
 			}
@@ -475,6 +478,7 @@ int main () {
 		for (int i = dominantGasGiantIndex + 1; i < starAPlanets.size(); i++) {
 			double priorFinalOrbitalRadius = starAPlanets[i - 1].planet.GetDistance();
 			double currentOrbitalRadius = starAPlanets[i].planet.GetDistance();
+			starAPlanets[i].triggeredGrandTack = true;
 			if (priorFinalOrbitalRadius * 1.3 > currentOrbitalRadius) {
 				starAPlanets[i].planet.SetDistance(priorFinalOrbitalRadius * 1.3);
 				cout << "Adjustment\n";
@@ -484,7 +488,43 @@ int main () {
 			}
 		}
 	}
-	
+
+	// Nice Event
+	if (thereIsAGrandTack) { // depends on forbidden zones per AOW p. 47
+		cout << "Nice event!\n";
+
+		bool aPlanetIsEjected = false;
+		for (int i = 5; i < 12; i++) {
+			if (starAPlanets[i].triggeredGrandTack == false) {
+				uniform_int_distribution<> diceRoll(1, 6);
+				int niceRoll = diceRoll(engine) + diceRoll(engine) + diceRoll(engine);
+				if (niceRoll >= 12) {
+					starAPlanets[i].planetEjected = true;
+					aPlanetIsEjected = true;
+					cout << aPlanetIsEjected << endl;
+					cout << "Planet " << i << " ejected\n";			
+				}
+			}
+		}
+		cout << "aPlanetIsEjected: " << aPlanetIsEjected << endl;
+		// find last surviving planet and multiply orbit by 50%
+		if (aPlanetIsEjected) {
+			cout << "Planet ejected\n\n";
+			for (int i = 12; i > 5; i--) {
+				cout << "Doing planet " << i << endl;
+				if (starAPlanets[i].planetEjected && !starAPlanets[i - 1].planetEjected) {
+					double oldRadius = starAPlanets[i - 1].planet.GetDistance();
+					cout << "oldRadius: " << oldRadius << endl;
+					double newRadius = 1.5 * oldRadius;
+					cout << "newRadius: " << newRadius << endl;
+					starAPlanets[i - 1].planet.SetDistance(newRadius);
+					cout << "Planet " << i - 1 << " relocated\n";
+					break;
+				}
+			}
+		}
+	}
+
 	
 
 
@@ -495,7 +535,7 @@ int main () {
 		cout << i << ": " << starAPlanets[i].planet.GetDistance() << " AU; mass " << starAPlanets[i].planet.GetMass();
 		cout << "; dominant? " << starAPlanets[i].isDominantGasGiant;
 		cout << "; disrupted? " << starAPlanets[i].orbitDisrupted;
-		cout << "; penult? " << starAPlanets[i].penultBeforeSlowAccretion;
+		cout << "; ejected? " << starAPlanets[i].planetEjected;
 		cout << "; last? " << starAPlanets[i].lastBeforeSlowAccretion << endl;
 	}
 
