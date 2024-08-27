@@ -38,10 +38,10 @@ struct OverallSeparation {
 // struct for planet formation
 struct FormingPlanet {
 	Planet planet;
-	bool isDominantGasGiant;
-	bool inExclusionZone;
-	bool lastBeforeSlowAccretion;
-	bool penultBeforeSlowAccretion;
+	bool isDominantGasGiant = false;
+	bool inExclusionZone = false;
+	bool lastBeforeSlowAccretion = false;
+	bool penultBeforeSlowAccretion = false;
 };
 
 /* MAIN */
@@ -365,7 +365,7 @@ int main () {
 			}
 		}*/
 	}
-	// Mark last before slow accretion
+	// Mark last before slow accretiong
 	for (int i = 0; i < starAPlanets.size(); i++) {
 		double distance = starAPlanets[i].planet.GetDistance();
 		if (i + 1 < starAPlanets.size()) {
@@ -392,6 +392,8 @@ int main () {
 		int accretionModifier = getAccretionModifier(planetesimalMass);
 
 		// modifier if close to slow accretion line
+		if (starAPlanets[i].penultBeforeSlowAccretion) { accretionModifier -= 8; }
+		if (starAPlanets[i].lastBeforeSlowAccretion) { accretionModifier -= 16; }
 
 		double temp = getOuterSystemProperties(starAPlanets[i].planet, accretionModifier, i, engine);
 		if (i == 5) {
@@ -407,7 +409,13 @@ int main () {
 
 
 
-
+	// print for testing
+	cout << "Later...:\n";
+	for (int i = 0; i < starAPlanets.size(); i++) {
+		cout << i << ": " << starAPlanets[i].planet.GetDistance() << " AU; mass " << starAPlanets[i].planet.GetMass();
+		cout << "; penult? " << starAPlanets[i].penultBeforeSlowAccretion;
+		cout << "; last? " << starAPlanets[i].lastBeforeSlowAccretion << endl;
+	}
 
 
 
@@ -815,6 +823,7 @@ double getOuterSystemProperties(Planet & p, int mod, int pNumber, default_random
 	uniform_int_distribution<> diceRoll(1, 6);
 	int roll = diceRoll(e) + diceRoll(e) + diceRoll(e) + mod;
 	double pMass = p.GetMass();
+	cout << "Planet " << pNumber << " roll: " << roll << endl;
 
 	if (roll <= 14) {
 		p.SetPlanetClass(NONE);
