@@ -11,6 +11,7 @@ Planet::Planet(const Planet & other) {
 	distance = other.distance;
 	mass = other.mass;
 	radius = other.radius;
+	classOfPlanet = other.classOfPlanet;
 }
 
 //alternate constructor
@@ -18,22 +19,50 @@ Planet::Planet(double d) {
 	distance = d;
 }
 
+//alternate constructor 2
+Planet::Planet(double d, double m) {
+	distance = d;
+	mass = m;
+}
+
 ///////////////////////////////////////
 // ACCESSORS
 ///////////////////////////////////////
+
+double Planet::GetDistance () {
+	return distance;
+}
 
 double Planet::GetMass () {
 	return mass;
 }
 
+double Planet::GetRadius () {
+	return radius;
+}
+
+PlanetClass Planet::GetPlanetClass () {
+	return classOfPlanet;
+}
 ///////////////////////////////////////
 // MUTATORS
 ///////////////////////////////////////
+
+void Planet::SetDistance (double d) {
+	distance = d;
+}
 
 void Planet::SetMass (double m) {
 	mass = m;
 }
 
+void Planet::SetRadius (double r) {
+	radius = r;
+}
+
+void Planet::SetPlanetClass (PlanetClass pc) {
+	classOfPlanet = pc;
+}
 ///////////////////////////////////////
 // OPERATORS
 ///////////////////////////////////////
