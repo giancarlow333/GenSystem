@@ -75,7 +75,7 @@ int main () {
 	else { cout << "IS NOT"; }
 	cout << " multiple!" << endl << endl;
 
-	isMultiple = false; // For testing
+	isMultiple = true; // For testing
 
 	// Create star
 	Star starA, starB, starC, starD;
@@ -91,7 +91,7 @@ int main () {
 	if (isMultiple) {
 		multiplicity = generateSystemMultiplicity(engine);
 		cout << "multiplicity: " << multiplicity << endl << endl;
-		//multiplicity = 3; // for testing
+		multiplicity = 3; // for testing
 
 		if (multiplicity == 2) {
 			double massRatio = generateMassRatio(engine);
@@ -137,7 +137,7 @@ int main () {
 				double exclusionZoneAB = getOuterOrbitalExclusionZone(baseMass, baseMass * massRatioAB, separationAB, eccenAB);
 				cout << "Exclusion zone around AB: " << exclusionZoneAB << endl;
 				double separationABC =  generateDistanceBetweenStars(engine, baseMass);
-				//separationABC = 25; // for testing
+				separationABC = 25; // for testing
 				double eccenABC = generateMultipleStarEccentricity(engine, separationABC);
 				while ((1 - eccenABC) * separationABC < exclusionZoneAB) {
 					cout << "Looping...\n";
@@ -1248,7 +1248,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	int innermostPlanetIndex = 0;
 	for (int i = 0; i < 5; i++) {
 		double innermostMigrationRadius = sPlanets[i].planet.GetDistance() * migrationFactor;
-		if (innermostMigrationRadius < diskInnerEdge) {
+		if (innermostMigrationRadius < diskInnerEdge && !starIsCircumbinary) {
 			uniform_int_distribution<> diceRoll(1, 6);
 			int roll = diceRoll(e);
 			if (roll <= 3) { sPlanets[i].planetEjected = true; }
@@ -1257,6 +1257,25 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 				sPlanets[i].finalPlacement = true;
 				innermostPlanetIndex = i;
 				break;
+			}
+		}
+		else if (innermostMigrationRadius < diskInnerEdge && starIsCircumbinary) {
+			uniform_int_distribution<> diceRoll(1, 6);
+			int roll = diceRoll(e);
+			if (roll <= 3) { sPlanets[i].planetEjected = true; }
+			else {
+				if (innermostMigrationRadius > innerExclusionZone) {
+					sPlanets[i].planet.SetDistance(diskInnerEdge);
+					sPlanets[i].finalPlacement = true;
+					innermostPlanetIndex = i;
+					break;
+				}
+				else { // it'd be in the exclusion zone
+					sPlanets[i].planet.SetDistance(innerExclusionZone * 1.1);
+					sPlanets[i].finalPlacement = true;
+					innermostPlanetIndex = i;
+					break;
+				}
 			}
 		}
 	}
@@ -1273,6 +1292,13 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	cout << "countToBePlaced: " << countToBePlaced << endl;
 	placeRemainingPlanets (sPlanets, innermostPlanetIndex, dominantGasGiantIndex, countToBePlaced, e);
 
+	// Make sure there aren't any in exclusion zones after migration!
+	for (int i = 0; i < sPlanets.size(); i++) {
+		double distance = sPlanets[i].planet.GetDistance();
+		if (distance < innerExclusionZone || distance > forbiddenZone) {
+			sPlanets[i].inExclusionZone = true;
+		}
+	}
 
 
 
@@ -1290,6 +1316,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		cout << "; disrupted? " << sPlanets[i].orbitDisrupted;
 		cout << "; ejected? " << sPlanets[i].planetEjected;
 		cout << "; class " << sPlanets[i].planet.GetPlanetClass();
+		cout << "; exclusion? " << sPlanets[i].inExclusionZone;
 		cout << "; placed? " << sPlanets[i].finalPlacement << endl;
 	}
 
