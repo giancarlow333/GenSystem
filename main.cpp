@@ -27,7 +27,7 @@ double generateMigrationFactor (default_random_engine & e, double diskMassFactor
 double getOuterSystemProperties(Planet & p, int mod, int pNumber, default_random_engine & e);
 double getInnerOrbitalExclusionZone (double pMass, double sMass, double separation, double eccentricity);
 double getOuterOrbitalExclusionZone (double pMass, double sMass, double separation, double eccentricity);
-vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbiddenZone);
+vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbiddenZone, bool starIsCircumbinary, double initialLuminosity);
 
 // constants
 const string VERSION_NUMBER = "0.6";
@@ -73,7 +73,7 @@ int main () {
 	else { cout << "IS NOT"; }
 	cout << " multiple!" << endl << endl;
 
-	isMultiple = false; // For testing
+	isMultiple = true; // For testing
 
 	// Create star
 	Star starA, starB, starC, starD;
@@ -274,6 +274,7 @@ int main () {
 	 */
 	Star dummyStar;
 	bool dummyStarIsCircumbinary = false;
+	double initialLuminosity = getInitialLuminosity(starA.GetMass());
 
 	if (multiplicity > 1) { // determine if the planets are circumbinary or not
 		if (multiplicity == 2) {
@@ -289,6 +290,7 @@ int main () {
 				dummyStar.SetTemperature(starA.GetTemperature());
 				dummyStar.SetAge(starA.GetAge());
 				dummyStar.SetMetallicity(starA.GetMetallicity());
+				initialLuminosity = getInitialLuminosity(starA.GetMass()) + getInitialLuminosity(starB.GetMass());
 			}
 			else {
 				dummyStar.SetMass(starA.GetMass());
@@ -309,9 +311,10 @@ int main () {
 				dummyStar.SetMass(starA.GetMass() + starB.GetMass());
 				dummyStar.SetLuminosity(starA.GetLuminosity() + starB.GetLuminosity());
 				dummyStar.SetRadius(starA.GetRadius());
-				dummyStar.SetTemperature(starA.GetTemperature());
+				dummyStar.SetTemperature(starA.GetTemperature() + starB.GetTemperature());
 				dummyStar.SetAge(starA.GetAge());
 				dummyStar.SetMetallicity(starA.GetMetallicity());
+				initialLuminosity = getInitialLuminosity(starA.GetMass()) + getInitialLuminosity(starB.GetMass());
 			}
 			else {
 				dummyStar.SetMass(starA.GetMass());
@@ -355,7 +358,7 @@ int main () {
 	}
 
 	// Planets around primary star
-	vector<Planet> dummyStarPlanets = formPlanets (dummyStar, engine, forbiddenZone);
+	vector<Planet> dummyStarPlanets = formPlanets (dummyStar, engine, forbiddenZone, dummyStarIsCircumbinary, initialLuminosity);
 
 	// HERE!
 
@@ -486,7 +489,8 @@ bool flipCoin(default_random_engine & e) {
 }
 
 // I can't make sense of the paper
-// The paper makes me think that 45 AU is the *mode*, in which case the mean is ln(45 - sigma^2) or 3.68.  Keeping the stdev of 2.3 seems to match the upper end of the distro (4.6% above 1500 AU), but not the lower end!
+// The paper makes me think that 45 AU is the *mode*, in which case the mean is ln(45 - sigma^2) or 3.68.
+// Keeping the stdev of 2.3 seems to match the upper end of the distro (4.6% above 1500 AU), but not the lower end!
 double generateDistanceBetweenStars(default_random_engine & e, double primaryMass) {
 	if (primaryMass <= 0.1) {
 		lognormal_distribution<> generator(1.45, 0.5);
@@ -914,15 +918,17 @@ double getOuterOrbitalExclusionZone (double pMass, double sMass, double separati
 // ////////////////////////////////////
 // ////////////////////////////////////
 
-vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbiddenZone) {
+vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbiddenZone, bool starIsCircumbinary, double initialLuminosity) {
 	double diskMassFactor = generateDiskMassFactor(e);
 	cout << "diskMassFactor: " << diskMassFactor << endl;
 	double migrationFactor = generateMigrationFactor(e, diskMassFactor);
+	migrationFactor = 0.001; // for testing
 	cout << "migrationFactor: " << migrationFactor << endl << endl;
+	cout << "s.GetMass(): " << s.GetMass() << endl;
 
-	double diskInnerEdge = 0.005 * pow(s.GetMass(), 1 / 3);
-	double formationIceLine = 4.0 * sqrt(getInitialLuminosity(s.GetMass()));
-	double slowAccretionLine = 20 * pow(s.GetMass(), 1 / 3);
+	double diskInnerEdge = 0.005 * pow(s.GetMass(), 1.0 / 3.0);
+	double formationIceLine = 4.0 * sqrt(initialLuminosity);
+	double slowAccretionLine = 20.0 * pow(s.GetMass(), 1.0 / 3.0);
 	cout << "diskInnerEdge: " << diskInnerEdge << endl;
 	cout << "formationIceLine: " << formationIceLine << endl;
 	cout << "slowAccretionLine: " << slowAccretionLine << endl << endl;
@@ -937,75 +943,75 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	vector<FormingPlanet> sPlanets;
 
 	// place inner planets
-	double planet0Distance = 0.6 * sqrt(getInitialLuminosity(s.GetMass()));
+	double planet0Distance = 0.6 * sqrt(initialLuminosity);
 	FormingPlanet temp0;
 	temp0.planet.SetDistance(planet0Distance);
 	temp0.planet.SetMass(0.08 * innerFormationZone);
 	sPlanets.push_back(temp0);
 
-	double planet1Distance = 0.8 * sqrt(getInitialLuminosity(s.GetMass()));
+	double planet1Distance = 0.8 * sqrt(initialLuminosity);
 	FormingPlanet temp1;
 	temp1.planet.SetDistance(planet1Distance);
 	temp1.planet.SetMass(0.41 * innerFormationZone);
 	sPlanets.push_back(temp1);
 
-	double planet2Distance = 1.2 * sqrt(getInitialLuminosity(s.GetMass()));
+	double planet2Distance = 1.2 * sqrt(initialLuminosity);
 	FormingPlanet temp2;
 	temp2.planet.SetDistance(planet2Distance);
 	temp2.planet.SetMass(0.39 * innerFormationZone);
 	sPlanets.push_back(temp2);
 
-	double planet3Distance = 1.8 * sqrt(getInitialLuminosity(s.GetMass()));
+	double planet3Distance = 1.8 * sqrt(initialLuminosity);
 	FormingPlanet temp3;
 	temp3.planet.SetDistance(planet3Distance);
 	temp3.planet.SetMass(0.08 * innerFormationZone);
 	sPlanets.push_back(temp3);
 	
-	double planet4Distance = 2.7 * sqrt(getInitialLuminosity(s.GetMass()));
+	double planet4Distance = 2.7 * sqrt(initialLuminosity);
 	FormingPlanet temp4;
 	temp4.planet.SetDistance(planet4Distance);
 	temp4.planet.SetMass(0.04 * innerFormationZone);
 	sPlanets.push_back(temp4);
 
 	// place middle planets
-	double planet5Distance = 4.0 * sqrt(getInitialLuminosity(s.GetMass()));
+	double planet5Distance = 4.0 * sqrt(initialLuminosity);
 	FormingPlanet temp5;
 	temp5.planet.SetDistance(planet5Distance);
 	temp5.planet.SetMass(0.4 * middleFormationZone);
 	sPlanets.push_back(temp5);
 
-	double planet6Distance = 6.0 * sqrt(getInitialLuminosity(s.GetMass()));
+	double planet6Distance = 6.0 * sqrt(initialLuminosity);
 	FormingPlanet temp6;
 	temp6.planet.SetDistance(planet6Distance);
 	temp6.planet.SetMass(0.25 * middleFormationZone);
 	sPlanets.push_back(temp6);
 
-	double planet7Distance = 9.0 * sqrt(getInitialLuminosity(s.GetMass()));
+	double planet7Distance = 9.0 * sqrt(initialLuminosity);
 	FormingPlanet temp7;
 	temp7.planet.SetDistance(planet7Distance);
 	temp7.planet.SetMass(0.18 * middleFormationZone);
 	sPlanets.push_back(temp7);
 
-	double planet8Distance = 13.5 * sqrt(getInitialLuminosity(s.GetMass()));
+	double planet8Distance = 13.5 * sqrt(initialLuminosity);
 	FormingPlanet temp8;
 	temp8.planet.SetDistance(planet8Distance);
 	temp8.planet.SetMass(0.17 * middleFormationZone);
 	sPlanets.push_back(temp8);
 
 	// place outer planets
-	double planet9Distance = 20.0 * sqrt(getInitialLuminosity(s.GetMass()));
+	double planet9Distance = 20.0 * sqrt(initialLuminosity);
 	FormingPlanet temp9;
 	temp9.planet.SetDistance(planet9Distance);
 	temp9.planet.SetMass(0.6 * outerFormationZone);
 	sPlanets.push_back(temp9);
 
-	double planet10Distance = 30.0 * sqrt(getInitialLuminosity(s.GetMass()));
+	double planet10Distance = 30.0 * sqrt(initialLuminosity);
 	FormingPlanet temp10;
 	temp10.planet.SetDistance(planet10Distance);
 	temp10.planet.SetMass(0.3 * outerFormationZone);
 	sPlanets.push_back(temp10);
 
-	double planet11Distance = 45.0 * sqrt(getInitialLuminosity(s.GetMass()));
+	double planet11Distance = 45.0 * sqrt(initialLuminosity);
 	FormingPlanet temp11;
 	temp11.planet.SetDistance(planet11Distance);
 	temp11.planet.SetMass(0.1 * outerFormationZone);
@@ -1024,12 +1030,6 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			cout << "Planet " << i << " is out of bounds!\n";
 			sPlanets[i].inExclusionZone = true;
 		}
-		/*if (i + 1 < sPlanets.size()) {
-			if (distance < slowAccretionLine && sPlanets[i + 1].planet.GetDistance() > slowAccretionLine) {
-				sPlanets[i].lastBeforeSlowAccretion = true;
-				cout << "lastBeforeSlowAccretion = true\n\n";
-			}
-		}*/
 	}
 	// Mark last before slow accretiong
 	for (int i = 0; i < sPlanets.size(); i++) {
@@ -1099,10 +1099,13 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 				formationRadius = sPlanets[i].planet.GetDistance();
 				orbitAfterInwardMigration = formationRadius * migrationFactor;
 				cout << "orbitAfterInwardMigration: " << orbitAfterInwardMigration << endl;
-				if (orbitAfterInwardMigration < diskInnerEdge) { // gas giant migrates inwards
+				if (orbitAfterInwardMigration < diskInnerEdge && !starIsCircumbinary) { // gas giant migrates inwards
 					thereWasInwardMigration = true;
 					cout << "There was inward migration!\n";
 					sPlanets[i].planet.SetDistance(orbitAfterInwardMigration);
+				}
+				else if (orbitAfterInwardMigration < diskInnerEdge && starIsCircumbinary) { 
+					// TBD: Account for circumbinary zones!
 				}
 				break;
 			}
@@ -1148,9 +1151,9 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	}
 
 	// Nice Event
-	if (thereIsAGrandTack) { // depends on forbidden zones per AOW p. 47
+	if (thereIsAGrandTack && (!forbiddenZone || forbiddenZone > 1.5 * slowAccretionLine)) { // depends on forbidden zones per AOW p. 47
 		cout << "Nice event!\n";
-
+		// TBD: roll for Nice event!!!
 		bool aPlanetIsEjected = false;
 		for (int i = 5; i < 12; i++) {
 			if (sPlanets[i].triggeredGrandTack == false) {
@@ -1191,6 +1194,19 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		cout << "; class " << sPlanets[i].planet.GetPlanetClass();
 		cout << "; last? " << sPlanets[i].lastBeforeSlowAccretion << endl;
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	// Remove eliminated orbits
 	vector<Planet> sPlanets2;
