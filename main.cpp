@@ -259,40 +259,35 @@ int main () {
 	// determine if planets orbit A directly here
 
 	// place inner planets
+
+	vector<Planet> starAPlanets;
+
 	double planet0Distance = 0.6 * sqrt(getInitialLuminosity(starA.GetMass()));
-	if (planet0Distance > diskInnerEdge) {
-		Planet temp(planet0Distance, 0.08 * innerFormationZone);
-		starA.SetPlanet(temp);
-	}
+	Planet temp0(planet0Distance, 0.08 * innerFormationZone);
+	starAPlanets.push_back(temp0);
 
 	double planet1Distance = 0.8 * sqrt(getInitialLuminosity(starA.GetMass()));
-	if (planet1Distance > diskInnerEdge) {
-		Planet temp(planet1Distance, 0.4 * innerFormationZone);
-		starA.SetPlanet(temp);
-	}
+	Planet temp1(planet1Distance, 0.4 * innerFormationZone);
+	starAPlanets.push_back(temp1);
 
 	double planet2Distance = 1.2 * sqrt(getInitialLuminosity(starA.GetMass()));
-	if (planet2Distance > diskInnerEdge) {
-		Planet temp(planet2Distance, 0.4 * innerFormationZone);
-		starA.SetPlanet(temp);
-	}
-	double planet3Distance = 1.8 * sqrt(getInitialLuminosity(starA.GetMass()));
-	if (planet3Distance > diskInnerEdge) {
-		Planet temp(planet3Distance, 0.08 * innerFormationZone);
-		starA.SetPlanet(temp);
-	}
-	double planet4Distance = 2.7 * sqrt(getInitialLuminosity(starA.GetMass()));
-	if (planet4Distance > diskInnerEdge) {
-		Planet temp(planet4Distance, 0.04 * innerFormationZone);
-		starA.SetPlanet(temp);
-	}
+	Planet temp2(planet2Distance, 0.4 * innerFormationZone);
+	starAPlanets.push_back(temp2);
 
-	vector<Planet> starAPlanets = starA.GetPlanets();
+	double planet3Distance = 1.8 * sqrt(getInitialLuminosity(starA.GetMass()));
+	Planet temp3(planet3Distance, 0.08 * innerFormationZone);
+	starAPlanets.push_back(temp3);
+	
+	double planet4Distance = 2.7 * sqrt(getInitialLuminosity(starA.GetMass()));
+	Planet temp4(planet4Distance, 0.04 * innerFormationZone);
+	starAPlanets.push_back(temp4);
 
 	// print for testing
 	for (int i = 0; i < starAPlanets.size(); i++) {
 		cout << i << ": " << starAPlanets[i].GetDistance() << " AU; mass " << starAPlanets[i].GetMass() << endl;
 	}
+
+	// work exclusion zones here
 
 	return 0;
 }
