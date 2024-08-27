@@ -22,6 +22,11 @@ double getStellarLifespan (double mass);
 double getInitialTemperature (double mass);
 double getStellarRadius (double lum, double temp);
 void evolveStar (Star & s, default_random_engine & e);
+double generateDiskMassFactor (default_random_engine & e);
+double generateMigrationFactor (default_random_engine & e, double diskMassFactor);
+
+// constants
+const string VERSION_NUMBER = "0.4";
 
 // struct for overall separation
 struct OverallSeparation {
@@ -32,7 +37,7 @@ struct OverallSeparation {
 /* MAIN */
 int main () {
 	cout << "Hello!\n\n";
-	cout << "Welcome to GenSystem Version 0.1!" << endl;
+	cout << "Welcome to GenSystem Version" << VERSION_NUMBER << "!" << endl;
 	cout << "(c) 2024 Giancarlo Whitaker" << endl << endl;
 
 	// construct random engine
@@ -52,7 +57,7 @@ int main () {
 	else { cout << "IS NOT"; }
 	cout << " multiple!" << endl << endl;
 
-	isMultiple = true; // For testing
+	isMultiple = false; // For testing
 
 	// Create star
 	Star starA, starB, starC, starD;
@@ -227,6 +232,29 @@ int main () {
 	else {
 		cout << "Not yet implemented!\n\n";
 	}
+
+	// PLANETARY DISK FOR STAR A
+
+	double diskMassFactor = generateDiskMassFactor(engine);
+	cout << "diskMassFactor: " << diskMassFactor << endl;
+	double migrationFactor = generateMigrationFactor(engine, diskMassFactor);
+	cout << "migrationFactor: " << migrationFactor << endl << endl;
+
+	double diskInnerEdge = 0.005 * pow(starA.GetMass(), 1 / 3);
+	double formationIceLine = 4.0 * sqrt(getInitialLuminosity(starA.GetMass()));
+	double slowAccretionLine = 20 * pow(starA.GetMass(), 1 / 3);
+	cout << "diskInnerEdge: " << diskInnerEdge << endl;
+	cout << "formationIceLine: " << formationIceLine << endl;
+	cout << "slowAccretionLine: " << slowAccretionLine << endl << endl;
+
+	// put forbidden zones here
+
+	double innerFormationZone = 2.5 * starA.GetMass() * starA.GetMetallicity() * diskMassFactor;
+	double middleFormationZone = 80.0 * starA.GetMass() * starA.GetMetallicity() * diskMassFactor;
+	double outerFormationZone = 18.0 * starA.GetMass() * starA.GetMetallicity() * diskMassFactor;
+	cout << "innerFormationZone: " << innerFormationZone << endl;
+	cout << "middleFormationZone: " << middleFormationZone << endl;
+	cout << "outerFormationZone: " << outerFormationZone << endl;
 
 	return 0;
 }
@@ -569,4 +597,42 @@ void evolveStar (Star & s, default_random_engine & e) {
 	return;
 }
 
+/* generateDiskMassFactor
+ * Generates the size of the protoplanetary disk relative to the Sun's
+ * Implements algorithm on AOW pp. 37-38
+ */
+double generateDiskMassFactor (default_random_engine & e) {
+	uniform_int_distribution<> diceRoll(1, 6);
+	int roll = diceRoll(e) + diceRoll(e) + diceRoll(e);
 
+	if (roll == 3) { return 0.25; }
+	else if (roll <= 5) { return 0.36; }
+	else if (roll <= 7) { return 0.50; }
+	else if (roll <= 9) { return 0.70; }
+	else if (roll <= 11) { return 1.00; }
+	else if (roll <= 13) { return 1.40; }
+	else if (roll <= 15) { return 2.00; }
+	else if (roll <= 17) { return 2.80; }
+	else { return 4.00; }
+}
+
+double generateMigrationFactor (default_random_engine & e, double diskMassFactor) {
+	uniform_int_distribution<> diceRoll(1, 6);
+	int roll = diceRoll(e) + diceRoll(e) + diceRoll(e);
+
+	if (diskMassFactor >= 2.0) { roll -= 3; }
+	if (diskMassFactor < 1.0) { roll += 3; }
+
+	if (roll <= 5) { return 0; }
+	else if (roll == 6) { return 0.05; }
+	else if (roll == 7) { return 0.1; }
+	else if (roll == 8) { return 0.2; }
+	else if (roll == 9) { return 0.3; }
+	else if (roll == 10) { return 0.4; }
+	else if (roll == 11) { return 0.5; }
+	else if (roll == 12) { return 0.6; }
+	else if (roll == 13) { return 0.7; }
+	else if (roll == 14) { return 0.8; }
+	else if (roll == 15) { return 0.9; }
+	else { return 1.0; } // roll >= 16
+}
