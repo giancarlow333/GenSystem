@@ -28,12 +28,16 @@ class Planet
 		double GetEccentricity ();
 		double GetMass ();
 		double GetRadius ();
+		double GetDensity ();
+		double GetGravity ();
 		PlanetClass GetPlanetClass ();
 		// Mutators
 		void SetDistance (double d);
 		void SetEccentricity (double e);
 		void SetMass (double m);
 		void SetRadius (double r);
+		void SetDensity (double rho);
+		void SetGravity (double g);
 		void SetPlanetClass (PlanetClass pc);
 		// Operators
 		Planet & operator=(const Planet & rhs);
@@ -44,6 +48,8 @@ class Planet
 		double eccentricity; // orbital eccentricity
 		double mass; // mass of planet in earths
 		double radius; // radius of planet in earths
+		double density; // density of planet in earths
+		double gravity; // gravity of planet in earths
 		PlanetClass classOfPlanet;
 };
 

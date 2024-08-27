@@ -12,6 +12,8 @@ Planet::Planet(const Planet & other) {
 	eccentricity = other.eccentricity;
 	mass = other.mass;
 	radius = other.radius;
+	density = other.density;
+	gravity = other.gravity;
 	classOfPlanet = other.classOfPlanet;
 }
 
@@ -46,6 +48,14 @@ double Planet::GetRadius () {
 	return radius;
 }
 
+double Planet::GetDensity () {
+	return density;
+}
+
+double Planet::GetGravity () {
+	return gravity;
+}
+
 PlanetClass Planet::GetPlanetClass () {
 	return classOfPlanet;
 }
@@ -67,6 +77,14 @@ void Planet::SetMass (double m) {
 
 void Planet::SetRadius (double r) {
 	radius = r;
+}
+
+void Planet::SetDensity (double rho) {
+	density = rho;
+}
+
+void Planet::SetGravity (double g) {
+	gravity = g;
 }
 
 void Planet::SetPlanetClass (PlanetClass pc) {

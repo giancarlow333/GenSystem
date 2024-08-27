@@ -373,6 +373,9 @@ int main () {
 	for (int i = 0; i < dummyStarPlanets.size(); i++) {
 		cout << i << ": " << dummyStarPlanets[i].GetDistance() << " AU; mass " << dummyStarPlanets[i].GetMass();
 		cout << "; eccen " << dummyStarPlanets[i].GetEccentricity();
+		cout << "; density " << dummyStarPlanets[i].GetDensity();
+		cout << "; radius " << dummyStarPlanets[i].GetRadius();
+		cout << "; gravity " << dummyStarPlanets[i].GetGravity();
 		cout << "; class " << dummyStarPlanets[i].GetPlanetClass() << endl;
 	}
 
@@ -1331,7 +1334,46 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		sPlanets2[i].SetEccentricity(eccen);
 	}
 
+	// Density, Radius, and Surface Gravity
+	for (int i = 0; i < sPlanets2.size(); i++) {
+		PlanetClass pc = sPlanets2[i].GetPlanetClass();
+		double density;
+		if (pc == SMALL_GAS_GIANT || pc == MEDIUM_GAS_GIANT || pc == LARGE_GAS_GIANT) {
+			if (sPlanets2[i].GetMass() <= 200) {
+				density = 1.0 / sqrt(sPlanets2[i].GetMass());
+			}
+			else { // gas giant > 200 masses
+				density = pow(sPlanets2[i].GetMass(), 1.27) / 11800.0;
+			}
+		} // end gas giant
+		else if (pc != PLANETOID_BELT) {
+			normal_distribution<> randomNorm(0.5, 2.958); // 3d6-10
+			density = pow(sPlanets2[i].GetMass(), 0.2) + randomNorm(e) / 100.0;
+			if (pc == FAILED_CORE) { density -= 0.1; }
+			if (pc == LEFTOVER_OLIGARCH) {
+				uniform_int_distribution<> diceRoll(1, 6);
+				int roll = diceRoll(e);
+				if (roll > 4) { density += 0.4; }
+			}
+			if (density < 0.18) { density = 0.18; }
+			if (density > 1.43) { density = 1.43; }
+		} // end not planetoid belt
+		else { // it's a planetoid belt
+			density = 0.0;
+		}
+		sPlanets2[i].SetDensity(density);
 
+		// compute radius and surface gravity
+		if (pc != PLANETOID_BELT) {
+			double radius = pow(sPlanets2[i].GetMass() / density, 1.0 / 3.0);
+			sPlanets2[i].SetRadius(radius);
+			sPlanets2[i].SetGravity(density * radius);
+		}
+		else {
+			sPlanets2[i].SetRadius(0.0);
+			sPlanets2[i].SetGravity(0.0);
+		}
+	}
 
 
 
