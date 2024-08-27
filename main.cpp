@@ -50,6 +50,7 @@ struct FormingPlanet {
 	bool planetEjected = false;
 	bool finalPlacement = false;
 };
+void placeRemainingPlanets (vector<FormingPlanet> & pVector, int firstPlanetIndex, int lastPlanetIndex, int countToBePlaced, default_random_engine & e);
 
 /* MAIN */
 int main () {
@@ -1213,21 +1214,8 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		else { break; }
 	}
 	cout << "countToBePlaced: " << countToBePlaced << endl;
-	double expectedRatio = pow(sPlanets[finalPlanetIndex].planet.GetDistance() / sPlanets[dominantGasGiantIndex].planet.GetDistance(), 1.0 / (countToBePlaced + 1));
-	cout << "expectedRatio: " << expectedRatio << endl;
+	placeRemainingPlanets (sPlanets, dominantGasGiantIndex, finalPlanetIndex, countToBePlaced, e);
 
-	normal_distribution<> randomOrbitalRatio(1.025, 0.22); // TBD AOW p. 48
-	for (int i = dominantGasGiantIndex + 1; i < finalPlanetIndex; i++) {
-		// place planet
-		double baseOrbitRatio = randomOrbitalRatio(e);
-		double finalOrbitRatio = expectedRatio * baseOrbitRatio;
-		if (finalOrbitRatio < 1.211) { finalOrbitRatio = 1.211; } // 4:3 resonance
-		double lastDistance = sPlanets[i - 1].planet.GetDistance();
-		sPlanets[i].planet.SetDistance(finalOrbitRatio * lastDistance);
-		sPlanets[i].finalPlacement = true;
-		cout << "finalOrbitRatio " << i << ": " << finalOrbitRatio << endl;
-		// TBD: orbital resonance
-	}
 
 	// INNER PLANETARY SYSTEM
 	innerFormationZone += 0;
@@ -1283,7 +1271,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		else { break; }
 	}
 	cout << "countToBePlaced: " << countToBePlaced << endl;
-
+	placeRemainingPlanets (sPlanets, innermostPlanetIndex, dominantGasGiantIndex, countToBePlaced, e);
 
 
 
@@ -1321,4 +1309,23 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	}
 
 	return sPlanets2;
+}
+
+void placeRemainingPlanets (vector<FormingPlanet> & pVector, int firstPlanetIndex, int lastPlanetIndex, int countToBePlaced, default_random_engine & e) {
+	double expectedRatio = pow(pVector[lastPlanetIndex].planet.GetDistance() / pVector[firstPlanetIndex].planet.GetDistance(), 1.0 / (countToBePlaced + 1));
+	cout << "expectedRatio: " << expectedRatio << endl;
+
+	normal_distribution<> randomOrbitalRatio(1.025, 0.22); // TBD AOW p. 48
+	for (int i = firstPlanetIndex + 1; i < lastPlanetIndex; i++) {
+		// place planet
+		double baseOrbitRatio = randomOrbitalRatio(e);
+		double finalOrbitRatio = expectedRatio * baseOrbitRatio;
+		if (finalOrbitRatio < 1.211) { finalOrbitRatio = 1.211; } // 4:3 resonance
+		double lastDistance = pVector[i - 1].planet.GetDistance();
+		pVector[i].planet.SetDistance(finalOrbitRatio * lastDistance);
+		pVector[i].finalPlacement = true;
+		cout << "finalOrbitRatio " << i << ": " << finalOrbitRatio << endl;
+		// TBD: orbital resonance
+	}
+	return;
 }
