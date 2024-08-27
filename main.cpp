@@ -27,7 +27,7 @@ double generateMigrationFactor (default_random_engine & e, double diskMassFactor
 double getOuterSystemProperties(Planet & p, int mod, int pNumber, default_random_engine & e);
 
 // constants
-const string VERSION_NUMBER = "0.4";
+const string VERSION_NUMBER = "0.5";
 
 // struct for overall separation
 struct OverallSeparation {
@@ -437,7 +437,6 @@ int main () {
 				formationRadius = starAPlanets[i].planet.GetDistance();
 				orbitAfterInwardMigration = formationRadius * migrationFactor;
 				cout << "orbitAfterInwardMigration: " << orbitAfterInwardMigration << endl;
-				diskInnerEdge = 0.1;
 				if (orbitAfterInwardMigration < diskInnerEdge) { // gas giant migrates inwards
 					thereWasInwardMigration = true;
 					cout << "There was inward migration!\n";
@@ -463,14 +462,12 @@ int main () {
 		if (nextPlanet == SMALL_GAS_GIANT || nextPlanet == MEDIUM_GAS_GIANT || nextPlanet == LARGE_GAS_GIANT) { // Grand Tack is *possible*
 			uniform_int_distribution<> diceRoll(1, 6);
 			int tackRoll = diceRoll(engine) + diceRoll(engine) + diceRoll(engine);
-			tackRoll = 19;
 			if (tackRoll >= 12) {
 				int tackDistanceRoll = diceRoll(engine) + diceRoll(engine) + diceRoll(engine);
 				double finalDistance = (1 + tackDistanceRoll / 10.0) * starAPlanets[dominantGasGiantIndex].planet.GetDistance();
 				starAPlanets[dominantGasGiantIndex].planet.SetDistance(finalDistance);
 				starAPlanets[dominantGasGiantIndex].triggeredGrandTack = true;
 				thereIsAGrandTack = true;
-				cout << "There is a grand tack!\n";
 			}
 		}
 	}
@@ -481,7 +478,6 @@ int main () {
 			starAPlanets[i].triggeredGrandTack = true;
 			if (priorFinalOrbitalRadius * 1.3 > currentOrbitalRadius) {
 				starAPlanets[i].planet.SetDistance(priorFinalOrbitalRadius * 1.3);
-				cout << "Adjustment\n";
 			}
 			else {
 				break;
@@ -506,19 +502,13 @@ int main () {
 				}
 			}
 		}
-		cout << "aPlanetIsEjected: " << aPlanetIsEjected << endl;
 		// find last surviving planet and multiply orbit by 50%
 		if (aPlanetIsEjected) {
-			cout << "Planet ejected\n\n";
 			for (int i = 12; i > 5; i--) {
-				cout << "Doing planet " << i << endl;
 				if (starAPlanets[i].planetEjected && !starAPlanets[i - 1].planetEjected) {
 					double oldRadius = starAPlanets[i - 1].planet.GetDistance();
-					cout << "oldRadius: " << oldRadius << endl;
 					double newRadius = 1.5 * oldRadius;
-					cout << "newRadius: " << newRadius << endl;
 					starAPlanets[i - 1].planet.SetDistance(newRadius);
-					cout << "Planet " << i - 1 << " relocated\n";
 					break;
 				}
 			}
