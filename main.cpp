@@ -27,7 +27,7 @@ double generateMigrationFactor (default_random_engine & e, double diskMassFactor
 double getOuterSystemProperties(Planet & p, int mod, int pNumber, default_random_engine & e);
 double getInnerOrbitalExclusionZone (double pMass, double sMass, double separation, double eccentricity);
 double getOuterOrbitalExclusionZone (double pMass, double sMass, double separation, double eccentricity);
-vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbiddenZone, bool starIsCircumbinary, double initialLuminosity);
+vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbiddenZone, bool starIsCircumbinary, double initialLuminosity, double innerExclusionZone);
 
 // constants
 const string VERSION_NUMBER = "0.6";
@@ -275,6 +275,7 @@ int main () {
 	Star dummyStar;
 	bool dummyStarIsCircumbinary = false;
 	double initialLuminosity = getInitialLuminosity(starA.GetMass());
+	double innerExclusionZone = 0.0;
 
 	if (multiplicity > 1) { // determine if the planets are circumbinary or not
 		if (multiplicity == 2) {
@@ -291,6 +292,7 @@ int main () {
 				dummyStar.SetAge(starA.GetAge());
 				dummyStar.SetMetallicity(starA.GetMetallicity());
 				initialLuminosity = getInitialLuminosity(starA.GetMass()) + getInitialLuminosity(starB.GetMass());
+				innerExclusionZone = exclusionZone;
 			}
 			else {
 				dummyStar.SetMass(starA.GetMass());
@@ -302,11 +304,12 @@ int main () {
 			}
 		} // close multiplicity == 3
 		else if (multiplicity == 3 && systemArrangement == 1) { // C orbits AB
-			// data is held in overallSeparation
+			// data is held in mainSystem
 			// get AB outer exclusion zone
-			double exclusionZone = getOuterOrbitalExclusionZone(starA.GetMass(), starB.GetMass(), overallSeparation.separation, overallSeparation.eccentricity);
+			double exclusionZone = getOuterOrbitalExclusionZone(starA.GetMass(), starB.GetMass(), mainSystem.GetSeparation(), mainSystem.GetEccentricity());
+				cout << "exclusionZone: " << exclusionZone << endl;
 			// if the separation of AB is SMALLER than this, it's circumbinary
-			if (overallSeparation.separation < exclusionZone) {
+			if (mainSystem.GetSeparation()  < exclusionZone) {
 				dummyStarIsCircumbinary = true;
 				dummyStar.SetMass(starA.GetMass() + starB.GetMass());
 				dummyStar.SetLuminosity(starA.GetLuminosity() + starB.GetLuminosity());
@@ -315,6 +318,7 @@ int main () {
 				dummyStar.SetAge(starA.GetAge());
 				dummyStar.SetMetallicity(starA.GetMetallicity());
 				initialLuminosity = getInitialLuminosity(starA.GetMass()) + getInitialLuminosity(starB.GetMass());
+				innerExclusionZone = exclusionZone; //getInnerOrbitalExclusionZone(starA.GetMass() + starB.GetMass(), starC.GetMass(), overallSeparation.separation, overallSeparation.eccentricity);
 			}
 			else {
 				dummyStar.SetMass(starA.GetMass());
@@ -347,6 +351,7 @@ int main () {
 	}
 
 	cout << "dummyStar.GetMass(): " << dummyStar.GetMass() << endl;
+	cout << "innerExclusionZone: " << innerExclusionZone << endl;
 
 	// put forbidden zones here
 	double forbiddenZone = 1000000.0;
@@ -358,7 +363,7 @@ int main () {
 	}
 
 	// Planets around primary star
-	vector<Planet> dummyStarPlanets = formPlanets (dummyStar, engine, forbiddenZone, dummyStarIsCircumbinary, initialLuminosity);
+	vector<Planet> dummyStarPlanets = formPlanets (dummyStar, engine, forbiddenZone, dummyStarIsCircumbinary, initialLuminosity, innerExclusionZone);
 
 	// HERE!
 
@@ -918,7 +923,7 @@ double getOuterOrbitalExclusionZone (double pMass, double sMass, double separati
 // ////////////////////////////////////
 // ////////////////////////////////////
 
-vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbiddenZone, bool starIsCircumbinary, double initialLuminosity) {
+vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbiddenZone, bool starIsCircumbinary, double initialLuminosity, double innerExclusionZone) {
 	double diskMassFactor = generateDiskMassFactor(e);
 	cout << "diskMassFactor: " << diskMassFactor << endl;
 	double migrationFactor = generateMigrationFactor(e, diskMassFactor);
@@ -1019,14 +1024,15 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 
 	// print for testing
 	for (int i = 0; i < sPlanets.size(); i++) {
-		cout << i << ": " << sPlanets[i].planet.GetDistance() << " AU; mass " << sPlanets[i].planet.GetMass() << endl;
+		cout << i << ": " << sPlanets[i].planet.GetDistance() << " AU; mass " << sPlanets[i].planet.GetMass();
+		cout << "; disrupted " << sPlanets[i].orbitDisrupted << endl;
 	}
 
 	// work exclusion zones
 	cout << "forbiddenZone: " << forbiddenZone << endl;
 	for (int i = 0; i < sPlanets.size(); i++) {
 		double distance = sPlanets[i].planet.GetDistance();
-		if (distance < diskInnerEdge || distance > slowAccretionLine || distance > forbiddenZone) {
+		if (distance < diskInnerEdge || distance > slowAccretionLine || distance > forbiddenZone || (distance < innerExclusionZone && starIsCircumbinary)) {
 			cout << "Planet " << i << " is out of bounds!\n";
 			sPlanets[i].inExclusionZone = true;
 		}
@@ -1106,6 +1112,16 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 				}
 				else if (orbitAfterInwardMigration < diskInnerEdge && starIsCircumbinary) { 
 					// TBD: Account for circumbinary zones!
+					thereWasInwardMigration = true;
+					cout << "There was inward migration!\n";
+					if (orbitAfterInwardMigration < innerExclusionZone) {
+						sPlanets[i].planet.SetDistance(innerExclusionZone * 1.07);
+						cout << "There was inward migration into an exclusion zone! New distance: " << innerExclusionZone * 1.07 << endl;
+						orbitAfterInwardMigration = innerExclusionZone * 1.07;
+					}
+					else {
+						sPlanets[i].planet.SetDistance(orbitAfterInwardMigration);
+					}
 				}
 				break;
 			}
