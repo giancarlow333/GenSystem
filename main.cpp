@@ -1,5 +1,8 @@
 #include <iostream>
 #include <random>
+#include <fstream>          // file output
+#include <string>           // file names
+#include <filesystem>       // directories
 #include "StarSystem.h"
 #include "Star.h"
 #include "Planet.h"
@@ -75,7 +78,7 @@ int main () {
 	else { cout << "IS NOT"; }
 	cout << " multiple!" << endl << endl;
 
-	isMultiple = true; // For testing
+	isMultiple = false; // For testing
 
 	// Create star
 	Star starA, starB, starC, starD;
@@ -367,8 +370,6 @@ int main () {
 	// Planets around primary star
 	vector<Planet> dummyStarPlanets = formPlanets (dummyStar, engine, forbiddenZone, dummyStarIsCircumbinary, initialLuminosity, innerExclusionZone);
 
-	// HERE!
-
 	cout << "\nFinal layout...:\n";
 	for (int i = 0; i < dummyStarPlanets.size(); i++) {
 		cout << i << ": " << dummyStarPlanets[i].GetDistance() << " AU; mass " << dummyStarPlanets[i].GetMass();
@@ -379,6 +380,26 @@ int main () {
 		cout << "; class " << dummyStarPlanets[i].GetPlanetClass() << endl;
 	}
 
+
+	// file output
+	std::filesystem::create_directory("output");
+
+	ofstream outFile;
+	string file_out;
+	file_out = "output/System_" + to_string(seed);
+	cout << "file_out: " << file_out << endl;
+	file_out = file_out + string(".html");
+	cout << "seed: " << seed << endl;
+	cout << "file_out: " << file_out << endl;
+	outFile.open(file_out.c_str());
+
+	if (outFile.fail()) {
+		  cout << "Could not open output file.\n";
+		  exit(1);
+	}
+
+	outFile.close();
+	cout << "Goodbye, and good luck!" << endl;
 
 	return 0;
 }
@@ -1414,3 +1435,4 @@ void placeRemainingPlanets (vector<FormingPlanet> & pVector, int firstPlanetInde
 	}
 	return;
 }
+

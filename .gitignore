@@ -3,3 +3,4 @@ steps.txt
 GenSystem
 *.o
 *~
+output/
