@@ -37,7 +37,7 @@ struct OverallSeparation {
 /* MAIN */
 int main () {
 	cout << "Hello!\n\n";
-	cout << "Welcome to GenSystem Version" << VERSION_NUMBER << "!" << endl;
+	cout << "Welcome to GenSystem Version " << VERSION_NUMBER << "!" << endl;
 	cout << "(c) 2024 Giancarlo Whitaker" << endl << endl;
 
 	// construct random engine
@@ -227,10 +227,10 @@ int main () {
 		mainSystem.SetSecondaryStar(starB);
 	}
 	else if (multiplicity == 3) {
-		cout << "Not yet implemented!\n\n";
+		cout << "Not yet implemented (1)!\n\n";
 	}
 	else {
-		cout << "Not yet implemented!\n\n";
+		cout << "Not yet implemented (2)!\n\n";
 	}
 
 	// PLANETARY DISK FOR STAR A
@@ -287,7 +287,12 @@ int main () {
 		starA.SetPlanet(temp);
 	}
 
-	
+	vector<Planet> starAPlanets = starA.GetPlanets();
+
+	// print for testing
+	for (int i = 0; i < starAPlanets.size(); i++) {
+		cout << i << ": " << starAPlanets[i].GetDistance() << " AU; mass " << starAPlanets[i].GetMass() << endl;
+	}
 
 	return 0;
 }
