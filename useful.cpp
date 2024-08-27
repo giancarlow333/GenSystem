@@ -81,3 +81,31 @@ string GetSpectralClass (double temp) {
 	else if (temp <= 9550) { return "A1"; }
 	else { return "A0"; }
 }
+
+int getAccretionModifier (double pMass) {
+	if (pMass <= 2) { return 0; }
+	else if (pMass <= 2.38) { return 2; }
+	else if (pMass <= 2.83) { return 4; }
+	else if (pMass <= 3.36) { return 6; }
+	else if (pMass <= 4.00) { return 8; }
+	else if (pMass <= 4.75) { return 10; }
+	else if (pMass <= 5.66) { return 12; }
+	else if (pMass <= 6.73) { return 14; }
+	else if (pMass <= 8.00) { return 16; }
+	else if (pMass <= 9.51) { return 18; }
+	else if (pMass <= 11.31) { return 20; }
+	else if (pMass <= 13.45) { return 22; }
+	else if (pMass <= 16.00) { return 24; }
+	else if (pMass <= 19.03) { return 26; }
+	else if (pMass <= 22.62) { return 28; }
+	else if (pMass <= 26.91) { return 30; }
+	else if (pMass <= 32.00) { return 32; }
+	else if (pMass <= 38.05) { return 34; }
+	else if (pMass <= 45.25) { return 36; }
+	else if (pMass <= 53.82) { return 38; }
+	else if (pMass <= 64) { return 40; }
+	else {
+		int log2pMass = log(pMass) / log(2);
+		return 40 + 8 * (log2pMass - 6);
+	}
+}
