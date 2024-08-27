@@ -243,8 +243,6 @@ int main () {
 	double diskInnerEdge = 0.005 * pow(starA.GetMass(), 1 / 3);
 	double formationIceLine = 4.0 * sqrt(getInitialLuminosity(starA.GetMass()));
 	double slowAccretionLine = 20 * pow(starA.GetMass(), 1 / 3);
-	slowAccretionLine = 8;
-	diskInnerEdge = 0.2;
 	cout << "diskInnerEdge: " << diskInnerEdge << endl;
 	cout << "formationIceLine: " << formationIceLine << endl;
 	cout << "slowAccretionLine: " << slowAccretionLine << endl << endl;
@@ -319,22 +317,38 @@ int main () {
 		cout << i << ": " << starAPlanets[i].GetDistance() << " AU; mass " << starAPlanets[i].GetMass() << endl;
 	}
 
+	// Outer Planetary System
+	for (int i = 5; i < 12; i++) {
+		double planetesimalMass = starAPlanets[i].GetMass();
+	}
+
+
+
+
+
+
+
+
+
+
+
+
 	// work exclusion zones here
-	vector<Planet> starAPlanets2;
+	vector<Planet> starAPlanets_excluded;
 	for (int i = 0; i < starAPlanets.size(); i++) {
 		double distance = starAPlanets[i].GetDistance();
 		if (distance < diskInnerEdge || distance > slowAccretionLine) {
 			cout << "Planet " << i << " is out of bounds!\n";
 		}
 		else {
-			starAPlanets2.push_back(starAPlanets[i]);
+			starAPlanets_excluded.push_back(starAPlanets[i]);
 		}
 	}
 
 	// print for testing
 	cout << "Modified:\n\n";
-	for (int i = 0; i < starAPlanets2.size(); i++) {
-		cout << i << ": " << starAPlanets2[i].GetDistance() << " AU; mass " << starAPlanets2[i].GetMass() << endl;
+	for (int i = 0; i < starAPlanets_excluded.size(); i++) {
+		cout << i << ": " << starAPlanets_excluded[i].GetDistance() << " AU; mass " << starAPlanets_excluded[i].GetMass() << endl;
 	}
 
 	return 0;

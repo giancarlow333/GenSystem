@@ -39,6 +39,10 @@ double Planet::GetMass () {
 double Planet::GetRadius () {
 	return radius;
 }
+
+double Planet::GetPlanetClass () {
+	return classOfPlanet;
+}
 ///////////////////////////////////////
 // MUTATORS
 ///////////////////////////////////////
@@ -53,6 +57,10 @@ void Planet::SetMass (double m) {
 
 void Planet::SetRadius (double r) {
 	radius = r;
+}
+
+void Planet::SetClass (PlanetClass pc) {
+	classOfPlanet = pc;
 }
 ///////////////////////////////////////
 // OPERATORS
