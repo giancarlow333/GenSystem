@@ -27,10 +27,10 @@ double generateMigrationFactor (default_random_engine & e, double diskMassFactor
 double getOuterSystemProperties(Planet & p, int mod, int pNumber, default_random_engine & e);
 double getInnerOrbitalExclusionZone (double pMass, double sMass, double separation, double eccentricity);
 double getOuterOrbitalExclusionZone (double pMass, double sMass, double separation, double eccentricity);
-vector<Planet> formPlanets (Star & s, default_random_engine & e, double diskMassFactor, double diskInnerEdge, double slowAccretionLine, double migrationFactor, double forbiddenZone);
+vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbiddenZone);
 
 // constants
-const string VERSION_NUMBER = "0.5";
+const string VERSION_NUMBER = "0.6";
 
 // struct for overall separation
 struct OverallSeparation {
@@ -342,18 +342,6 @@ int main () {
 
 	cout << "dummyStar.GetMass(): " << dummyStar.GetMass() << endl;
 
-	double diskMassFactor = generateDiskMassFactor(engine);
-	cout << "diskMassFactor: " << diskMassFactor << endl;
-	double migrationFactor = generateMigrationFactor(engine, diskMassFactor);
-	cout << "migrationFactor: " << migrationFactor << endl << endl;
-
-	double diskInnerEdge = 0.005 * pow(dummyStar.GetMass(), 1 / 3);
-	double formationIceLine = 4.0 * sqrt(getInitialLuminosity(starA.GetMass()));
-	double slowAccretionLine = 20 * pow(dummyStar.GetMass(), 1 / 3);
-	cout << "diskInnerEdge: " << diskInnerEdge << endl;
-	cout << "formationIceLine: " << formationIceLine << endl;
-	cout << "slowAccretionLine: " << slowAccretionLine << endl << endl;
-
 	// put forbidden zones here
 	double forbiddenZone = 1000000.0;
 	if (multiplicity == 2 && !dummyStarIsCircumbinary) { // A is orbited by B; planets orbit A
@@ -363,8 +351,10 @@ int main () {
 		forbiddenZone = getInnerOrbitalExclusionZone (starA.GetMass() + starB.GetMass(), starC.GetMass(), overallSeparation.separation, overallSeparation.eccentricity);
 	}
 
+	// Planets around primary star
+	vector<Planet> dummyStarPlanets = formPlanets (dummyStar, engine, forbiddenZone);
+
 	// HERE!
-	vector<Planet> dummyStarPlanets = formPlanets (dummyStar, engine, diskMassFactor, diskInnerEdge, slowAccretionLine, migrationFactor, forbiddenZone);
 
 	cout << "\nFinal layout...:\n";
 	for (int i = 0; i < dummyStarPlanets.size(); i++) {
@@ -921,7 +911,19 @@ double getOuterOrbitalExclusionZone (double pMass, double sMass, double separati
 // ////////////////////////////////////
 // ////////////////////////////////////
 
-vector<Planet> formPlanets (Star & s, default_random_engine & e, double diskMassFactor, double diskInnerEdge, double slowAccretionLine, double migrationFactor, double forbiddenZone) {
+vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbiddenZone) {
+	double diskMassFactor = generateDiskMassFactor(e);
+	cout << "diskMassFactor: " << diskMassFactor << endl;
+	double migrationFactor = generateMigrationFactor(e, diskMassFactor);
+	cout << "migrationFactor: " << migrationFactor << endl << endl;
+
+	double diskInnerEdge = 0.005 * pow(s.GetMass(), 1 / 3);
+	double formationIceLine = 4.0 * sqrt(getInitialLuminosity(s.GetMass()));
+	double slowAccretionLine = 20 * pow(s.GetMass(), 1 / 3);
+	cout << "diskInnerEdge: " << diskInnerEdge << endl;
+	cout << "formationIceLine: " << formationIceLine << endl;
+	cout << "slowAccretionLine: " << slowAccretionLine << endl << endl;
+
 	double innerFormationZone = 2.5 * s.GetMass() * s.GetMetallicity() * diskMassFactor;
 	double middleFormationZone = 80.0 * s.GetMass() * s.GetMetallicity() * diskMassFactor;
 	double outerFormationZone = 18.0 * s.GetMass() * s.GetMetallicity() * diskMassFactor;
