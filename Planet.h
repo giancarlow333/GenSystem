@@ -12,9 +12,13 @@ class Planet
 		Planet(const Planet & other);
 		Planet(double d);
 		// Accessors
+		double GetDistance ();
 		double GetMass ();
+		double GetRadius ();
 		// Mutators
+		void SetDistance (double d);
 		void SetMass (double m);
+		void SetRadius (double r);
 		// Operators
 		Planet & operator=(const Planet & rhs);
 		bool operator==(Planet b);

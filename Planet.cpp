@@ -22,18 +22,32 @@ Planet::Planet(double d) {
 // ACCESSORS
 ///////////////////////////////////////
 
+double Planet::GetDistance () {
+	return distance;
+}
+
 double Planet::GetMass () {
 	return mass;
 }
 
+double Planet::GetRadius () {
+	return radius;
+}
 ///////////////////////////////////////
 // MUTATORS
 ///////////////////////////////////////
+
+void Planet::SetDistance (double d) {
+	distance = d;
+}
 
 void Planet::SetMass (double m) {
 	mass = m;
 }
 
+void Planet::SetRadius (double r) {
+	radius = r;
+}
 ///////////////////////////////////////
 // OPERATORS
 ///////////////////////////////////////
