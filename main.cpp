@@ -525,23 +525,34 @@ int main () {
 		}
 	}
 
-	
+	// Orbital resonances
 
 
 
 	// print for testing
-	cout << "Later...:\n";
+	cout << "After Nice event (if any)...:\n";
 	for (int i = 0; i < starAPlanets.size(); i++) {
 		cout << i << ": " << starAPlanets[i].planet.GetDistance() << " AU; mass " << starAPlanets[i].planet.GetMass();
 		cout << "; dominant? " << starAPlanets[i].isDominantGasGiant;
 		cout << "; disrupted? " << starAPlanets[i].orbitDisrupted;
 		cout << "; ejected? " << starAPlanets[i].planetEjected;
+		cout << "; class " << starAPlanets[i].planet.GetPlanetClass();
 		cout << "; last? " << starAPlanets[i].lastBeforeSlowAccretion << endl;
 	}
 
+	// Remove eliminated orbits
+	vector<Planet> starAPlanets2;
+	for (int i = 0; i < starAPlanets.size(); i++) {
+		if (!starAPlanets[i].orbitDisrupted && !starAPlanets[i].planetEjected) {
+			starAPlanets2.push_back(starAPlanets[i].planet);
+		}
+	}
 
-
-
+	cout << "\nFinal layout...:\n";
+	for (int i = 0; i < starAPlanets2.size(); i++) {
+		cout << i << ": " << starAPlanets2[i].GetDistance() << " AU; mass " << starAPlanets2[i].GetMass();
+		cout << "; class " << starAPlanets2[i].GetPlanetClass() << endl;
+	}
 
 
 	return 0;

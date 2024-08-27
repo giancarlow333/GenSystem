@@ -11,6 +11,7 @@ Planet::Planet(const Planet & other) {
 	distance = other.distance;
 	mass = other.mass;
 	radius = other.radius;
+	classOfPlanet = other.classOfPlanet;
 }
 
 //alternate constructor
