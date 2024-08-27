@@ -414,9 +414,14 @@ int main () {
 		if (theClass == SMALL_GAS_GIANT || theClass == MEDIUM_GAS_GIANT || theClass == LARGE_GAS_GIANT) {
 			starAPlanets[i].isDominantGasGiant = true;
 			thereIsADominantGasGiant = true;
-			gasGiantCount++;
 			dominantGasGiantIndex = i;
 			break;
+		}
+	}
+	for (int i = 5; i < 12; i++) {
+		PlanetClass theClass = starAPlanets[i].planet.GetPlanetClass();
+		if (theClass == SMALL_GAS_GIANT || theClass == MEDIUM_GAS_GIANT || theClass == LARGE_GAS_GIANT) {
+			gasGiantCount++;
 		}
 	}
 
@@ -449,16 +454,33 @@ int main () {
 	}
 
 	// Grand Tack
+	bool thereIsAGrandTack = false;
+	cout << "gasGiantCount: " << gasGiantCount << endl;
 	if (thereIsADominantGasGiant && gasGiantCount > 1) {
 		PlanetClass nextPlanet = starAPlanets[dominantGasGiantIndex].planet.GetPlanetClass();
 		if (nextPlanet == SMALL_GAS_GIANT || nextPlanet == MEDIUM_GAS_GIANT || nextPlanet == LARGE_GAS_GIANT) { // Grand Tack is *possible*
 			uniform_int_distribution<> diceRoll(1, 6);
 			int tackRoll = diceRoll(engine) + diceRoll(engine) + diceRoll(engine);
-			if (tackRoll < 12) { break; } // no grand tack
-			else {
+			tackRoll = 19;
+			if (tackRoll >= 12) {
 				int tackDistanceRoll = diceRoll(engine) + diceRoll(engine) + diceRoll(engine);
 				double finalDistance = (1 + tackDistanceRoll / 10.0) * starAPlanets[dominantGasGiantIndex].planet.GetDistance();
 				starAPlanets[dominantGasGiantIndex].planet.SetDistance(finalDistance);
+				thereIsAGrandTack = true;
+				cout << "There is a grand tack!\n";
+			}
+		}
+	}
+	if (thereIsAGrandTack) {
+		for (int i = dominantGasGiantIndex + 1; i < starAPlanets.size(); i++) {
+			double priorFinalOrbitalRadius = starAPlanets[i - 1].planet.GetDistance();
+			double currentOrbitalRadius = starAPlanets[i].planet.GetDistance();
+			if (priorFinalOrbitalRadius * 1.3 > currentOrbitalRadius) {
+				starAPlanets[i].planet.SetDistance(priorFinalOrbitalRadius * 1.3);
+				cout << "Adjustment\n";
+			}
+			else {
+				break;
 			}
 		}
 	}
