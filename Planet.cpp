@@ -9,6 +9,7 @@ Planet::Planet()
 
 Planet::Planet(const Planet & other) {
 	distance = other.distance;
+	eccentricity = other.eccentricity;
 	mass = other.mass;
 	radius = other.radius;
 	classOfPlanet = other.classOfPlanet;
@@ -33,6 +34,10 @@ double Planet::GetDistance () {
 	return distance;
 }
 
+double Planet::GetEccentricity () {
+	return eccentricity;
+}
+
 double Planet::GetMass () {
 	return mass;
 }
@@ -50,6 +55,10 @@ PlanetClass Planet::GetPlanetClass () {
 
 void Planet::SetDistance (double d) {
 	distance = d;
+}
+
+void Planet::SetEccentricity (double e) {
+	eccentricity = e;
 }
 
 void Planet::SetMass (double m) {

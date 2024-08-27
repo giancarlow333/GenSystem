@@ -25,11 +25,13 @@ class Planet
 		Planet(double d, double m);
 		// Accessors
 		double GetDistance ();
+		double GetEccentricity ();
 		double GetMass ();
 		double GetRadius ();
 		PlanetClass GetPlanetClass ();
 		// Mutators
 		void SetDistance (double d);
+		void SetEccentricity (double e);
 		void SetMass (double m);
 		void SetRadius (double r);
 		void SetPlanetClass (PlanetClass pc);
@@ -39,6 +41,7 @@ class Planet
 	protected:
 	private:
 		double distance; // distance from star in AU
+		double eccentricity; // orbital eccentricity
 		double mass; // mass of planet in earths
 		double radius; // radius of planet in earths
 		PlanetClass classOfPlanet;

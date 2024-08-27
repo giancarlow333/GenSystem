@@ -372,6 +372,7 @@ int main () {
 	cout << "\nFinal layout...:\n";
 	for (int i = 0; i < dummyStarPlanets.size(); i++) {
 		cout << i << ": " << dummyStarPlanets[i].GetDistance() << " AU; mass " << dummyStarPlanets[i].GetMass();
+		cout << "; eccen " << dummyStarPlanets[i].GetEccentricity();
 		cout << "; class " << dummyStarPlanets[i].GetPlanetClass() << endl;
 	}
 
@@ -1300,14 +1301,6 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		}
 	}
 
-
-
-
-
-
-
-
-
 	// print for testing
 	cout << "After inner migration (if any)...:\n";
 	for (int i = 0; i < sPlanets.size(); i++) {
@@ -1320,13 +1313,6 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		cout << "; placed? " << sPlanets[i].finalPlacement << endl;
 	}
 
-
-
-
-
-
-
-
 	// Remove eliminated orbits
 	vector<Planet> sPlanets2;
 	for (int i = 0; i < sPlanets.size(); i++) {
@@ -1334,6 +1320,36 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			sPlanets2.push_back(sPlanets[i].planet);
 		}
 	}
+
+	// Set orbital eccentricities
+	int totalNumberOfPlanets = sPlanets2.size();
+	double typicalEccen = getTypicalEccentricity(totalNumberOfPlanets);
+	for (int i = 0; i < sPlanets2.size(); i++) {
+		normal_distribution<> randomNorm(-0.035, 0.02415); // 2d6-7 / 100
+		double eccen = typicalEccen + randomNorm(e);
+		if (eccen < 0) { eccen = 0; }
+		sPlanets2[i].SetEccentricity(eccen);
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	return sPlanets2;
 }

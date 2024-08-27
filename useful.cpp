@@ -111,4 +111,13 @@ int getAccretionModifier (double pMass) {
 	}
 }
 
-
+double getTypicalEccentricity (int planets) {
+	if (planets <=2) { return 0.23; }
+	else if (planets == 3) { return 0.15; }
+	else if (planets == 4) { return 0.12; }
+	else if (planets == 5) { return 0.10; }
+	else if (planets == 6) { return 0.08; }
+	else if (planets == 7) { return 0.07; }
+	else if (planets <= 9) { return 0.06; }
+	else { return 0.05; }
+}
