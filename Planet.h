@@ -27,7 +27,7 @@ class Planet
 		double GetDistance ();
 		double GetMass ();
 		double GetRadius ();
-		double GetPlanetClass ();
+		PlanetClass GetPlanetClass ();
 		// Mutators
 		void SetDistance (double d);
 		void SetMass (double m);

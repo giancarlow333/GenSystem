@@ -40,7 +40,7 @@ double Planet::GetRadius () {
 	return radius;
 }
 
-double Planet::GetPlanetClass () {
+PlanetClass Planet::GetPlanetClass () {
 	return classOfPlanet;
 }
 ///////////////////////////////////////

@@ -42,6 +42,7 @@ struct FormingPlanet {
 	bool inExclusionZone = false;
 	bool lastBeforeSlowAccretion = false;
 	bool penultBeforeSlowAccretion = false;
+	bool orbitDisrupted = false;
 };
 
 /* MAIN */
@@ -404,8 +405,47 @@ int main () {
 	middleFormationZone *= (1 - massToInnerSystem);
 	innerFormationZone += (massToInnerSystem * middleFormationZone);
 
-	// Dominant Gas Giant Inward Migration
+	// Find dominant gas giant
+	bool thereIsADominantGasGiant = false;
+	int gasGiantCount = 0;
+	for (int i = 5; i < 12; i++) {
+		PlanetClass theClass = starAPlanets[i].planet.GetPlanetClass();
+		if (theClass == SMALL_GAS_GIANT || theClass == MEDIUM_GAS_GIANT || theClass == LARGE_GAS_GIANT) {
+			starAPlanets[i].isDominantGasGiant = true;
+			thereIsADominantGasGiant = true;
+			gasGiantCount++;
+			break;
+		}
+	}
 
+	// Dominant Gas Giant Inward Migration
+	bool thereWasInwardMigration = false;
+	double orbitAfterInwardMigration = 0;
+	double formationRadius;
+	if (thereIsADominantGasGiant) {
+		for (int i = 5; i < 12; i++) {
+			if (starAPlanets[i].isDominantGasGiant) {
+				formationRadius = starAPlanets[i].planet.GetDistance();
+				orbitAfterInwardMigration = formationRadius * migrationFactor;
+				cout << "orbitAfterInwardMigration: " << orbitAfterInwardMigration << endl;
+				diskInnerEdge = 0.1;
+				if (orbitAfterInwardMigration < diskInnerEdge) { // gas giant migrates inwards
+					thereWasInwardMigration = true;
+					cout << "There was inward migration!\n";
+					starAPlanets[i].planet.SetDistance(orbitAfterInwardMigration);
+				}
+				break;
+			}
+		}
+	}
+	if (thereWasInwardMigration) { // mark orbits as disturbed
+		for (int i = 0; i < starAPlanets.size(); i++) {
+			if (starAPlanets[i].planet.GetDistance() > orbitAfterInwardMigration && starAPlanets[i].planet.GetDistance() < formationRadius) {
+				starAPlanets[i].orbitDisrupted = true;
+			}
+		}
+	}
+	
 
 
 
@@ -413,6 +453,8 @@ int main () {
 	cout << "Later...:\n";
 	for (int i = 0; i < starAPlanets.size(); i++) {
 		cout << i << ": " << starAPlanets[i].planet.GetDistance() << " AU; mass " << starAPlanets[i].planet.GetMass();
+		cout << "; dominant? " << starAPlanets[i].isDominantGasGiant;
+		cout << "; disrupted? " << starAPlanets[i].orbitDisrupted;
 		cout << "; penult? " << starAPlanets[i].penultBeforeSlowAccretion;
 		cout << "; last? " << starAPlanets[i].lastBeforeSlowAccretion << endl;
 	}
@@ -420,23 +462,7 @@ int main () {
 
 
 
-	/* work exclusion zones here
-	vector<Planet> starAPlanets_excluded;
-	for (int i = 0; i < starAPlanets.size(); i++) {
-		double distance = starAPlanets[i].planet.GetDistance();
-		if (distance < diskInnerEdge || distance > slowAccretionLine) {
-			cout << "Planet " << i << " is out of bounds!\n";
-		}
-		else {
-			starAPlanets_excluded.push_back(starAPlanets[i]);
-		}
-	}
 
-	// print for testing
-	cout << "Modified:\n\n";
-	for (int i = 0; i < starAPlanets_excluded.size(); i++) {
-		cout << i << ": " << starAPlanets_excluded[i].GetDistance() << " AU; mass " << starAPlanets_excluded[i].GetMass() << endl;
-	}*/
 
 	return 0;
 }
