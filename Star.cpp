@@ -57,6 +57,13 @@ vector<Planet> Star::GetPlanets () {
 	return planets;
 }
 
+string Star::GetSpectralType () {
+	return spectralType;
+}
+
+string Star::GetLuminosityClass () {
+	return luminosityClass;
+}
 /*char Star::GetSpectralClass () const
 {   // BAFGKMLTDX
     switch (spectral) {
@@ -123,6 +130,13 @@ void Star::SetLuminosity (double l) {
 
 void Star::SetRadius (double r) {
 	radius = r;
+}
+
+void Star::SetSpectralType (string st) {
+	spectralType = st;
+}
+void Star::SetLuminosityClass (string lc) {
+	luminosityClass = lc;
 }
 
 void Star::SetPlanet (Planet p) {

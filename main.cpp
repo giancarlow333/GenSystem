@@ -17,10 +17,11 @@ double generateDistanceBetweenStars(default_random_engine & e, double primaryMas
 double generateMultipleStarEccentricity(default_random_engine & e, double separation);
 double generateSystemAge (default_random_engine & e);
 double generateMetallicity (default_random_engine & e, double age);
-double getLuminosityFromMass (double mass);
+double getInitialLuminosity (double mass);
 double getStellarLifespan (double mass);
-double getStellarTemperature (double mass);
+double getInitialTemperature (double mass);
 double getStellarRadius (double lum, double temp);
+void evolveStar (Star & s, default_random_engine & e);
 
 // struct for overall separation
 struct OverallSeparation {
@@ -40,6 +41,7 @@ int main () {
 
 	// mass of the primary star
 	double baseMass = initialMassFunction(engine);
+	//baseMass = 1.2; // for testing
 
 	cout << "The base mass is: " << baseMass << endl << endl;
 
@@ -191,50 +193,30 @@ int main () {
 
 	// Age, Metallicity, Luminosity, Lifespan
 	double systemAge = generateSystemAge(engine);
+	//systemAge = 6.5; // for testing
 	cout << "Age: " << systemAge << " Ga" << endl << endl;
 	double metallicity = generateMetallicity(engine, systemAge);
 	cout << "Metallicity: " << metallicity << " x Sol" << endl << endl;
 	starA.SetAge(systemAge);
 	starA.SetMetallicity(metallicity);
 
-	double baseLuminosityA = getLuminosityFromMass(starA.GetMass());
-	double lifespanA = getStellarLifespan(starA.GetMass());
-	double currentLuminosityA;
-	if (systemAge < lifespanA) {
-		currentLuminosityA = baseLuminosityA * pow(2.2, systemAge / lifespanA);
-	}
-	else {cout << "A is too old!\n\n";}
+	// evolve Star A
+	evolveStar(starA, engine);
 
-	starA.SetLuminosity(currentLuminosityA);
 	cout << "A Luminosity: " << starA.GetLuminosity() << endl;
-
-	starA.SetTemperature(getStellarTemperature(starA.GetMass()));
 	cout << "A Temperature: " << starA.GetTemperature() << endl;
-
-	starA.SetRadius(getStellarRadius(starA.GetLuminosity(), starA.GetTemperature()));
 	cout << "A Radius: " << starA.GetRadius() << endl;
-	cout << "A Type: " << GetSpectralClass(starA.GetTemperature()) << endl;
+	cout << "A Type: " << starA.GetSpectralType() << " " << starA.GetLuminosityClass() << endl;
 	if (multiplicity == 2) {
 		starB.SetAge(systemAge);
 		starB.SetMetallicity(metallicity);
 
-		double baseLuminosityB = getLuminosityFromMass(starB.GetMass());
-		double lifespanB = getStellarLifespan(starB.GetMass());
-		double currentLuminosityB;
-		if (systemAge < lifespanB) {
-			currentLuminosityB = baseLuminosityB * pow(2.2, systemAge / lifespanB);
-		}
-		else {cout << "B is too old!\n\n";}
-		starB.SetLuminosity(currentLuminosityB);
+		evolveStar(starB, engine);
 
 		cout << "B Luminosity: " << starB.GetLuminosity() << endl;
-
-		starB.SetTemperature(getStellarTemperature(starB.GetMass()));
 		cout << "B Temperature: " << starB.GetTemperature() << endl;
-
-		starB.SetRadius(getStellarRadius(starB.GetLuminosity(), starB.GetTemperature()));
 		cout << "B Radius: " << starB.GetRadius() << endl;
-		cout << "B Type: " << GetSpectralClass(starB.GetTemperature()) << endl;
+		cout << "B Type: " << starB.GetSpectralType() << " " << starB.GetLuminosityClass() << endl;
 
 		mainSystem.SetPrimaryStar(starA);
 		mainSystem.SetSecondaryStar(starB);
@@ -427,17 +409,18 @@ double generateMetallicity (default_random_engine & e, double age) {
 	return (roll / 10) * (1.2 - age / 13.5);
 }
 
-/* getLuminosityFromMass
+/* getInitialLuminosity
+ * Get the luminosity the star had at formation
+ * I derived this equation by doing two regressions on the table found in
+ * "Architect of Worlds 0.8," which is ultimately from Mamajek (2016) and
+ * Townsend (2016).
  */
-double getLuminosityFromMass (double mass) {
-	if (mass < 0.43) {
-		return 0.23 * pow(mass, 2.3);
-	}
-	else if (mass < 2) {
-		return pow(mass, 4.0);
+double getInitialLuminosity (double mass) {
+	if (mass < 0.5) {
+		return 0.2106 * pow(mass, 2.3357);
 	}
 	else {
-		return 1.4 * pow(mass, 3.5);
+		return 0.7329 * pow(mass, 4.6128);
 	}
 }
 
@@ -455,10 +438,23 @@ double getStellarLifespan (double mass) {
 	}
 }
 
-/* getStellarTemperature
+/* getInitialTemperature
+ * Get the temperature the star had at formation
+ * I derived this equation by doing multiple regressions on the table found in
+ * "Architect of Worlds 0.8," which is ultimately from Mamajek (2016) and
+ * Townsend (2016).  This equation is very ugly but it avoid a table at least!
  */
-double getStellarTemperature (double mass) {
-	return 5772.0 * pow(mass, 0.505);
+double getInitialTemperature (double mass) {
+	if (mass < 0.5) {
+		return 4335.95 + 684.72 * log (mass);
+	}
+	else if (mass < 1.3) {
+		double denominator = 1 + 4.2427 * exp(-2.914 * mass);
+		return 7007.56 / denominator;
+	}
+	else {
+		return 2857.576 * mass + 2537.984;
+	}
 }
 
 /* getStellarRadius
@@ -466,3 +462,111 @@ double getStellarTemperature (double mass) {
 double getStellarRadius (double lum, double temp) {
 	return pow(lum, 0.5) / pow(temp / 5772.0, 2.0);
 }
+
+/* evolveStar
+ * When invoked, age and mass need to have been calculated!
+ */
+void evolveStar (Star & s, default_random_engine & e) {
+	double systemAge = s.GetAge();
+	double starMass = s.GetMass();
+
+	if (starMass < 0.08) { // it's a brown dwarf
+		double upper = pow(starMass, 0.83);
+		double lower = pow(systemAge, 0.32);
+		double temp = 18600 * upper / lower;
+		s.SetTemperature(temp);
+
+		s.SetLuminosity(pow(temp, 4.0) / 1.1e17);
+
+		s.SetSpectralType(GetSpectralClass(s.GetTemperature()));
+		s.SetLuminosityClass("V");
+
+		return;
+	}
+	
+	double lifespan = getStellarLifespan(starMass);
+
+	if (systemAge <= lifespan) { // main sequence
+		double initLum = getInitialLuminosity(starMass);
+		double lum = initLum * pow(2.2, systemAge / lifespan);
+		s.SetLuminosity(lum);
+
+		double temp = getInitialTemperature(starMass);
+		s.SetTemperature(temp);
+
+		double radius = getStellarRadius(lum, temp);
+		s.SetRadius(radius);
+
+		s.SetSpectralType(GetSpectralClass(temp));
+		s.SetLuminosityClass("V");
+	}
+	else if (systemAge <= 1.15 * lifespan) {
+		uniform_int_distribution<> diceRoll(1, 100);
+		int roll = diceRoll(e);
+
+		if (roll <= 60) { // subgiant
+			uniform_real_distribution<> newLumRatio(2.0, 2.4);
+			
+			double initLum = getInitialLuminosity(starMass);
+			s.SetLuminosity(newLumRatio(e) * initLum);
+
+			double initTemp = getInitialTemperature(starMass);
+			uniform_real_distribution<> newTemp(5000, initTemp);
+			double newTemperature = newTemp(e);
+			s.SetTemperature(newTemperature);
+
+			double radius = getStellarRadius(newLumRatio(e) * initLum, newTemperature);
+			s.SetRadius(radius);
+
+			s.SetSpectralType(GetSpectralClass(newTemperature));
+			s.SetLuminosityClass("IV");
+		}
+		else if (roll <= 90) { // red giant branch
+			uniform_real_distribution<> randomU(0, 1);
+			double randomNumber = randomU(e);
+
+			s.SetTemperature(5000 - randomNumber * 2000);
+			s.SetLuminosity(pow(50, 1 + randomNumber));
+			s.SetRadius(getStellarRadius(s.GetLuminosity(), s.GetTemperature()));
+
+			s.SetSpectralType(GetSpectralClass(s.GetTemperature()));
+			s.SetLuminosityClass("III");
+		}
+		else { // Horizontal branch
+			uniform_real_distribution<> randomLum(50, 100);
+			s.SetLuminosity(randomLum(e));
+
+			normal_distribution<> randomTemp(5000, 50);
+			s.SetTemperature(randomTemp(e));
+
+			s.SetRadius(getStellarRadius(s.GetLuminosity(), s.GetTemperature()));
+
+			s.SetSpectralType(GetSpectralClass(s.GetTemperature()));
+			s.SetLuminosityClass("II");
+		}
+	} // close 1.15 * lifespan
+	else { // white dwarf
+		double newMass = 0.43 + starMass / 10.4;
+		s.SetMass(newMass);
+
+		double postLifespan = systemAge - (1.15 * lifespan);
+		double upper = pow(newMass, 0.25);
+		double lower = pow(postLifespan, 0.35);
+		double temp = 13500 * upper / lower;
+		s.SetTemperature(temp);
+
+		double radiusKM = 5500 / pow(newMass, 1 / 3);
+		double radius = radiusKM / 695700;
+		s.SetRadius(radius);
+
+		s.SetLuminosity(pow(radius, 2) * pow(temp / 5772, 4));
+
+		// Set Spectral Class
+		s.SetSpectralType("D");
+		s.SetLuminosityClass("WD");
+	}
+
+	return;
+}
+
+

@@ -20,6 +20,8 @@ class Star
 		double GetTemperature ();
 		double GetLuminosity ();
 		double GetRadius ();
+		string GetSpectralType ();
+		string GetLuminosityClass ();
 		vector<Planet> GetPlanets ();
 		// Mutators
 		void SetMass (double m);
@@ -28,6 +30,8 @@ class Star
 		void SetTemperature (double t);
 		void SetLuminosity (double l);
 		void SetRadius (double r);
+		void SetSpectralType (string st);
+		void SetLuminosityClass (string lc);
 		void SetPlanet (Planet p);
 		void SetPlanets (vector<Planet> vp);
 		// Operators
@@ -41,6 +45,8 @@ class Star
 		double temperature;
 		double luminosity;
 		double radius;
+		string spectralType;
+		string luminosityClass;
 		vector<Planet> planets;
 };
 
