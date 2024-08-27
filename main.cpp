@@ -41,6 +41,7 @@ int main () {
 
 	// mass of the primary star
 	double baseMass = initialMassFunction(engine);
+	//baseMass = 1.2; // for testing
 
 	cout << "The base mass is: " << baseMass << endl << endl;
 
@@ -192,6 +193,7 @@ int main () {
 
 	// Age, Metallicity, Luminosity, Lifespan
 	double systemAge = generateSystemAge(engine);
+	//systemAge = 6.5; // for testing
 	cout << "Age: " << systemAge << " Ga" << endl << endl;
 	double metallicity = generateMetallicity(engine, systemAge);
 	cout << "Metallicity: " << metallicity << " x Sol" << endl << endl;
@@ -204,7 +206,7 @@ int main () {
 	cout << "A Luminosity: " << starA.GetLuminosity() << endl;
 	cout << "A Temperature: " << starA.GetTemperature() << endl;
 	cout << "A Radius: " << starA.GetRadius() << endl;
-	cout << "A Type: " << GetSpectralClass(starA.GetTemperature()) << endl;
+	cout << "A Type: " << starA.GetSpectralType() << " " << starA.GetLuminosityClass() << endl;
 	if (multiplicity == 2) {
 		starB.SetAge(systemAge);
 		starB.SetMetallicity(metallicity);
@@ -214,7 +216,7 @@ int main () {
 		cout << "B Luminosity: " << starB.GetLuminosity() << endl;
 		cout << "B Temperature: " << starB.GetTemperature() << endl;
 		cout << "B Radius: " << starB.GetRadius() << endl;
-		cout << "B Type: " << GetSpectralClass(starB.GetTemperature()) << endl;
+		cout << "B Type: " << starB.GetSpectralType() << " " << starB.GetLuminosityClass() << endl;
 
 		mainSystem.SetPrimaryStar(starA);
 		mainSystem.SetSecondaryStar(starB);
@@ -476,6 +478,9 @@ void evolveStar (Star & s, default_random_engine & e) {
 
 		s.SetLuminosity(pow(temp, 4.0) / 1.1e17);
 
+		s.SetSpectralType(GetSpectralClass(s.GetTemperature()));
+		s.SetLuminosityClass("V");
+
 		return;
 	}
 	
@@ -491,6 +496,9 @@ void evolveStar (Star & s, default_random_engine & e) {
 
 		double radius = getStellarRadius(lum, temp);
 		s.SetRadius(radius);
+
+		s.SetSpectralType(GetSpectralClass(temp));
+		s.SetLuminosityClass("V");
 	}
 	else if (systemAge <= 1.15 * lifespan) {
 		uniform_int_distribution<> diceRoll(1, 100);
@@ -509,6 +517,9 @@ void evolveStar (Star & s, default_random_engine & e) {
 
 			double radius = getStellarRadius(newLumRatio(e) * initLum, newTemperature);
 			s.SetRadius(radius);
+
+			s.SetSpectralType(GetSpectralClass(newTemperature));
+			s.SetLuminosityClass("IV");
 		}
 		else if (roll <= 90) { // red giant branch
 			uniform_real_distribution<> randomU(0, 1);
@@ -517,6 +528,9 @@ void evolveStar (Star & s, default_random_engine & e) {
 			s.SetTemperature(5000 - randomNumber * 2000);
 			s.SetLuminosity(pow(50, 1 + randomNumber));
 			s.SetRadius(getStellarRadius(s.GetLuminosity(), s.GetTemperature()));
+
+			s.SetSpectralType(GetSpectralClass(s.GetTemperature()));
+			s.SetLuminosityClass("III");
 		}
 		else { // Horizontal branch
 			uniform_real_distribution<> randomLum(50, 100);
@@ -526,6 +540,9 @@ void evolveStar (Star & s, default_random_engine & e) {
 			s.SetTemperature(randomTemp(e));
 
 			s.SetRadius(getStellarRadius(s.GetLuminosity(), s.GetTemperature()));
+
+			s.SetSpectralType(GetSpectralClass(s.GetTemperature()));
+			s.SetLuminosityClass("II");
 		}
 	} // close 1.15 * lifespan
 	else { // white dwarf
@@ -543,25 +560,13 @@ void evolveStar (Star & s, default_random_engine & e) {
 		s.SetRadius(radius);
 
 		s.SetLuminosity(pow(radius, 2) * pow(temp / 5772, 4));
+
+		// Set Spectral Class
+		s.SetSpectralType("D");
+		s.SetLuminosityClass("WD");
 	}
 
 	return;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
