@@ -89,7 +89,7 @@ int main () {
 	OverallSeparation overallSeparation;
 
 	// If the star is multiple, determine components
-	int multiplicity = 0;
+	int multiplicity = 1;
 	bool systemArrangement;
 	if (isMultiple) {
 		multiplicity = generateSystemMultiplicity(engine);
@@ -398,6 +398,103 @@ int main () {
 		  exit(1);
 	}
 
+	outFile << "<html>\n\t<head>\n\t\t<title>GenSystem #" << seed << "</title>\n\t</head>";
+	outFile << "\n\t<body>\n";
+	outFile << "\t\t<h1>System " << seed << "</h1>\n";
+
+	string firstStarName = "System " + to_string(seed);
+	if (multiplicity == 1) {
+		outFile << "\t\t<h2>Star</h2>\n";
+		outFile << "\t\t<p><strong>Spectral type:</strong> " << starA.GetSpectralType() << " ";
+		outFile << starA.GetLuminosityClass() << "</p>\n";
+		outFile << "\t\t<p><strong>Mass:</strong> " << starA.GetMass() << "</p>\n";
+		outFile << "\t\t<p><strong>Radius:</strong> " << starA.GetRadius() << "</p>\n";
+		outFile << "\t\t<p><strong>Luminosity:</strong> " << starA.GetLuminosity() << "</p>\n";
+		outFile << "\t\t<p><strong>Temperature:</strong> " << starA.GetTemperature() << " K</p>\n";
+		outFile << "\t\t<p><strong>Age:</strong> " << starA.GetAge() << " Ga</p>\n";
+
+		outFile << "\t\t<h2>Planets</h2>\n";
+	}
+	else {
+		outFile << "\t\t<h2>Star(s)</h2>\n";
+		outFile << "\t\t<h3>System " << seed << " A</h3>\n";
+		outFile << "\t\t<p><strong>Spectral type:</strong> " << starA.GetSpectralType() << " ";
+		outFile << starA.GetLuminosityClass() << "</p>\n";
+		outFile << "\t\t<p><strong>Mass:</strong> " << starA.GetMass() << "</p>\n";
+		outFile << "\t\t<p><strong>Radius:</strong> " << starA.GetRadius() << "</p>\n";
+		outFile << "\t\t<p><strong>Luminosity:</strong> " << starA.GetLuminosity() << "</p>\n";
+		outFile << "\t\t<p><strong>Temperature:</strong> " << starA.GetTemperature() << " K</p>\n";
+		outFile << "\t\t<p><strong>Age:</strong> " << starA.GetAge() << " Ga</p>\n";
+
+		outFile << "\t\t<h3>System " << seed << " B</h3>\n";
+		outFile << "\t\t<p><strong>Spectral type:</strong> " << starB.GetSpectralType() << " ";
+		outFile << starB.GetLuminosityClass() << "</p>\n";
+		outFile << "\t\t<p><strong>Mass:</strong> " << starB.GetMass() << "</p>\n";
+		outFile << "\t\t<p><strong>Radius:</strong> " << starB.GetRadius() << "</p>\n";
+		outFile << "\t\t<p><strong>Luminosity:</strong> " << starB.GetLuminosity() << "</p>\n";
+		outFile << "\t\t<p><strong>Temperature:</strong> " << starB.GetTemperature() << " K</p>\n";
+		outFile << "\t\t<p><strong>Age:</strong> " << starB.GetAge() << " Ga</p>\n";
+		if (multiplicity == 3 || multiplicity == 4) {
+			outFile << "\t\t<h3>System " << seed << " C</h3>\n";
+			outFile << "\t\t<p><strong>Spectral type:</strong> " << starC.GetSpectralType() << " ";
+			outFile << starC.GetLuminosityClass() << "</p>\n";
+			outFile << "\t\t<p><strong>Mass:</strong> " << starC.GetMass() << "</p>\n";
+			outFile << "\t\t<p><strong>Radius:</strong> " << starC.GetRadius() << "</p>\n";
+			outFile << "\t\t<p><strong>Luminosity:</strong> " << starC.GetLuminosity() << "</p>\n";
+			outFile << "\t\t<p><strong>Temperature:</strong> " << starC.GetTemperature() << " K</p>\n";
+			outFile << "\t\t<p><strong>Age:</strong> " << starC.GetAge() << " Ga</p>\n";
+		}
+	}
+
+	for (int i = 0; i < dummyStarPlanets.size(); i++) {
+		outFile << "\t\t<h3>" << firstStarName << " #" << i + 1 << "</h3>\n";
+		PlanetClass theClass = dummyStarPlanets[i].GetPlanetClass();
+		string className;
+
+		switch(theClass) {
+			case NONE:
+				className = "None";
+				break;
+			case FAILED_CORE:
+				className = "Failed core";
+				break;
+			case SMALL_GAS_GIANT:
+				className = "Small gas giant";
+				break;
+			case MEDIUM_GAS_GIANT:
+				className = "Medium gas giant";
+				break;
+			case LARGE_GAS_GIANT:
+				className = "Large gas giant";
+				break;
+			case TERRESTRIAL_PLANET:
+				className = "Terrestrial planet";
+				break;
+			case PLANETOID_BELT:
+				className = "Planetoid belt";
+				break;
+			case LEFTOVER_OLIGARCH:
+				className = "Leftover oligarch";
+				break;
+		}
+		
+		outFile << "\t\t<p><strong>Class:</strong> " << className << "</p>\n";
+		outFile << "\t\t<p><strong>Distance:</strong> " << dummyStarPlanets[i].GetDistance() << " AU</p>\n";
+		outFile << "\t\t<p><strong>Orbital eccentricity:</strong> " << dummyStarPlanets[i].GetEccentricity() << "</p>\n";
+		outFile << "\t\t<p><strong>Orbital period:</strong> " << sqrt(pow(dummyStarPlanets[i].GetDistance(), 3.0) / dummyStar.GetMass()) << " a (" << 365.25 * sqrt(pow(dummyStarPlanets[i].GetDistance(), 3.0) / dummyStar.GetMass()) << " d)</p>\n";
+		outFile << "\t\t<p><strong>Mass:</strong> " << dummyStarPlanets[i].GetMass() << " M<sub>E</sub></p>\n";
+		outFile << "\t\t<p><strong>Radius:</strong> " << dummyStarPlanets[i].GetRadius() << " R<sub>E</sub> (";
+		outFile << dummyStarPlanets[i].GetRadius() * 6371.0 << " km)</p>\n";
+		outFile << "\t\t<p><strong>Density:</strong> " << dummyStarPlanets[i].GetDensity() << " D<sub>E</sub> (";
+		outFile << dummyStarPlanets[i].GetDensity() * 5.52 << " g/cc)</p>\n";
+		outFile << "\t\t<p><strong>Gravity:</strong> " << dummyStarPlanets[i].GetGravity() << " g</p>\n";
+	}
+
+
+
+
+
+	outFile << "\t</body>\n</html>";
 	outFile.close();
 	cout << "Goodbye, and good luck!" << endl;
 
