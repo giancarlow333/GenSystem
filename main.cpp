@@ -1257,6 +1257,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	}
 
 	// Inner Planetary System Migration
+	int innermostPlanetIndex = 0;
 	for (int i = 0; i < 5; i++) {
 		double innermostMigrationRadius = sPlanets[i].planet.GetDistance() * migrationFactor;
 		if (innermostMigrationRadius < diskInnerEdge) {
@@ -1265,10 +1266,33 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			if (roll <= 3) { sPlanets[i].planetEjected = true; }
 			else {
 				sPlanets[i].planet.SetDistance(diskInnerEdge);
+				sPlanets[i].finalPlacement = true;
+				innermostPlanetIndex = i;
 				break;
 			}
 		}
 	}
+	// If there are no remaining objects before the dominant gas giant, inner formation is done
+	// Else, if there are no gas giants, move the final planet outward
+
+	// Place remaining inner system
+	// count how many objects remain to be placed between innermost surviving object and either the dominant gas giant or, if no such, the outermost planet
+	countToBePlaced = 0;
+	for (int i = innermostPlanetIndex + 1; i < dominantGasGiantIndex; i++) { // NOT QUITE RIGHT!
+		if (!sPlanets[i].finalPlacement) { countToBePlaced++; }
+		else { break; }
+	}
+	cout << "countToBePlaced: " << countToBePlaced << endl;
+
+
+
+
+
+
+
+
+
+
 
 	// print for testing
 	cout << "After inner migration (if any)...:\n";
