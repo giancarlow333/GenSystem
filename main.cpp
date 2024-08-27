@@ -230,23 +230,37 @@ int main () {
 	cout << "A Luminosity: " << starA.GetLuminosity() << endl;
 	cout << "A Temperature: " << starA.GetTemperature() << endl;
 	cout << "A Radius: " << starA.GetRadius() << endl;
-	cout << "A Type: " << starA.GetSpectralType() << " " << starA.GetLuminosityClass() << endl;
+	cout << "A Type: " << starA.GetSpectralType() << " " << starA.GetLuminosityClass() << endl << endl;
 	if (multiplicity == 2) {
 		starB.SetAge(systemAge);
 		starB.SetMetallicity(metallicity);
-
 		evolveStar(starB, engine);
 
 		cout << "B Luminosity: " << starB.GetLuminosity() << endl;
 		cout << "B Temperature: " << starB.GetTemperature() << endl;
 		cout << "B Radius: " << starB.GetRadius() << endl;
-		cout << "B Type: " << starB.GetSpectralType() << " " << starB.GetLuminosityClass() << endl;
+		cout << "B Type: " << starB.GetSpectralType() << " " << starB.GetLuminosityClass() << endl << endl;
 
 		mainSystem.SetPrimaryStar(starA);
 		mainSystem.SetSecondaryStar(starB);
 	}
 	else if (multiplicity == 3) {
-		cout << "Not yet implemented (1)!\n\n";
+		starB.SetAge(systemAge);
+		starB.SetMetallicity(metallicity);
+		evolveStar(starB, engine);
+
+		starC.SetAge(systemAge);
+		starC.SetMetallicity(metallicity);
+		evolveStar(starC, engine);
+
+		cout << "B Luminosity: " << starB.GetLuminosity() << endl;
+		cout << "B Temperature: " << starB.GetTemperature() << endl;
+		cout << "B Radius: " << starB.GetRadius() << endl;
+		cout << "B Type: " << starB.GetSpectralType() << " " << starB.GetLuminosityClass() << endl << endl;
+		cout << "C Luminosity: " << starC.GetLuminosity() << endl;
+		cout << "C Temperature: " << starC.GetTemperature() << endl;
+		cout << "C Radius: " << starC.GetRadius() << endl;
+		cout << "C Type: " << starC.GetSpectralType() << " " << starC.GetLuminosityClass() << endl << endl;
 	}
 	else {
 		cout << "Not yet implemented (2)!\n\n";
@@ -339,7 +353,13 @@ int main () {
 	cout << "slowAccretionLine: " << slowAccretionLine << endl << endl;
 
 	// put forbidden zones here
-	
+	double forbiddenZone = 1000000.0;
+	if (multiplicity == 2 && !dummyStarIsCircumbinary) { // A is orbited by B; planets orbit A
+		forbiddenZone = getInnerOrbitalExclusionZone (starA.GetMass(), starB.GetMass(), overallSeparation.separation, overallSeparation.eccentricity);
+	}
+	else if (multiplicity == 3 && systemArrangement && dummyStarIsCircumbinary) { // AB is orbited by C; planets orbit AB
+		forbiddenZone = getInnerOrbitalExclusionZone (starA.GetMass() + starB.GetMass(), starC.GetMass(), overallSeparation.separation, overallSeparation.eccentricity);
+	}
 
 	double innerFormationZone = 2.5 * dummyStar.GetMass() * dummyStar.GetMetallicity() * diskMassFactor;
 	double middleFormationZone = 80.0 * dummyStar.GetMass() * dummyStar.GetMetallicity() * diskMassFactor;
@@ -431,9 +451,10 @@ int main () {
 	}
 
 	// work exclusion zones
+	cout << "forbiddenZone: " << forbiddenZone << endl;
 	for (int i = 0; i < dummyStarPlanets.size(); i++) {
 		double distance = dummyStarPlanets[i].planet.GetDistance();
-		if (distance < diskInnerEdge || distance > slowAccretionLine) {
+		if (distance < diskInnerEdge || distance > slowAccretionLine || distance > forbiddenZone) {
 			cout << "Planet " << i << " is out of bounds!\n";
 			dummyStarPlanets[i].inExclusionZone = true;
 		}
@@ -609,7 +630,7 @@ int main () {
 	// Remove eliminated orbits
 	vector<Planet> dummyStarPlanets2;
 	for (int i = 0; i < dummyStarPlanets.size(); i++) {
-		if (!dummyStarPlanets[i].orbitDisrupted && !dummyStarPlanets[i].planetEjected && dummyStarPlanets[i].planet.GetPlanetClass() != NONE) {
+		if (!dummyStarPlanets[i].orbitDisrupted && !dummyStarPlanets[i].planetEjected && !dummyStarPlanets[i].inExclusionZone && dummyStarPlanets[i].planet.GetPlanetClass() != NONE) {
 			dummyStarPlanets2.push_back(dummyStarPlanets[i].planet);
 		}
 	}
