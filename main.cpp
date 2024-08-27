@@ -78,7 +78,7 @@ int main () {
 	else { cout << "IS NOT"; }
 	cout << " multiple!" << endl << endl;
 
-	isMultiple = false; // For testing
+	isMultiple = true; // For testing
 
 	// Create star
 	Star starA, starB, starC, starD;
@@ -444,6 +444,9 @@ int main () {
 			outFile << "\t\t<p><strong>Temperature:</strong> " << starC.GetTemperature() << " K</p>\n";
 			outFile << "\t\t<p><strong>Age:</strong> " << starC.GetAge() << " Ga</p>\n";
 		}
+		if (dummyStarIsCircumbinary == true) { firstStarName += " AB"; }
+
+		outFile << "\t\t<h2>" << firstStarName << " Planets</h2>\n";
 	}
 
 	for (int i = 0; i < dummyStarPlanets.size(); i++) {
