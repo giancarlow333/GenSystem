@@ -26,6 +26,7 @@ double generateDiskMassFactor (default_random_engine & e);
 double generateMigrationFactor (default_random_engine & e, double diskMassFactor);
 double getOuterSystemProperties(Planet & p, int mod, int pNumber, default_random_engine & e);
 double getInnerOrbitalExclusionZone (double pMass, double sMass, double separation, double eccentricity);
+double getOuterOrbitalExclusionZone (double pMass, double sMass, double separation, double eccentricity);
 
 // constants
 const string VERSION_NUMBER = "0.5";
@@ -71,7 +72,7 @@ int main () {
 	else { cout << "IS NOT"; }
 	cout << " multiple!" << endl << endl;
 
-	isMultiple = false; // For testing
+	isMultiple = true; // For testing
 
 	// Create star
 	Star starA, starB, starC, starD;
@@ -129,16 +130,19 @@ int main () {
 				mainSystem.SetEccentricity(eccenAB);
 
 				// Set separation of (AB)C
+				double exclusionZoneAB = getOuterOrbitalExclusionZone(baseMass, baseMass * massRatioAB, separationAB, eccenAB);
+				cout << "Exclusion zone around AB: " << exclusionZoneAB << endl;
 				double separationABC =  generateDistanceBetweenStars(engine, baseMass);
-				while (separationABC < 3 * (separationAB * (1 + eccenAB))) {
+				double eccenABC = generateMultipleStarEccentricity(engine, separationABC);
+				while ((1 - eccenABC) * separationABC < exclusionZoneAB) {
 					cout << "Looping.../n";
 					separationABC =  generateDistanceBetweenStars(engine, baseMass);
 				}
 				cout << "Separation, (AB)C: " << separationABC << " AU\n";
 				overallSeparation.separation = separationABC;
-				double eccenABC = generateMultipleStarEccentricity(engine, separationABC);
-				cout << "Eccentricity, (AB)C: " << eccenABC << "\n\n";
+				cout << "Eccentricity, (AB)C: " << eccenABC << "\n";
 				overallSeparation.eccentricity = eccenABC;
+				cout << "Minimum sep, (AB)C: " << (1 - eccenABC) * separationABC << " AU\n\n";
 			}
 			// A orbits close pair BC
 			else {
@@ -1053,6 +1057,9 @@ double getOuterSystemProperties(Planet & p, int mod, int pNumber, default_random
 	return 0.0;
 }
 
+/* getInnerOrbitalExclusionZone
+ * Maximum stable orbit around A only
+ */
 double getInnerOrbitalExclusionZone (double pMass, double sMass, double separation, double eccentricity) {
 	double combinedMass = pMass + sMass;
 	double bMassFraction = sMass / combinedMass;
@@ -1061,4 +1068,14 @@ double getInnerOrbitalExclusionZone (double pMass, double sMass, double separati
 	double r1Egg = separation * (0.49 * pow(massRatio, 2/3)) / (0.6 * pow(massRatio, 2/3) + log(1 + pow(massRatio, 1/3)));
 
 	return r1Egg * (0.733 * pow((1 - eccentricity), 1.2) * pow(bMassFraction, 0.07));
+}
+
+/* getOuterOrbitalExclusionZone
+ * Minimum stable orbit around both A and B
+ */
+double getOuterOrbitalExclusionZone (double pMass, double sMass, double separation, double eccentricity) {
+	double combinedMass = pMass + sMass;
+	double bMassFraction = sMass / combinedMass;
+
+	return 1.93 * separation * (1 + 1.01 * pow(eccentricity, 0.32)) * pow(bMassFraction * (1 - bMassFraction), 0.043);
 }
