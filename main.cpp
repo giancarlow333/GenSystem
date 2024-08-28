@@ -77,7 +77,7 @@ int main () {
 	else { cout << "IS NOT"; }
 	cout << " multiple!" << endl << endl;*/
 
-	//isMultiple = true; // For testing
+	isMultiple = true; // For testing
 
 	// Create star
 	Star starA, starB, starC, starD;
@@ -370,7 +370,7 @@ int main () {
 		outFile << starA.GetAge() << " Ga</td></tr>\n";
 		outFile << "\t\t</table>\n";
 	}
-	else {
+	else { // is multiple
 		outFile << "\t\t<table class=\"infobox\">\n";
 		outFile << "\t\t\t<colgroup><col width=\"300\" /><col width=\"300\" /></colgroup>\n";
 		outFile << "\t\t\t<tr><th class=\"star\" colspan=\"2\">" << firstStarName << "</th></tr>\n";
@@ -414,8 +414,36 @@ int main () {
 			outFile << starC.GetTemperature() << " K</td></tr>\n";
 		}
 		if (dummyStarIsCircumbinary == true) { firstStarName += " AB"; }
+		// print orbits
+
+		outFile << "\t\t\t<tr><th class=\"star\" colspan=\"2\">Orbit</th></tr>\n";
+		outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Primary</strong></td>\n";
+		outFile << "\t\t\t\t<td>A</td>\n\t\t\t</tr>\n";
+		outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Companion</strong></td>\n";
+		outFile << "\t\t\t\t<td>B</td>\n\t\t\t</tr>\n";
+		outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Period</strong></td>\n";
+
+		double separation, eccentricity;
+		if (multiplicity == 2 || (multiplicity == 3 && systemArrangement == 1) ) {
+			separation = mainSystem.GetSeparation();
+			eccentricity = mainSystem.GetEccentricity();
+		}
+		else {
+			separation = overallSeparation.separation;
+			eccentricity = overallSeparation.eccentricity;
+		}
+
+		double period = sqrt(pow(separation, 3.0) / (starA.GetMass() + starB.GetMass()));
+
+		outFile << "\t\t\t\t<td>" << period << " a</td>\n\t\t\t</tr>\n";
+		outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Semi-major axis</strong></td>\n";
+		outFile << "\t\t\t\t<td>" << separation << " AU</td>\n\t\t\t</tr>\n";
+		outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Eccentricity</strong></td>\n";
+		outFile << "\t\t\t\t<td>" << eccentricity << "</td>\n\t\t\t</tr>\n";
+
+
 		outFile << "\t\t</table>\n";
-	}
+	} // close is multiple
 	outFile << "\t\t<h2>" << firstStarName << " planets</h2>\n\n";
 
 	/*
