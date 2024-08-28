@@ -16,6 +16,7 @@ Planet::Planet(const Planet & other) {
 	radius = other.radius;
 	density = other.density;
 	gravity = other.gravity;
+	orbitalPeriod = other.orbitalPeriod;
 	classOfPlanet = other.classOfPlanet;
 	moons = other.moons;
 }
@@ -59,6 +60,10 @@ double Planet::GetGravity () {
 	return gravity;
 }
 
+double Planet::GetOrbitalPeriod () {
+	return orbitalPeriod;
+}
+
 PlanetClass Planet::GetPlanetClass () {
 	return classOfPlanet;
 }
@@ -96,6 +101,11 @@ void Planet::SetDensity (double rho) {
 
 void Planet::SetGravity (double g) {
 	gravity = g;
+}
+
+
+void Planet::SetOrbitalPeriod (double y) {
+	orbitalPeriod = y;
 }
 
 void Planet::SetPlanetClass (PlanetClass pc) {

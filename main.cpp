@@ -70,7 +70,7 @@ int main () {
 
 	// mass of the primary star
 	double baseMass = initialMassFunction(engine);
-	baseMass = 1.2; // for testing
+	//baseMass = 1.2; // for testing
 
 	bool isMultiple = isSystemMultiple(baseMass, engine);
 
@@ -79,7 +79,7 @@ int main () {
 	else { cout << "IS NOT"; }
 	cout << " multiple!" << endl << endl;*/
 
-	//isMultiple = false; // For testing
+	//isMultiple = true; // For testing
 
 	// Create star
 	Star starA, starB, starC, starD;
@@ -115,7 +115,7 @@ int main () {
 		else if (multiplicity == 3) {
 			// flip coin; if heads, C orbits AB, else BC orbits A
 			systemArrangement = flipCoin(engine);
-			systemArrangement = 0; // for testing
+			//systemArrangement = 0; // for testing
 
 			// C orbits close pair AB
 			if (systemArrangement) {
@@ -1623,9 +1623,39 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			sPlanets2[i].SetSingleMoon(temp);
 		}
 	}
-	
 
+	// orbital periods
+	for (int i = 0; i < sPlanets2.size(); i++) {
+		double period = sqrt(pow(sPlanets2[i].GetDistance(), 3.0) / s.GetMass());
+		sPlanets2[i].SetOrbitalPeriod(period);
+	}
 
+	// rotation periods
+	for (int i = 0; i < sPlanets2.size(); i++) {
+		double tideLockRadius = pow((s.GetAge() * pow(s.GetMass(), 2.0) / 479.0, 1.0 / 6.0);
+		if (sPlanets2[i].GetDistance() < tideLockRadius) { // tidally locked in some way
+			// do something
+		}
+		else {
+			// do something
+		}
+	}
+
+	// obliquity
+
+	// solar day
+
+	// blackbody temp
+
+	// surface water
+
+	// geophysics and magnetics
+
+	// atmosphere, world class, and albedo
+
+	// native life
+
+	// surface temperatures
 
 
 
