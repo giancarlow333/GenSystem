@@ -1601,6 +1601,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			}
 			cout << "distance: " << distance << endl;
 			Moon temp(distance, moonMass);
+			sPlanets2[i].SetSingleMoon(temp);
 		}
 	}
 	
