@@ -31,6 +31,7 @@ double getOuterSystemProperties(Planet & p, int mod, int pNumber, default_random
 double getInnerOrbitalExclusionZone (double pMass, double sMass, double separation, double eccentricity);
 double getOuterOrbitalExclusionZone (double pMass, double sMass, double separation, double eccentricity);
 vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbiddenZone, bool starIsCircumbinary, double initialLuminosity, double innerExclusionZone);
+void printPlanetaryClass (PlanetClass pc, string & className, string & imgFileName);
 
 // constants
 const string VERSION_NUMBER = "0.8";
@@ -427,36 +428,11 @@ int main () {
 	for (int i = 0; i < dummyStarPlanets.size(); i++) {
 		outFile << "\t\t\t<tr>\n\t\t\t\t<td><a href=\"#" << firstStarName << " " << i + 1 << "\">" << i + 1 << "</a></td>\n";
 		PlanetClass theClass = dummyStarPlanets[i].GetPlanetClass();
-		string className;
+		string className, imgFileName;
 
-		switch(theClass) {
-			case NONE:
-				className = "None";
-				break;
-			case FAILED_CORE:
-				className = "Failed core";
-				break;
-			case SMALL_GAS_GIANT:
-				className = "Small gas giant";
-				break;
-			case MEDIUM_GAS_GIANT:
-				className = "Medium gas giant";
-				break;
-			case LARGE_GAS_GIANT:
-				className = "Large gas giant";
-				break;
-			case TERRESTRIAL_PLANET:
-				className = "Terrestrial planet";
-				break;
-			case PLANETOID_BELT:
-				className = "Planetoid belt";
-				break;
-			case LEFTOVER_OLIGARCH:
-				className = "Leftover oligarch";
-				break;
-		}
+		printPlanetaryClass (theClass, className, imgFileName);
 		
-		outFile << "\t\t\t\t<td></td>\n";
+		outFile << "\t\t\t\t<td><img src=\"../misc/" << imgFileName << "\" width=\"20\" /></td>\n";
 		outFile << "\t\t\t\t<td>" << className << "</td>\n";
 		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetDistance() << " AU</td>\n";
 		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetMass() << " M<sub>E</sub></td>\n";
@@ -474,37 +450,13 @@ int main () {
 		outFile << "\t\t\t<tr>\n\t\t\t\t<th colspan=\"3\">" << firstStarName << " #" << i + 1 << "</th>\n\t\t\t</tr>\n";
 
 		PlanetClass theClass = dummyStarPlanets[i].GetPlanetClass();
-		string className;
+		string className, imgFileName;
 
-		switch(theClass) {
-			case NONE:
-				className = "None";
-				break;
-			case FAILED_CORE:
-				className = "Failed core";
-				break;
-			case SMALL_GAS_GIANT:
-				className = "Small gas giant";
-				break;
-			case MEDIUM_GAS_GIANT:
-				className = "Medium gas giant";
-				break;
-			case LARGE_GAS_GIANT:
-				className = "Large gas giant";
-				break;
-			case TERRESTRIAL_PLANET:
-				className = "Terrestrial planet";
-				break;
-			case PLANETOID_BELT:
-				className = "Planetoid belt";
-				break;
-			case LEFTOVER_OLIGARCH:
-				className = "Leftover oligarch";
-				break;
-		}
+		printPlanetaryClass (theClass, className, imgFileName);
+
 		outFile << "\t\t\t<tr>\n";
 		outFile << "\t\t\t\t<td><strong>Planet type</strong></td>\n";
-		outFile << "\t\t\t\t<td>" << className << "</td>\n";
+		outFile << "\t\t\t\t<td><img src=\"../misc/" << imgFileName << "\" width=\"20\" />&nbsp;" << className << "</td>\n";
 		outFile << "\t\t\t</tr>\n";
 
 		outFile << "\t\t\t<tr>\n";
@@ -1549,3 +1501,39 @@ void placeRemainingPlanets (vector<FormingPlanet> & pVector, int firstPlanetInde
 	return;
 }
 
+void printPlanetaryClass (PlanetClass pc, string & className, string & imgFileName) {
+	switch(pc) {
+		case NONE:
+			className = "None";
+			imgFileName = "";
+			break;
+		case FAILED_CORE:
+			className = "Failed core";
+			imgFileName = "GasDwarfPlanet.gif";
+			break;
+		case SMALL_GAS_GIANT:
+			className = "Small gas giant";
+			imgFileName = "Sub-JovianPlanet.gif";
+			break;
+		case MEDIUM_GAS_GIANT:
+			className = "Medium gas giant";
+			imgFileName = "JovianPlanet.gif";
+			break;
+		case LARGE_GAS_GIANT:
+			className = "Large gas giant";
+			imgFileName = "JovianPlanet.gif";
+			break;
+		case TERRESTRIAL_PLANET:
+			className = "Terrestrial planet";
+			imgFileName = "RockPlanet.gif";
+			break;
+		case PLANETOID_BELT:
+			className = "Planetoid belt";
+			imgFileName = "AsteroidsPlanet.gif";
+			break;
+		case LEFTOVER_OLIGARCH:
+			className = "Leftover oligarch";
+			imgFileName = "1FacePlanet.gif";
+			break;
+	}
+}
