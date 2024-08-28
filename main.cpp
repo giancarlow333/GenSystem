@@ -1558,7 +1558,26 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		double apastron = sPlanets2[i].GetDistance() * (1.0 - sPlanets2[i].GetEccentricity());
 		double hillSphereInKm = 2.17e6 * apastron * pow(sPlanets2[i].GetMass() / s.GetMass(), 1.0/3.0);
 		int numberOfMajorMoons = 2e-15 * pow(hillSphereInKm, 2.0) / sqrt(sPlanets2[i].GetDistance());
+		uniform_int_distribution<> plusMinus2(-2, 2);
+		int moonModifier = plusMinus2(e);
+		if (numberOfMajorMoons > 8) {
+			numberOfMajorMoons = 8;
+		}
+		if (numberOfMajorMoons != 0) {
+			numberOfMajorMoons += moonModifier;
+		}
+		if (numberOfMajorMoons < 0) {
+			numberOfMajorMoons = 0;
+		}
 		cout << "Planet " << i << " has " << numberOfMajorMoons << " major moons." << endl;
+
+		for (int j = 0; j < numberOfMajorMoons; j++) {
+			uniform_int_distribution<> rollDice(1, 6);
+			int roll = rollDice(e) + rollDice(e) + rollDice(e);
+			double moonMass = 1e-6 * (roll * sPlanets2[i].GetMass()) / numberOfMajorMoons;
+			Moon temp;
+			cout << "moonMass " << j << ": " << moonMass << endl;
+		}
 	}
 	
 
