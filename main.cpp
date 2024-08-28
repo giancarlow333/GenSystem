@@ -1232,7 +1232,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	double innerFormationZone = 2.5 * s.GetMass() * s.GetMetallicity() * diskMassFactor;
 	double middleFormationZone = 80.0 * s.GetMass() * s.GetMetallicity() * diskMassFactor;
 	double outerFormationZone = 18.0 * s.GetMass() * s.GetMetallicity() * diskMassFactor;
-	cout << "s.GetMass(): " << s.GetMass() << endl;
+	cout << "diskMassFactor: " << diskMassFactor << endl;
 
 	vector<FormingPlanet> sPlanets;
 
@@ -1311,6 +1311,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	temp11.planet.SetDistance(planet11Distance);
 	temp11.planet.SetMass(0.1 * outerFormationZone);
 	sPlanets.push_back(temp11);
+	cout << "planet11Distance: " << planet11Distance << endl;
 
 	// work exclusion zones
 	for (int i = 0; i < sPlanets.size(); i++) {
@@ -1438,7 +1439,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			}
 		}
 	}
-
+	cout << "Post Grand Tack!!\n\n";
 	// Nice Event
 	if (thereIsAGrandTack && (!forbiddenZone || forbiddenZone > 1.5 * slowAccretionLine)) { // depends on forbidden zones per AOW p. 47
 		// TBD: roll for Nice event!!!
@@ -1465,6 +1466,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			}
 		}
 	}
+	cout << "Post Nice Event!!\n\n";
 
 	// Orbital resonances
 	// Dominant and outer-most gas giant should have final placement now
@@ -1483,6 +1485,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		else { break; }
 	}
 	placeRemainingPlanets (sPlanets, dominantGasGiantIndex, finalPlanetIndex, countToBePlaced, e);
+	cout << "Remaining planets placed!!\n\n";
 
 
 	// INNER PLANETARY SYSTEM
@@ -1558,6 +1561,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		else { break; }
 	}
 	placeRemainingPlanets (sPlanets, innermostPlanetIndex, dominantGasGiantIndex, countToBePlaced, e);
+	cout << "Inner planets placed!!\n\n";
 
 	// Make sure there aren't any in exclusion zones after migration!
 	for (int i = 0; i < sPlanets.size(); i++) {
@@ -1565,6 +1569,9 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		if (distance < innerExclusionZone || distance > forbiddenZone) {
 			sPlanets[i].inExclusionZone = true;
 		}
+	}
+	for (int i = 0; i < sPlanets.size(); i++) {
+		cout << i << " excluded: " << sPlanets[i].inExclusionZone << "; distance: " << sPlanets[i].planet.GetDistance() << endl;
 	}
 
 	// Remove eliminated orbits
@@ -1574,9 +1581,11 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			sPlanets2.push_back(sPlanets[i].planet);
 		}
 	}
+	cout << "Eliminate orbits\n\n";
 
 	// Set orbital eccentricities
 	int totalNumberOfPlanets = sPlanets2.size();
+	cout << "totalNumberOfPlanets: " << totalNumberOfPlanets << endl;
 	double typicalEccen = getTypicalEccentricity(totalNumberOfPlanets);
 	for (int i = 0; i < sPlanets2.size(); i++) {
 		normal_distribution<> randomNorm(-0.035, 0.02415); // 2d6-7 / 100
@@ -1584,9 +1593,14 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		if (eccen < 0) { eccen = 0; }
 		sPlanets2[i].SetEccentricity(eccen);
 	}
+	cout << "Set orbital eccentricities!!\n\n";
+	for (int i = 0; i < sPlanets2.size(); i++) {
+		cout << i << " mass: " << sPlanets2[i].GetMass() << endl;
+	}
 
 	// Density, Radius, and Surface Gravity
 	for (int i = 0; i < sPlanets2.size(); i++) {
+		cout << "Doing planet " << i << endl;
 		PlanetClass pc = sPlanets2[i].GetPlanetClass();
 		double density;
 		if (pc == SMALL_GAS_GIANT || pc == MEDIUM_GAS_GIANT || pc == LARGE_GAS_GIANT) {
@@ -1612,6 +1626,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		else { // it's a planetoid belt
 			density = 0.0;
 		}
+		cout << "Density " << i << ": " << density << endl;
 		sPlanets2[i].SetDensity(density);
 
 		// compute radius and surface gravity
