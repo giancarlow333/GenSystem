@@ -189,11 +189,11 @@ int main () {
 			else { maxSep = maxCD; }
 
 			double separationABCD = generateDistanceBetweenStars(engine, baseMass + baseMass * massRatioAC);
-				while (separationABCD < 3 * maxSep) {
-					separationABCD =  generateDistanceBetweenStars(engine, baseMass + baseMass * massRatioAC);
-				}
+			while (separationABCD < 3 * maxSep) {
+				separationABCD =  generateDistanceBetweenStars(engine, baseMass + baseMass * massRatioAC);
+			}
 			double eccenABCD = generateMultipleStarEccentricity(engine, separationABCD);
-		}
+		} // close else is quaternary
 	} // END IS_MULTIPLE
 
 	// Age, Metallicity, Luminosity, Lifespan
@@ -223,7 +223,7 @@ int main () {
 		starC.SetMetallicity(metallicity);
 		evolveStar(starC, engine);
 	}
-	else {
+	else if (multiplicity == 4) {
 		starB.SetAge(systemAge);
 		starB.SetMetallicity(metallicity);
 		evolveStar(starB, engine);
@@ -235,6 +235,12 @@ int main () {
 		starD.SetAge(systemAge);
 		starD.SetMetallicity(metallicity);
 		evolveStar(starD, engine);
+
+		mainSystem.SetPrimaryStar(starA);
+		mainSystem.SetSecondaryStar(starB);
+
+		farSystem.SetPrimaryStar(starC);
+		farSystem.SetSecondaryStar(starD);
 	}
 
 	/* PLANETARY DISK FOR MAIN STAR(S)
@@ -271,7 +277,7 @@ int main () {
 				dummyStar.SetAge(starA.GetAge());
 				dummyStar.SetMetallicity(starA.GetMetallicity());
 			}
-		} // close multiplicity == 3
+		} // close multiplicity == 2
 		else if (multiplicity == 3 && systemArrangement == 1) { // C orbits AB
 			// data is held in mainSystem
 			// get AB outer exclusion zone
@@ -304,11 +310,33 @@ int main () {
 			dummyStar.SetTemperature(starA.GetTemperature());
 			dummyStar.SetAge(starA.GetAge());
 			dummyStar.SetMetallicity(starA.GetMetallicity());
-		}
-	}
-	else if (multiplicity == 4) {
-		cout << "Not yet implemented!\n\n";
-	}
+		} // close if (multiplicity == 3 && systemArrangement != 1)
+		else if (multiplicity == 4) {
+			// data is held in mainSystem
+			// get AB outer exclusion zone
+			double exclusionZone = getOuterOrbitalExclusionZone(starA.GetMass(), starB.GetMass(), mainSystem.GetSeparation(), mainSystem.GetEccentricity());
+			// if the separation of AB is SMALLER than this, it's circumbinary
+			if (mainSystem.GetSeparation() < exclusionZone) {
+				dummyStarIsCircumbinary = true;
+				dummyStar.SetMass(starA.GetMass() + starB.GetMass());
+				dummyStar.SetLuminosity(starA.GetLuminosity() + starB.GetLuminosity());
+				dummyStar.SetRadius(starA.GetRadius());
+				dummyStar.SetTemperature(starA.GetTemperature());
+				dummyStar.SetAge(starA.GetAge());
+				dummyStar.SetMetallicity(starA.GetMetallicity());
+				initialLuminosity = getInitialLuminosity(starA.GetMass()) + getInitialLuminosity(starB.GetMass());
+				innerExclusionZone = exclusionZone;
+			}
+			else {
+				dummyStar.SetMass(starA.GetMass());
+				dummyStar.SetLuminosity(starA.GetLuminosity());
+				dummyStar.SetRadius(starA.GetRadius());
+				dummyStar.SetTemperature(starA.GetTemperature());
+				dummyStar.SetAge(starA.GetAge());
+				dummyStar.SetMetallicity(starA.GetMetallicity());
+			}
+		} // close if (multiplicity == 4)
+	} // close if multiple
 	else { // single star
 		dummyStar.SetMass(starA.GetMass());
 		dummyStar.SetLuminosity(starA.GetLuminosity());
@@ -328,6 +356,12 @@ int main () {
 	}
 	else if (multiplicity == 3 && !systemArrangement) { // A is orbited by BC; planets orbit A
 		forbiddenZone = getInnerOrbitalExclusionZone (starA.GetMass(), starC.GetMass() + starB.GetMass(), overallSeparation.separation, overallSeparation.eccentricity);
+	}
+	else if (multiplicity == 4 && dummyStarIsCircumbinary) { // AB is orbited by CD; planets orbit AB
+		forbiddenZone = getInnerOrbitalExclusionZone (starA.GetMass() + starB.GetMass(), starC.GetMass() + starD.GetMass(), overallSeparation.separation, overallSeparation.eccentricity);
+	}
+	else if (multiplicity == 4 && !dummyStarIsCircumbinary) { // AB is orbited by CD; planets orbit A
+		forbiddenZone = getInnerOrbitalExclusionZone (starA.GetMass(), starB.GetMass(), mainSystem.GetSeparation(), mainSystem.GetEccentricity());
 	}
 
 	// Planets around primary star
