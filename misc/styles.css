@@ -1,0 +1,125 @@
+/* styles.css
+ * Author: Giancarlo Whitaker
+ * Pseudo-Wikipedia style infobox code
+ */
+
+table.infobox {
+  padding: 10px;
+  border: 1px solid #DBDEE2;
+  border-collapse: collapse;
+  background-color: #F8F9FA;
+  table-layout: fixed;
+  overflow: hidden;
+  word-wrap: break-word;
+  color: black;
+}
+table.infobox tr {
+  padding: 10px;
+  border: 1px solid #DBDEE2;
+  border-collapse: collapse;
+  background-color: #F8F9FA;
+  table-layout: fixed;
+  overflow: hidden;
+  word-wrap: break-word;
+}
+table.infobox td {
+  padding: 10px;
+  border: 1px solid #DBDEE2;
+  border-collapse: collapse;
+  background-color: #F8F9FA;
+  table-layout: fixed;
+  overflow: hidden;
+  word-wrap: break-word;
+}
+table.infobox th {
+  padding: 10px;
+  border: 1px solid #DBDEE2;
+  border-collapse: collapse;
+  background-color: #EAECF0;
+}
+
+table.infobox th.star {
+  padding: 10px;
+  border: 1px solid #DBDEE2;
+  border-collapse: collapse;
+  background-color: #FFFFC0;
+}
+table.infobox th.o-star {
+  padding: 10px;
+  border: 1px solid #DBDEE2;
+  border-collapse: collapse;
+  background-color: #92B5FF;
+	color: white;
+}
+table.infobox th.b-star {
+  padding: 10px;
+  border: 1px solid #DBDEE2;
+  border-collapse: collapse;
+  background-color: #A2C0FF;
+	color: white;
+}
+table.infobox th.a-star {
+  padding: 10px;
+  border: 1px solid #DBDEE2;
+  border-collapse: collapse;
+  background-color: #D5E0FF;
+}
+table.infobox th.f-star {
+  padding: 10px;
+  border: 1px solid #DBDEE2;
+  border-collapse: collapse;
+  background-color: #F9F5FF;
+}
+table.infobox th.g-star {
+  padding: 10px;
+  border: 1px solid #DBDEE2;
+  border-collapse: collapse;
+  background-color: #FFEDE3;
+}
+table.infobox th.k-star {
+  padding: 10px;
+  border: 1px solid #DBDEE2;
+  border-collapse: collapse;
+  background-color: #FFDAB5;
+}
+table.infobox th.m-star {
+  padding: 10px;
+  border: 1px solid #DBDEE2;
+  border-collapse: collapse;
+  background-color: #FFB56C;
+}
+table.infobox th.brown-dwarf {
+  padding: 10px;
+  border: 1px solid #DBDEE2;
+  border-collapse: collapse;
+  background-color: #804000;
+	color: white;
+}
+table.infobox th.white-dwarf {
+  padding: 10px;
+  border: 1px solid #DBDEE2;
+  border-collapse: collapse;
+  background-color: #FFFFFF;
+}
+table.infobox th.neutron-star {
+  padding: 10px;
+  border: 1px solid #DBDEE2;
+  border-collapse: collapse;
+  background-color: #778899;
+	color: white;
+}
+table.infobox th.black-hole {
+  padding: 10px;
+  border: 1px solid #DBDEE2;
+  border-collapse: collapse;
+  background-color: #000000;
+	color: white;
+}
+
+table.infobox th.planet {
+  padding: 10px;
+  border: 1px solid #DBDEE2;
+  border-collapse: collapse;
+  background-color: #E0CCFF;
+}
+
