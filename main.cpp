@@ -63,7 +63,7 @@ int main () {
 	cout << "(c) 2024 Giancarlo Whitaker" << endl << endl;
 
 	// construct random engine
-	int seed = 333;  // non-random seed for testing
+	int seed = 334;  // non-random seed for testing
 	default_random_engine engine(seed);
 
 	// mass of the primary star
@@ -1573,13 +1573,13 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		}
 	}
 	for (int i = 0; i < sPlanets.size(); i++) {
-		cout << i << " excluded: " << sPlanets[i].inExclusionZone << "; distance: " << sPlanets[i].planet.GetDistance() << endl;
+		cout << i << " class: " << sPlanets[i].planet.GetPlanetClass() << "; distance: " << sPlanets[i].planet.GetDistance() << endl;
 	}
 
 	// Remove eliminated orbits
 	vector<Planet> sPlanets2;
 	for (int i = 0; i < sPlanets.size(); i++) {
-		if (!sPlanets[i].orbitDisrupted && !sPlanets[i].planetEjected && !sPlanets[i].inExclusionZone && sPlanets[i].planet.GetPlanetClass() != NONE) {
+		if (!sPlanets[i].planetEjected && !sPlanets[i].inExclusionZone && sPlanets[i].planet.GetPlanetClass() != NONE) {
 			sPlanets2.push_back(sPlanets[i].planet);
 		}
 	}
@@ -1587,7 +1587,13 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 
 	// Set orbital eccentricities
 	int totalNumberOfPlanets = sPlanets2.size();
-	cout << "totalNumberOfPlanets: " << totalNumberOfPlanets << endl;
+
+	// no planets
+	if (totalNumberOfPlanets == 0) {
+		cout << "No planets formed!\n";
+		return sPlanets2;
+	}
+
 	double typicalEccen = getTypicalEccentricity(totalNumberOfPlanets);
 	for (int i = 0; i < sPlanets2.size(); i++) {
 		normal_distribution<> randomNorm(-0.035, 0.02415); // 2d6-7 / 100
@@ -1642,9 +1648,13 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			sPlanets2[i].SetGravity(0.0);
 		}
 	}
+	cout << "Planets done!\n\n";
 
 
-
+	cout << "Set orbital eccentricities!!\n\n";
+	for (int i = 0; i < sPlanets2.size(); i++) {
+		cout << i << " class: " << sPlanets2[i].GetPlanetClass() << endl;
+	}
 
 
 
