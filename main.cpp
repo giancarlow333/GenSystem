@@ -1662,6 +1662,18 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		}
 
 		sPlanets2[i].SetRotationPeriod(rotationPeriod);
+
+		// axial tilt
+		double axis = 0;
+		PlanetClass pc;
+		if (sPlanets2[i].GetNumberOfMoons() > 0) { // has major moon(s), is terrestrial, leftover oligarch, failed core
+			normal_distribution<> randomNorm(30.0, 9.0);
+			axis = randomNorm(e);
+		}
+		else if (isTidallyLocked) {
+		}
+		else { // not tidally locked, no moons, or gas giant
+		}
 	}
 	// solar day
 
