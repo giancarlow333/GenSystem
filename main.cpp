@@ -556,12 +556,6 @@ int main () {
 		outFile << "\t\t\t\t<td><strong>Distance from star(s)</strong></td>\n";
 		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetDistance() << " AU</td>\n";
 		outFile << "\t\t\t</tr>\n";
-
-		outFile << "\t\t\t<tr>\n";
-		outFile << "\t\t\t\t<td><strong>Mass</strong></td>\n";
-		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetMass() << " M<sub>E</sub></td>\n";
-		outFile << "\t\t\t</tr>\n";
-
 		outFile << "\t\t\t<tr>\n";
 		outFile << "\t\t\t\t<td><strong>Orbital eccentricity</strong></td>\n";
 		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetEccentricity() << "</td>\n";
@@ -569,7 +563,7 @@ int main () {
 
 		outFile << "\t\t\t<tr>\n";
 		outFile << "\t\t\t\t<td><strong>Orbital period</strong></td>\n";
-		outFile << "\t\t\t\t<td>" << sqrt(pow(dummyStarPlanets[i].GetDistance(), 3.0) / dummyStar.GetMass()) << " a</td>\n";
+		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetOrbitalPeriod() << " a</td>\n";
 		outFile << "\t\t\t\t<td>" << 365.25 * sqrt(pow(dummyStarPlanets[i].GetDistance(), 3.0) / dummyStar.GetMass()) << " d</td>\n";
 		outFile << "\t\t\t</tr>\n";
 
@@ -577,6 +571,11 @@ int main () {
 		outFile << "\t\t\t\t<td><strong>Insolation</strong></td>\n";
 		outFile << "\t\t\t\t<td>" << dummyStar.GetLuminosity() / pow(dummyStarPlanets[i].GetDistance(), 2.0) << "</td>\n";
 		outFile << "\t\t\t\t<td>" << 1321.0 * dummyStar.GetLuminosity() / pow(dummyStarPlanets[i].GetDistance(), 2.0) << " W/m<sup>2</sup></td>\n";
+		outFile << "\t\t\t</tr>\n";
+
+		outFile << "\t\t\t<tr>\n";
+		outFile << "\t\t\t\t<td><strong>Mass</strong></td>\n";
+		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetMass() << " M<sub>E</sub></td>\n";
 		outFile << "\t\t\t</tr>\n";
 
 		outFile << "\t\t\t<tr>\n";
@@ -594,6 +593,12 @@ int main () {
 		outFile << "\t\t\t<tr>\n";
 		outFile << "\t\t\t\t<td><strong>Gravity</strong></td>\n";
 		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetGravity() << " g</td>\n";
+		outFile << "\t\t\t</tr>\n";
+
+		outFile << "\t\t\t<tr>\n";
+		outFile << "\t\t\t\t<td><strong>Siderial rotation period</strong></td>\n";
+		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetRotationPeriod() << " h</td>\n";
+		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetRotationPeriod() / 24.0 << " d</td>\n";
 		outFile << "\t\t\t</tr>\n";
 
 		outFile << "\t\t</table>\n\n";
@@ -1630,19 +1635,34 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		sPlanets2[i].SetOrbitalPeriod(period);
 	}
 
-	// rotation periods
+	// rotation periods and obliquity
 	for (int i = 0; i < sPlanets2.size(); i++) {
-		double tideLockRadius = pow((s.GetAge() * pow(s.GetMass(), 2.0) / 479.0, 1.0 / 6.0);
+		double rotationPeriod;
+		double tideLockRadius = pow(s.GetAge() * pow(s.GetMass(), 2.0) / 479.0, 1.0 / 6.0);
+		bool isTidallyLocked = false;
 		if (sPlanets2[i].GetDistance() < tideLockRadius) { // tidally locked in some way
-			// do something
+			isTidallyLocked = true;
+			double year = sPlanets2[i].GetOrbitalPeriod();
+			double eccen = sPlanets2[i].GetEccentricity();
+			if (eccen <= 0.12) { rotationPeriod = year; }
+			else if (eccen <= 0.25) { rotationPeriod = year * 2.0 / 3.0; }
+			else if (eccen <= 0.35) { rotationPeriod = year / 2.0; }
+			else if (eccen <= 0.45) { rotationPeriod = year * 2.0 / 5.0; }
+			else { rotationPeriod = year / 3.0; }
+
+			rotationPeriod *= 8766; // in hours
 		}
 		else {
-			// do something
+			// temporary measure while I research this
+			// based on gut only: mean 24, stdev 1
+			// IQR is 12.22 to 47.11 hours (0.51 to 1.96 d)
+			lognormal_distribution<> logNorm(3.18, 1.0);
+			rotationPeriod = logNorm(e);
+			if (rotationPeriod < 4.0) { rotationPeriod = 4.0; }
 		}
+
+		sPlanets2[i].SetRotationPeriod(rotationPeriod);
 	}
-
-	// obliquity
-
 	// solar day
 
 	// blackbody temp
