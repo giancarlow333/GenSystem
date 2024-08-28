@@ -34,6 +34,7 @@ class Planet
 		double GetGravity ();
 		PlanetClass GetPlanetClass ();
 		vector<Moon> GetMoons ();
+		int GetNumberOfMoons ();
 		// Mutators
 		void SetDistance (double d);
 		void SetEccentricity (double e);

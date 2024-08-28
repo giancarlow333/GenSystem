@@ -3,6 +3,7 @@
 #include <fstream>          // file output
 #include <string>           // file names
 #include <filesystem>       // directories
+#include <iomanip>          // setprecision
 #include "StarSystem.h"
 #include "Star.h"
 #include "Planet.h"
@@ -531,7 +532,9 @@ int main () {
 	outFile << "\t\t\t</table>\n";
 
 
-	// FULL DETAILS
+	/*
+	 * FULL DETAILS
+	 */
 	for (int i = 0; i < dummyStarPlanets.size(); i++) {
 		char planetNo = i + 98;
 		outFile << "\t\t<p>&nbsp;</p>\n";
@@ -594,6 +597,23 @@ int main () {
 		outFile << "\t\t\t</tr>\n";
 
 		outFile << "\t\t</table>\n\n";
+
+		if (dummyStarPlanets[i].GetNumberOfMoons() != 0) {
+			cout << "Planet " << i << " has " << dummyStarPlanets[i].GetNumberOfMoons() << " moons\n";
+			outFile << "\t\t<table class=\"infobox\">\n";
+			outFile << "\t\t\t<colgroup><col width=\"50\" /><col width=\"300\" /><col width=\"300\" /></colgroup>\n";
+			outFile << "\t\t\t<tr>\n\t\t\t\t<th>&numero;</th><th>Distance</th><th>Mass</th>\n";
+			vector<Moon> theMoons = dummyStarPlanets[i].GetMoons();
+			for (int j = 0; j < theMoons.size(); j++) {
+				cout << "Doing moon " << j << endl;
+				outFile << "\t\t\t<tr>\n\t\t\t\t<td>" << j + 1 << "</td>\n";
+				outFile << "\t\t\t\t<td>" << setprecision(9) << theMoons[j].GetDistance() << " km</td>\n";
+				outFile << "\t\t\t\t<td>" << setprecision(6) << theMoons[j].GetMass() << " M<sub>E</sub><br />";
+				outFile << theMoons[j].GetMass() / 0.0123 << " M<sub>Moon</sub></td>\n";
+				outFile << "\t\t\t</tr>\n";
+			}
+			outFile << "\t\t</table>\n\n";
+		}
 	}
 
 
@@ -1569,7 +1589,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		if (numberOfMajorMoons < 0) {
 			numberOfMajorMoons = 0;
 		}
-		cout << "Planet " << i << " has " << numberOfMajorMoons << " major moons." << endl;
+		//cout << "Planet " << i << " has " << numberOfMajorMoons << " major moons." << endl;
 
 		int laplaceResonanceCount = 0;
 		double priorMoonDistance = 0;
@@ -1577,7 +1597,6 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			uniform_int_distribution<> rollDice(1, 6);
 			int roll = rollDice(e) + rollDice(e) + rollDice(e);
 			double moonMass = 1e-6 * (roll * sPlanets2[i].GetMass()) / numberOfMajorMoons;
-			cout << "moonMass " << j << ": " << moonMass << endl;
 			double distance = 0;
 			if (j == 0) { // it's the first moon
 				uniform_real_distribution<> rUnif(3, 8);

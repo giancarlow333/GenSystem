@@ -66,6 +66,10 @@ PlanetClass Planet::GetPlanetClass () {
 vector<Moon> Planet::GetMoons () {
 	return moons;
 }
+
+int Planet::GetNumberOfMoons () {
+	return moons.size();
+}
 ///////////////////////////////////////
 // MUTATORS
 ///////////////////////////////////////
