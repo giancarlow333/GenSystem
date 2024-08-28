@@ -316,6 +316,9 @@ int main () {
 	else if (multiplicity == 3 && systemArrangement && dummyStarIsCircumbinary) { // AB is orbited by C; planets orbit AB
 		forbiddenZone = getInnerOrbitalExclusionZone (starA.GetMass() + starB.GetMass(), starC.GetMass(), overallSeparation.separation, overallSeparation.eccentricity);
 	}
+	else if (multiplicity == 3 && !systemArrangement) { // A is orbited by BC; planets orbit A
+		forbiddenZone = getInnerOrbitalExclusionZone (starA.GetMass(), starC.GetMass() + starB.GetMass(), overallSeparation.separation, overallSeparation.eccentricity);
+	}
 
 	// Planets around primary star
 	vector<Planet> dummyStarPlanets = formPlanets (dummyStar, engine, forbiddenZone, dummyStarIsCircumbinary, initialLuminosity, innerExclusionZone);
