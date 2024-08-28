@@ -198,6 +198,8 @@ int main () {
 			cout << "separationABCD: " << separationABCD << endl;
 			double eccenABCD = generateMultipleStarEccentricity(engine, separationABCD);
 			cout << "eccenABCD: " << eccenABCD << endl;
+			overallSeparation.separation = separationABCD;
+			overallSeparation.eccentricity = eccenABCD;
 		}
 	} // END IS_MULTIPLE
 
@@ -340,6 +342,7 @@ int main () {
 				innerExclusionZone = exclusionZone; //getInnerOrbitalExclusionZone(starA.GetMass() + starB.GetMass(), starC.GetMass(), overallSeparation.separation, overallSeparation.eccentricity);
 			}
 			else {
+				cout << "mainSystem.GetSeparation() > exclusionZone\n";
 				dummyStar.SetMass(starA.GetMass());
 				dummyStar.SetLuminosity(starA.GetLuminosity());
 				dummyStar.SetRadius(starA.GetRadius());
@@ -368,6 +371,15 @@ int main () {
 	}
 	else if (multiplicity == 3 && !systemArrangement) { // A is orbited by BC; planets orbit A
 		forbiddenZone = getInnerOrbitalExclusionZone (starA.GetMass(), starC.GetMass() + starB.GetMass(), overallSeparation.separation, overallSeparation.eccentricity);
+	}
+	else if (multiplicity == 4 && dummyStarIsCircumbinary) { // A is orbited by B, both by CD; planets orbit A
+		cout << "multiplicity == 4 && dummyStarIsCircumbinary\n\n";
+		forbiddenZone = getInnerOrbitalExclusionZone (starA.GetMass(), starB.GetMass(), mainSystem.GetSeparation(), mainSystem.GetEccentricity());
+	}
+	else if (multiplicity == 4 && !dummyStarIsCircumbinary) { // A is orbited by B, both by CD; planets orbit AB
+		cout << "multiplicity == 4 && !dummyStarIsCircumbinary\n\n";
+		forbiddenZone = getInnerOrbitalExclusionZone (starA.GetMass() + starB.GetMass(), starC.GetMass() + starD.GetMass(), overallSeparation.separation, overallSeparation.eccentricity);
+		cout << "forbiddenZone: " << forbiddenZone << endl << endl;
 	}
 
 	// Planets around primary star
