@@ -92,7 +92,7 @@ int main () {
 	bool systemArrangement;
 	if (isMultiple) {
 		multiplicity = generateSystemMultiplicity(engine);
-		multiplicity = 3; // for testing
+		multiplicity = 4; // for testing
 
 		if (multiplicity == 2) {
 			double massRatio = generateMassRatio(engine);
@@ -166,6 +166,7 @@ int main () {
 		else { // quaternary
 			double massRatioAB = generateHeavyMassRatio(engine);
 			starB.SetMass(baseMass * massRatioAB);
+			cout << "massRatioAB: " << massRatioAB << endl;
 
 			double separationAB =  generateDistanceBetweenStars(engine, baseMass);
 			double eccenAB = generateMultipleStarEccentricity(engine, separationAB);
@@ -177,6 +178,7 @@ int main () {
 			double massRatioCD = generateHeavyMassRatio(engine);
 			starD.SetMass(baseMass * massRatioAC * massRatioCD);
 			//mainSystem.secondSystem.SetSingleStar(starD);
+			cout << "massRatioCD: " << massRatioCD << endl;
 
 			double separationCD =  generateDistanceBetweenStars(engine, baseMass * massRatioAC);
 			double eccenCD = generateMultipleStarEccentricity(engine, separationCD);
@@ -187,12 +189,15 @@ int main () {
 			double maxSep;
 			if (maxAB > maxCD) { maxSep = maxAB; }
 			else { maxSep = maxCD; }
+			cout << "maxSep: " << maxSep << endl;
 
 			double separationABCD = generateDistanceBetweenStars(engine, baseMass + baseMass * massRatioAC);
 				while (separationABCD < 3 * maxSep) {
 					separationABCD =  generateDistanceBetweenStars(engine, baseMass + baseMass * massRatioAC);
 				}
+			cout << "separationABCD: " << separationABCD << endl;
 			double eccenABCD = generateMultipleStarEccentricity(engine, separationABCD);
+			cout << "eccenABCD: " << eccenABCD << endl;
 		}
 	} // END IS_MULTIPLE
 
@@ -223,8 +228,27 @@ int main () {
 		starC.SetMetallicity(metallicity);
 		evolveStar(starC, engine);
 	}
-	else {
-		cout << "Not yet implemented (2)!\n\n";
+	else if (multiplicity == 4)  {
+		starB.SetAge(systemAge);
+		starB.SetMetallicity(metallicity);
+		evolveStar(starB, engine);
+		cout << "starB mass: " << starB.GetMass() << endl;
+
+		starC.SetAge(systemAge);
+		starC.SetMetallicity(metallicity);
+		evolveStar(starC, engine);
+		cout << "starC mass: " << starC.GetMass() << endl;
+
+		starD.SetAge(systemAge);
+		starD.SetMetallicity(metallicity);
+		evolveStar(starD, engine);
+		cout << "starD mass: " << starD.GetMass() << endl;
+
+		mainSystem.SetPrimaryStar(starA);
+		mainSystem.SetSecondaryStar(starB);
+
+		farSystem.SetPrimaryStar(starC);
+		farSystem.SetSecondaryStar(starD);
 	}
 
 	/* PLANETARY DISK FOR MAIN STAR(S)
@@ -236,6 +260,7 @@ int main () {
 	double initialLuminosity = getInitialLuminosity(starA.GetMass());
 	double innerExclusionZone = 0.0;
 
+	cout << "multiplicity: " << multiplicity << endl;
 	if (multiplicity > 1) { // determine if the planets are circumbinary or not
 		if (multiplicity == 2) {
 			// data is held in overallSeparation
@@ -287,7 +312,7 @@ int main () {
 				dummyStar.SetMetallicity(starA.GetMetallicity());
 			}
 		} // close multiplicity == 3 && systemArrangement == 1
-		else if (multiplicity == 3 && systemArrangement != 1) { // A orbits BC
+		else if (multiplicity == 3 && systemArrangement == 0) { // A orbits BC
 			dummyStar.SetMass(starA.GetMass());
 			dummyStar.SetLuminosity(starA.GetLuminosity());
 			dummyStar.SetRadius(starA.GetRadius());
@@ -295,9 +320,34 @@ int main () {
 			dummyStar.SetAge(starA.GetAge());
 			dummyStar.SetMetallicity(starA.GetMetallicity());
 		}
-	}
-	else if (multiplicity == 4) {
-		cout << "Not yet implemented!\n\n";
+		else if (multiplicity == 4) {
+			cout << "multiplicity == 4!" << endl;
+			// Orbit ABCD is stored in overallSeparation
+			// Orbit AB is stored in mainSystem
+			// get AB outer exclusion zone
+			double exclusionZone = getOuterOrbitalExclusionZone(starA.GetMass(), starB.GetMass(), mainSystem.GetSeparation(), mainSystem.GetEccentricity());
+			// if the separation of AB is SMALLER than this, it's circumbinary
+			if (mainSystem.GetSeparation() < exclusionZone) {
+				cout << "mainSystem.GetSeparation() < exclusionZone\n";
+				dummyStarIsCircumbinary = true;
+				dummyStar.SetMass(starA.GetMass() + starB.GetMass());
+				dummyStar.SetLuminosity(starA.GetLuminosity() + starB.GetLuminosity());
+				dummyStar.SetRadius(starA.GetRadius());
+				dummyStar.SetTemperature(starA.GetTemperature() + starB.GetTemperature());
+				dummyStar.SetAge(starA.GetAge());
+				dummyStar.SetMetallicity(starA.GetMetallicity());
+				initialLuminosity = getInitialLuminosity(starA.GetMass()) + getInitialLuminosity(starB.GetMass());
+				innerExclusionZone = exclusionZone; //getInnerOrbitalExclusionZone(starA.GetMass() + starB.GetMass(), starC.GetMass(), overallSeparation.separation, overallSeparation.eccentricity);
+			}
+			else {
+				dummyStar.SetMass(starA.GetMass());
+				dummyStar.SetLuminosity(starA.GetLuminosity());
+				dummyStar.SetRadius(starA.GetRadius());
+				dummyStar.SetTemperature(starA.GetTemperature());
+				dummyStar.SetAge(starA.GetAge());
+				dummyStar.SetMetallicity(starA.GetMetallicity());
+			}
+		}
 	}
 	else { // single star
 		dummyStar.SetMass(starA.GetMass());
