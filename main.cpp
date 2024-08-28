@@ -603,7 +603,7 @@ int main () {
 
 		outFile << "\t\t\t<tr>\n";
 		outFile << "\t\t\t\t<td><strong>Axial tilt</strong></td>\n";
-		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetAxialTilt() << " &deg;</td>\n";
+		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetAxialTilt() << "&deg;</td>\n";
 		outFile << "\t\t\t</tr>\n";
 
 		outFile << "\t\t</table>\n\n";
@@ -1191,6 +1191,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	double innerFormationZone = 2.5 * s.GetMass() * s.GetMetallicity() * diskMassFactor;
 	double middleFormationZone = 80.0 * s.GetMass() * s.GetMetallicity() * diskMassFactor;
 	double outerFormationZone = 18.0 * s.GetMass() * s.GetMetallicity() * diskMassFactor;
+	cout << "diskMassFactor: " << diskMassFactor << endl;
 
 	vector<FormingPlanet> sPlanets;
 
@@ -1605,8 +1606,10 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		double priorMoonDistance = 0;
 		for (int j = 0; j < numberOfMajorMoons; j++) {
 			uniform_int_distribution<> rollDice(1, 6);
-			int roll = rollDice(e) + rollDice(e) + rollDice(e);
-			double moonMass = 1e-5 * (roll * sPlanets2[i].GetMass()) / numberOfMajorMoons;
+			normal_distribution<> randomNorm(10.5, 2.958);
+			int roll = randomNorm(e);
+			double moonMass = 1e-5 * (roll * sPlanets2[i].GetMass()) / numberOfMajorMoons * diskMassFactor;
+			// TBD: a way to form even Mars-sized moons!  Perhaps this?
 			double distance = 0;
 			if (j == 0) { // it's the first moon
 				uniform_real_distribution<> rUnif(3, 8);
