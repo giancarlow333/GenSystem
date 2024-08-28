@@ -92,7 +92,7 @@ int main () {
 	bool systemArrangement;
 	if (isMultiple) {
 		multiplicity = generateSystemMultiplicity(engine);
-		//multiplicity = 3; // for testing
+		multiplicity = 3; // for testing
 
 		if (multiplicity == 2) {
 			double massRatio = generateMassRatio(engine);
@@ -110,7 +110,7 @@ int main () {
 		else if (multiplicity == 3) {
 			// flip coin; if heads, C orbits AB, else BC orbits A
 			systemArrangement = flipCoin(engine);
-			//systemArrangement = 1; // for testing
+			systemArrangement = 0; // for testing
 
 			// C orbits close pair AB
 			if (systemArrangement) {
@@ -415,31 +415,84 @@ int main () {
 		}
 		if (dummyStarIsCircumbinary == true) { firstStarName += " AB"; }
 		// print orbits
-
-		outFile << "\t\t\t<tr><th class=\"star\" colspan=\"2\">Orbit</th></tr>\n";
-		outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Primary</strong></td>\n";
-		outFile << "\t\t\t\t<td>A</td>\n\t\t\t</tr>\n";
-		outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Companion</strong></td>\n";
-		outFile << "\t\t\t\t<td>B</td>\n\t\t\t</tr>\n";
-		outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Period</strong></td>\n";
-
-		double separation, eccentricity;
 		if (multiplicity == 2 || (multiplicity == 3 && systemArrangement == 1) ) {
+			outFile << "\t\t\t<tr><th class=\"star\" colspan=\"2\">Orbit</th></tr>\n";
+			outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Primary</strong></td>\n";
+			outFile << "\t\t\t\t<td>A</td>\n\t\t\t</tr>\n";
+			outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Companion</strong></td>\n";
+			outFile << "\t\t\t\t<td>B</td>\n\t\t\t</tr>\n";
+			outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Period</strong></td>\n";
+
+			double separation, eccentricity;
 			separation = mainSystem.GetSeparation();
 			eccentricity = mainSystem.GetEccentricity();
-		}
-		else {
+
+			double period = sqrt(pow(separation, 3.0) / (starA.GetMass() + starB.GetMass()));
+
+			outFile << "\t\t\t\t<td>" << period << " a</td>\n\t\t\t</tr>\n";
+			outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Semi-major axis</strong></td>\n";
+			outFile << "\t\t\t\t<td>" << separation << " AU</td>\n\t\t\t</tr>\n";
+			outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Eccentricity</strong></td>\n";
+			outFile << "\t\t\t\t<td>" << eccentricity << "</td>\n\t\t\t</tr>\n";
+
+			if (multiplicity == 3 && systemArrangement == 1) {
+				outFile << "\t\t\t<tr><th class=\"star\" colspan=\"2\">Orbit</th></tr>\n";
+				outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Primary</strong></td>\n";
+				outFile << "\t\t\t\t<td>AB</td>\n\t\t\t</tr>\n";
+				outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Companion</strong></td>\n";
+				outFile << "\t\t\t\t<td>C</td>\n\t\t\t</tr>\n";
+				outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Period</strong></td>\n";
+
+				double separation, eccentricity;
+				separation = overallSeparation.separation;
+				eccentricity = overallSeparation.eccentricity;
+
+				double period = sqrt(pow(separation, 3.0) / (starA.GetMass() + starB.GetMass() + starC.GetMass()));
+
+				outFile << "\t\t\t\t<td>" << period << " a</td>\n\t\t\t</tr>\n";
+				outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Semi-major axis</strong></td>\n";
+				outFile << "\t\t\t\t<td>" << separation << " AU</td>\n\t\t\t</tr>\n";
+				outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Eccentricity</strong></td>\n";
+				outFile << "\t\t\t\t<td>" << eccentricity << "</td>\n\t\t\t</tr>\n";
+			}
+		} // close (multiplicity == 2 || (multiplicity == 3 && systemArrangement == 1))
+		else if (multiplicity == 3 && systemArrangement == 0) {
+			outFile << "\t\t\t<tr><th class=\"star\" colspan=\"2\">Orbit</th></tr>\n";
+			outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Primary</strong></td>\n";
+			outFile << "\t\t\t\t<td>A</td>\n\t\t\t</tr>\n";
+			outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Companion</strong></td>\n";
+			outFile << "\t\t\t\t<td>BC</td>\n\t\t\t</tr>\n";
+			outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Period</strong></td>\n";
+
+			double separation, eccentricity;
 			separation = overallSeparation.separation;
 			eccentricity = overallSeparation.eccentricity;
-		}
 
-		double period = sqrt(pow(separation, 3.0) / (starA.GetMass() + starB.GetMass()));
+			double period = sqrt(pow(separation, 3.0) / (starA.GetMass() + starB.GetMass() + starC.GetMass()));
 
-		outFile << "\t\t\t\t<td>" << period << " a</td>\n\t\t\t</tr>\n";
-		outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Semi-major axis</strong></td>\n";
-		outFile << "\t\t\t\t<td>" << separation << " AU</td>\n\t\t\t</tr>\n";
-		outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Eccentricity</strong></td>\n";
-		outFile << "\t\t\t\t<td>" << eccentricity << "</td>\n\t\t\t</tr>\n";
+			outFile << "\t\t\t\t<td>" << period << " a</td>\n\t\t\t</tr>\n";
+			outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Semi-major axis</strong></td>\n";
+			outFile << "\t\t\t\t<td>" << separation << " AU</td>\n\t\t\t</tr>\n";
+			outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Eccentricity</strong></td>\n";
+			outFile << "\t\t\t\t<td>" << eccentricity << "</td>\n\t\t\t</tr>\n";
+
+			outFile << "\t\t\t<tr><th class=\"star\" colspan=\"2\">Orbit</th></tr>\n";
+			outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Primary</strong></td>\n";
+			outFile << "\t\t\t\t<td>B</td>\n\t\t\t</tr>\n";
+			outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Companion</strong></td>\n";
+			outFile << "\t\t\t\t<td>C</td>\n\t\t\t</tr>\n";
+			outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Period</strong></td>\n";
+
+			separation = farSystem.GetSeparation();
+			eccentricity = farSystem.GetEccentricity();
+			period = sqrt(pow(separation, 3.0) / (starC.GetMass() + starB.GetMass()));
+
+			outFile << "\t\t\t\t<td>" << period << " a</td>\n\t\t\t</tr>\n";
+			outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Semi-major axis</strong></td>\n";
+			outFile << "\t\t\t\t<td>" << separation << " AU</td>\n\t\t\t</tr>\n";
+			outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Eccentricity</strong></td>\n";
+			outFile << "\t\t\t\t<td>" << eccentricity << "</td>\n\t\t\t</tr>\n";
+		} // close (multiplicity == 3 && systemArrangement == 0)
 
 
 		outFile << "\t\t</table>\n";
