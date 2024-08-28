@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -std=c++17 -g -Wall
+CFLAGS = -std=c++17
 
 default:	gensystem
 
