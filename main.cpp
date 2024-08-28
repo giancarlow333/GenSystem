@@ -367,6 +367,7 @@ int main () {
 		outFile << starA.GetTemperature() << " K</td></tr>\n";
 		outFile << "\t\t\t<tr><td><strong>Age</strong></td><td>";
 		outFile << starA.GetAge() << " Ga</td></tr>\n";
+		outFile << "\t\t</table>\n";
 	}
 	else {
 		outFile << "\t\t<table class=\"infobox\">\n";
@@ -413,9 +414,8 @@ int main () {
 		}
 		if (dummyStarIsCircumbinary == true) { firstStarName += " AB"; }
 		outFile << "\t\t</table>\n";
-
-		outFile << "\t\t<h2>" << firstStarName << " planets</h2>\n\n";
 	}
+	outFile << "\t\t<h2>" << firstStarName << " planets</h2>\n\n";
 
 	/*
    * SUMMARY TABLE
@@ -526,6 +526,12 @@ int main () {
 		outFile << "\t\t\t\t<td><strong>Orbital period</strong></td>\n";
 		outFile << "\t\t\t\t<td>" << sqrt(pow(dummyStarPlanets[i].GetDistance(), 3.0) / dummyStar.GetMass()) << " a</td>\n";
 		outFile << "\t\t\t\t<td>" << 365.25 * sqrt(pow(dummyStarPlanets[i].GetDistance(), 3.0) / dummyStar.GetMass()) << " d</td>\n";
+		outFile << "\t\t\t</tr>\n";
+
+		outFile << "\t\t\t<tr>\n";
+		outFile << "\t\t\t\t<td><strong>Insolation</strong></td>\n";
+		outFile << "\t\t\t\t<td>" << dummyStar.GetLuminosity() / pow(dummyStarPlanets[i].GetDistance(), 2.0) << "</td>\n";
+		outFile << "\t\t\t\t<td>" << 1321.0 * dummyStar.GetLuminosity() / pow(dummyStarPlanets[i].GetDistance(), 2.0) << " W/m<sup>2</sup></td>\n";
 		outFile << "\t\t\t</tr>\n";
 
 		outFile << "\t\t\t<tr>\n";
