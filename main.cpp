@@ -398,59 +398,80 @@ int main () {
 		  exit(1);
 	}
 
-	outFile << "<html>\n\t<head>\n\t\t<title>GenSystem #" << seed << "</title>\n\t</head>";
+	outFile << "<html>\n\t<head>\n\t\t<title>GenSystem #" << seed << "</title>\n";
+	outFile << "\t\t<link href=\"../misc/styles.css\" rel=\"stylesheet\" type=\"text/css\" media=\"all\" />\n\t</head>";
 	outFile << "\n\t<body>\n";
-	outFile << "\t\t<h1>System " << seed << "</h1>\n";
+	outFile << "\t\t<h1>System " << seed << "</h1>\n\n";
 
 	string firstStarName = "System " + to_string(seed);
 	if (multiplicity == 1) {
-		outFile << "\t\t<h2>Star</h2>\n";
-		outFile << "\t\t<p><strong>Spectral type:</strong> " << starA.GetSpectralType() << " ";
-		outFile << starA.GetLuminosityClass() << "</p>\n";
-		outFile << "\t\t<p><strong>Mass:</strong> " << starA.GetMass() << "</p>\n";
-		outFile << "\t\t<p><strong>Radius:</strong> " << starA.GetRadius() << "</p>\n";
-		outFile << "\t\t<p><strong>Luminosity:</strong> " << starA.GetLuminosity() << "</p>\n";
-		outFile << "\t\t<p><strong>Temperature:</strong> " << starA.GetTemperature() << " K</p>\n";
-		outFile << "\t\t<p><strong>Age:</strong> " << starA.GetAge() << " Ga</p>\n";
-
-		outFile << "\t\t<h2>Planets</h2>\n";
+		outFile << "\t\t<table class=\"infobox\">\n";
+		outFile << "\t\t\t<colgroup><col width=\"300\" /><col width=\"300\" /></colgroup>\n";
+		outFile << "\t\t\t<tr><th class=\"star\" colspan=\"2\">" << firstStarName << "</th></tr>\n\n";
+		outFile << "\t\t\t<tr><td><strong>Spectral type</strong></td><td>";
+		outFile << starA.GetSpectralType() << " " << starA.GetLuminosityClass() << "</td></tr>\n";
+		outFile << "\t\t\t<tr><td><strong>Mass</strong></td><td>";
+		outFile << starA.GetMass() << " M<sub>&#x2609;</sub></td></tr>\n";
+		outFile << "\t\t\t<tr><td><strong>Radius</strong></td><td>";
+		outFile << starA.GetRadius() << " R<sub>&#x2609;</sub></td></tr>\n";
+		outFile << "\t\t\t<tr><td><strong>Luminosity</strong></td><td>";
+		outFile << starA.GetLuminosity() << " L<sub>&#x2609;</sub></td></tr>\n";
+		outFile << "\t\t\t<tr><td><strong>Temperature</strong></td><td>";
+		outFile << starA.GetTemperature() << " K</td></tr>\n";
+		outFile << "\t\t\t<tr><td><strong>Age</strong></td><td>";
+		outFile << starA.GetAge() << " Ga</td></tr>\n";
 	}
 	else {
-		outFile << "\t\t<h2>Star(s)</h2>\n";
-		outFile << "\t\t<h3>System " << seed << " A</h3>\n";
-		outFile << "\t\t<p><strong>Spectral type:</strong> " << starA.GetSpectralType() << " ";
-		outFile << starA.GetLuminosityClass() << "</p>\n";
-		outFile << "\t\t<p><strong>Mass:</strong> " << starA.GetMass() << "</p>\n";
-		outFile << "\t\t<p><strong>Radius:</strong> " << starA.GetRadius() << "</p>\n";
-		outFile << "\t\t<p><strong>Luminosity:</strong> " << starA.GetLuminosity() << "</p>\n";
-		outFile << "\t\t<p><strong>Temperature:</strong> " << starA.GetTemperature() << " K</p>\n";
-		outFile << "\t\t<p><strong>Age:</strong> " << starA.GetAge() << " Ga</p>\n";
+		outFile << "\t\t<table class=\"infobox\">\n";
+		outFile << "\t\t\t<colgroup><col width=\"300\" /><col width=\"300\" /></colgroup>\n";
+		outFile << "\t\t\t<tr><th class=\"star\" colspan=\"2\">" << firstStarName << "</th></tr>\n";
+		outFile << "\t\t\t<tr><td><strong>Age</strong></td><td>";
+		outFile << starA.GetAge() << " Ga</td></tr>\n";
 
-		outFile << "\t\t<h3>System " << seed << " B</h3>\n";
-		outFile << "\t\t<p><strong>Spectral type:</strong> " << starB.GetSpectralType() << " ";
-		outFile << starB.GetLuminosityClass() << "</p>\n";
-		outFile << "\t\t<p><strong>Mass:</strong> " << starB.GetMass() << "</p>\n";
-		outFile << "\t\t<p><strong>Radius:</strong> " << starB.GetRadius() << "</p>\n";
-		outFile << "\t\t<p><strong>Luminosity:</strong> " << starB.GetLuminosity() << "</p>\n";
-		outFile << "\t\t<p><strong>Temperature:</strong> " << starB.GetTemperature() << " K</p>\n";
-		outFile << "\t\t<p><strong>Age:</strong> " << starB.GetAge() << " Ga</p>\n";
+		outFile << "\t\t\t<tr><th class=\"star\" colspan=\"2\">" << firstStarName << " A</th></tr>\n";
+		outFile << "\t\t\t<tr><td><strong>Spectral type</strong></td><td>";
+		outFile << starA.GetSpectralType() << " " << starA.GetLuminosityClass() << "</td></tr>\n";
+		outFile << "\t\t\t<tr><td><strong>Mass</strong></td><td>";
+		outFile << starA.GetMass() << " M<sub>&#x2609;</sub></td></tr>\n";
+		outFile << "\t\t\t<tr><td><strong>Radius</strong></td><td>";
+		outFile << starA.GetRadius() << " R<sub>&#x2609;</sub></td></tr>\n";
+		outFile << "\t\t\t<tr><td><strong>Luminosity</strong></td><td>";
+		outFile << starA.GetLuminosity() << " L<sub>&#x2609;</sub></td></tr>\n";
+		outFile << "\t\t\t<tr><td><strong>Temperature</strong></td><td>";
+		outFile << starA.GetTemperature() << " K</td></tr>\n";
+
+		outFile << "\t\t\t<tr><th class=\"star\" colspan=\"2\">" << firstStarName << " B</th></tr>\n";
+		outFile << "\t\t\t<tr><td><strong>Spectral type</strong></td><td>";
+		outFile << starB.GetSpectralType() << " " << starB.GetLuminosityClass() << "</td></tr>\n";
+		outFile << "\t\t\t<tr><td><strong>Mass</strong></td><td>";
+		outFile << starB.GetMass() << " M<sub>&#x2609;</sub></td></tr>\n";
+		outFile << "\t\t\t<tr><td><strong>Radius</strong></td><td>";
+		outFile << starB.GetRadius() << " R<sub>&#x2609;</sub></td></tr>\n";
+		outFile << "\t\t\t<tr><td><strong>Luminosity</strong></td><td>";
+		outFile << starB.GetLuminosity() << " L<sub>&#x2609;</sub></td></tr>\n";
+		outFile << "\t\t\t<tr><td><strong>Temperature</strong></td><td>";
+		outFile << starB.GetTemperature() << " K</td></tr>\n";
 		if (multiplicity == 3 || multiplicity == 4) {
-			outFile << "\t\t<h3>System " << seed << " C</h3>\n";
-			outFile << "\t\t<p><strong>Spectral type:</strong> " << starC.GetSpectralType() << " ";
-			outFile << starC.GetLuminosityClass() << "</p>\n";
-			outFile << "\t\t<p><strong>Mass:</strong> " << starC.GetMass() << "</p>\n";
-			outFile << "\t\t<p><strong>Radius:</strong> " << starC.GetRadius() << "</p>\n";
-			outFile << "\t\t<p><strong>Luminosity:</strong> " << starC.GetLuminosity() << "</p>\n";
-			outFile << "\t\t<p><strong>Temperature:</strong> " << starC.GetTemperature() << " K</p>\n";
-			outFile << "\t\t<p><strong>Age:</strong> " << starC.GetAge() << " Ga</p>\n";
+			outFile << "\t\t\t<tr><th class=\"star\" colspan=\"2\">" << firstStarName << " C</th></tr>\n";
+			outFile << "\t\t\t<tr><td><strong>Spectral type</strong></td><td>";
+			outFile << starC.GetSpectralType() << " " << starC.GetLuminosityClass() << "</td></tr>\n";
+			outFile << "\t\t\t<tr><td><strong>Mass</strong></td><td>";
+			outFile << starC.GetMass() << " M<sub>&#x2609;</sub></td></tr>\n";
+			outFile << "\t\t\t<tr><td><strong>Radius</strong></td><td>";
+			outFile << starC.GetRadius() << " R<sub>&#x2609;</sub></td></tr>\n";
+			outFile << "\t\t\t<tr><td><strong>Luminosity</strong></td><td>";
+			outFile << starC.GetLuminosity() << " L<sub>&#x2609;</sub></td></tr>\n";
+			outFile << "\t\t\t<tr><td><strong>Temperature</strong></td><td>";
+			outFile << starC.GetTemperature() << " K</td></tr>\n";
 		}
 		if (dummyStarIsCircumbinary == true) { firstStarName += " AB"; }
+		outFile << "\t\t</table>\n";
 
-		outFile << "\t\t<h2>" << firstStarName << " Planets</h2>\n";
+		outFile << "\t\t<h2>" << firstStarName << " planets</h2>\n\n";
 	}
 
 	for (int i = 0; i < dummyStarPlanets.size(); i++) {
-		outFile << "\t\t<h3>" << firstStarName << " #" << i + 1 << "</h3>\n";
+		outFile << "\t\t<h3>" << firstStarName << " #" << i + 1 << "</h3>\n\n";
 		PlanetClass theClass = dummyStarPlanets[i].GetPlanetClass();
 		string className;
 
