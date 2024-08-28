@@ -92,7 +92,10 @@ int main () {
 	bool systemArrangement;
 	if (isMultiple) {
 		multiplicity = generateSystemMultiplicity(engine);
-		multiplicity = 3; // for testing
+		//multiplicity = 4; // for testing
+
+		// don't implement quaternary yet
+		if (multiplicity == 4) { multiplicity = 3; }
 
 		if (multiplicity == 2) {
 			double massRatio = generateMassRatio(engine);
@@ -510,7 +513,8 @@ int main () {
 	outFile << "\t\t\t<tr><th colspan=\"6\">" << firstStarName << "</th></tr>\n";
 	outFile << "\t\t\t<tr><th>&numero;</th><th colspan=\"2\">Type</th><th>Distance</th><th>Mass</th><th>Radius</th></tr>\n";
 	for (int i = 0; i < dummyStarPlanets.size(); i++) {
-		outFile << "\t\t\t<tr>\n\t\t\t\t<td><a href=\"#" << firstStarName << " " << i + 1 << "\">" << i + 1 << "</a></td>\n";
+		char planetNo = i + 98;
+		outFile << "\t\t\t<tr>\n\t\t\t\t<td><a href=\"#" << firstStarName << " " << planetNo << "\">" << planetNo << "</a></td>\n";
 		PlanetClass theClass = dummyStarPlanets[i].GetPlanetClass();
 		string className, imgFileName;
 
@@ -528,10 +532,11 @@ int main () {
 
 	// FULL DETAILS
 	for (int i = 0; i < dummyStarPlanets.size(); i++) {
+		char planetNo = i + 98;
 		outFile << "\t\t<p>&nbsp;</p>\n";
-		outFile << "\t\t<table class=\"infobox\" id=\"" << firstStarName << " " << i + 1 << "\">\n";
+		outFile << "\t\t<table class=\"infobox\" id=\"" << firstStarName << " " << planetNo << "\">\n";
 		outFile << "\t\t\t<colgroup><col width=\"500\" /><col width=\"300\" /><col width=\"300\" /></colgroup>\n";
-		outFile << "\t\t\t<tr>\n\t\t\t\t<th colspan=\"3\">" << firstStarName << " #" << i + 1 << "</th>\n\t\t\t</tr>\n";
+		outFile << "\t\t\t<tr>\n\t\t\t\t<th colspan=\"3\">" << firstStarName << " " << planetNo << "</th>\n\t\t\t</tr>\n";
 
 		PlanetClass theClass = dummyStarPlanets[i].GetPlanetClass();
 		string className, imgFileName;
