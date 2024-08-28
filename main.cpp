@@ -302,7 +302,7 @@ int main () {
 			// get AB outer exclusion zone
 			double exclusionZone = getOuterOrbitalExclusionZone(starA.GetMass(), starB.GetMass(), mainSystem.GetSeparation(), mainSystem.GetEccentricity());
 			// if the separation of AB is SMALLER than this, it's circumbinary
-			if (mainSystem.GetSeparation() < exclusionZone) {
+			if (mainSystem.GetSeparation() < 1.0) {
 				dummyStarIsCircumbinary = true;
 				dummyStar.SetMass(starA.GetMass() + starB.GetMass());
 				dummyStar.SetLuminosity(starA.GetLuminosity() + starB.GetLuminosity());
@@ -337,7 +337,7 @@ int main () {
 			// get AB outer exclusion zone
 			double exclusionZone = getOuterOrbitalExclusionZone(starA.GetMass(), starB.GetMass(), mainSystem.GetSeparation(), mainSystem.GetEccentricity());
 			// if the separation of AB is SMALLER than this, it's circumbinary
-			if (mainSystem.GetSeparation() < exclusionZone) {
+			if (mainSystem.GetSeparation() < 1.0) {
 				cout << "mainSystem.GetSeparation() < exclusionZone\n";
 				cout << "exclusionZone: " << exclusionZone << endl;
 				cout << "mainSystem.GetSeparation(): " << mainSystem.GetSeparation() << endl;
