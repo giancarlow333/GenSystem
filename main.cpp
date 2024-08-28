@@ -70,7 +70,7 @@ int main () {
 
 	// mass of the primary star
 	double baseMass = initialMassFunction(engine);
-	//baseMass = 1.2; // for testing
+	baseMass = 1.02; // for testing
 
 	bool isMultiple = isSystemMultiple(baseMass, engine);
 
@@ -599,6 +599,11 @@ int main () {
 		outFile << "\t\t\t\t<td><strong>Siderial rotation period</strong></td>\n";
 		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetRotationPeriod() << " h</td>\n";
 		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetRotationPeriod() / 24.0 << " d</td>\n";
+		outFile << "\t\t\t</tr>\n";
+
+		outFile << "\t\t\t<tr>\n";
+		outFile << "\t\t\t\t<td><strong>Axial tilt</strong></td>\n";
+		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetAxialTilt() << " &deg;</td>\n";
 		outFile << "\t\t\t</tr>\n";
 
 		outFile << "\t\t</table>\n\n";
@@ -1601,7 +1606,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		for (int j = 0; j < numberOfMajorMoons; j++) {
 			uniform_int_distribution<> rollDice(1, 6);
 			int roll = rollDice(e) + rollDice(e) + rollDice(e);
-			double moonMass = 1e-6 * (roll * sPlanets2[i].GetMass()) / numberOfMajorMoons;
+			double moonMass = 1e-5 * (roll * sPlanets2[i].GetMass()) / numberOfMajorMoons;
 			double distance = 0;
 			if (j == 0) { // it's the first moon
 				uniform_real_distribution<> rUnif(3, 8);
@@ -1667,13 +1672,20 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		double axis = 0;
 		PlanetClass pc;
 		if (sPlanets2[i].GetNumberOfMoons() > 0) { // has major moon(s), is terrestrial, leftover oligarch, failed core
-			normal_distribution<> randomNorm(30.0, 9.0);
+			normal_distribution<> randomNorm(30.0, 9.0); // basically 4d6
 			axis = randomNorm(e);
 		}
 		else if (isTidallyLocked) {
+			normal_distribution<> randomNorm(2.5, 3.0); // basically 3d6-8
+			axis = randomNorm(e);
+			if (axis < 0) { axis = 0; }
 		}
 		else { // not tidally locked, no moons, or gas giant
+			lognormal_distribution<> randomLogNorm(3.56, 1.1); // average 35, IQR 16.7 - 73.5
+			axis = randomLogNorm(e);
+			if (axis < 0) { axis = 0; }
 		}
+		sPlanets2[i].SetAxialTilt(axis);
 	}
 	// solar day
 

@@ -34,6 +34,7 @@ class Planet
 		double GetGravity ();
 		double GetOrbitalPeriod ();
 		double GetRotationPeriod ();
+		double GetAxialTilt ();
 		PlanetClass GetPlanetClass ();
 		vector<Moon> GetMoons ();
 		int GetNumberOfMoons ();
@@ -46,6 +47,7 @@ class Planet
 		void SetGravity (double g);
 		void SetOrbitalPeriod (double y);
 		void SetRotationPeriod (double r);
+		void SetAxialTilt (double a);
 		void SetPlanetClass (PlanetClass pc);
 		void SetMoons (vector<Moon> mv);
 		void SetSingleMoon (Moon m);
@@ -62,6 +64,7 @@ class Planet
 		double gravity; // gravity of planet in earths
 		double orbitalPeriod; // year length in earth years
 		double rotationPeriod; // day length in HOURS
+		double axialTilt; // in degrees
 		PlanetClass classOfPlanet;
 		vector<Moon> moons;
 };

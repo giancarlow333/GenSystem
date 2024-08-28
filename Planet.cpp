@@ -18,6 +18,7 @@ Planet::Planet(const Planet & other) {
 	gravity = other.gravity;
 	orbitalPeriod = other.orbitalPeriod;
 	rotationPeriod = other.rotationPeriod;
+	axialTilt = other.axialTilt;
 	classOfPlanet = other.classOfPlanet;
 	moons = other.moons;
 }
@@ -69,6 +70,10 @@ double Planet::GetRotationPeriod () {
 	return rotationPeriod;
 }
 
+double Planet::GetAxialTilt () {
+	return axialTilt;
+}
+
 PlanetClass Planet::GetPlanetClass () {
 	return classOfPlanet;
 }
@@ -115,6 +120,10 @@ void Planet::SetOrbitalPeriod (double y) {
 
 void Planet::SetRotationPeriod (double r) {
 	rotationPeriod = r;
+}
+
+void Planet::SetAxialTilt (double a) {
+	axialTilt = a;
 }
 
 void Planet::SetPlanetClass (PlanetClass pc) {
