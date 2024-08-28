@@ -76,7 +76,7 @@ int main () {
 	else { cout << "IS NOT"; }
 	cout << " multiple!" << endl << endl;*/
 
-	isMultiple = true; // For testing
+	//isMultiple = true; // For testing
 
 	// Create star
 	Star starA, starB, starC, starD;
@@ -91,7 +91,7 @@ int main () {
 	bool systemArrangement;
 	if (isMultiple) {
 		multiplicity = generateSystemMultiplicity(engine);
-		multiplicity = 3; // for testing
+		//multiplicity = 3; // for testing
 
 		if (multiplicity == 2) {
 			double massRatio = generateMassRatio(engine);
@@ -109,7 +109,7 @@ int main () {
 		else if (multiplicity == 3) {
 			// flip coin; if heads, C orbits AB, else BC orbits A
 			systemArrangement = flipCoin(engine);
-			systemArrangement = 1; // for testing
+			//systemArrangement = 1; // for testing
 
 			// C orbits close pair AB
 			if (systemArrangement) {
@@ -129,7 +129,7 @@ int main () {
 				// Set separation of (AB)C
 				double exclusionZoneAB = getOuterOrbitalExclusionZone(baseMass, baseMass * massRatioAB, separationAB, eccenAB);
 				double separationABC =  generateDistanceBetweenStars(engine, baseMass);
-				separationABC = 25; // for testing
+				//separationABC = 25; // for testing
 				double eccenABC = generateMultipleStarEccentricity(engine, separationABC);
 				while ((1 - eccenABC) * separationABC < exclusionZoneAB) {
 					separationABC =  generateDistanceBetweenStars(engine, baseMass);
