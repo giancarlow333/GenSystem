@@ -121,3 +121,19 @@ double getTypicalEccentricity (int planets) {
 	else if (planets <= 9) { return 0.06; }
 	else { return 0.05; }
 }
+
+double getFromMajorSatelliteOrbitalRatioTable (int roll) {
+	if (roll == 3) { return 1.406; }
+	else if (roll == 4) { return 1.432; }
+	else if (roll == 5) { return 1.452; }
+	else if (roll == 6) { return 1.480; }
+	else if (roll == 7) { return 1.500; }
+	else if (roll == 8) { return 1.550; }
+	else if (roll <= 12) { return 1.587; }
+	else if (roll == 13) { return 1.600; }
+	else if (roll == 14) { return 1.650; }
+	else if (roll == 15) { return 1.700; }
+	else if (roll == 16) { return 1.750; }
+	else if (roll == 17) { return 1.800; }
+	else /* roll == 18 */ { return 1.850; }
+}

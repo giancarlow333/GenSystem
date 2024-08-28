@@ -1571,12 +1571,36 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		}
 		cout << "Planet " << i << " has " << numberOfMajorMoons << " major moons." << endl;
 
+		int laplaceResonanceCount = 0;
+		double priorMoonDistance = 0;
 		for (int j = 0; j < numberOfMajorMoons; j++) {
 			uniform_int_distribution<> rollDice(1, 6);
 			int roll = rollDice(e) + rollDice(e) + rollDice(e);
 			double moonMass = 1e-6 * (roll * sPlanets2[i].GetMass()) / numberOfMajorMoons;
-			Moon temp;
 			cout << "moonMass " << j << ": " << moonMass << endl;
+			double distance = 0;
+			if (j == 0) { // it's the first moon
+				uniform_real_distribution<> rUnif(3, 8);
+				distance = rUnif(e) * sPlanets2[i].GetRadius() * 6371.0;
+				priorMoonDistance = distance;
+			}
+			else {
+				if (laplaceResonanceCount == 1) {
+					distance = priorMoonDistance * 1.587;
+					laplaceResonanceCount++;
+				}
+				else {
+					int roll2 = rollDice(e) + rollDice(e) + rollDice(e);
+					if (roll2 >= 9 && roll2 <= 12) {
+						laplaceResonanceCount++;
+					}
+					else { laplaceResonanceCount = 0; }
+					distance = getFromMajorSatelliteOrbitalRatioTable(roll2) * priorMoonDistance;
+				}
+				priorMoonDistance = distance;
+			}
+			cout << "distance: " << distance << endl;
+			Moon temp(distance, moonMass);
 		}
 	}
 	
