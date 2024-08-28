@@ -1,4 +1,6 @@
 #include <iostream>
+#include <vector>
+#include "Moon.h"
 #include "Planet.h"
 using namespace std;
 
@@ -15,6 +17,7 @@ Planet::Planet(const Planet & other) {
 	density = other.density;
 	gravity = other.gravity;
 	classOfPlanet = other.classOfPlanet;
+	moons = other.moons;
 }
 
 //alternate constructor
@@ -59,6 +62,10 @@ double Planet::GetGravity () {
 PlanetClass Planet::GetPlanetClass () {
 	return classOfPlanet;
 }
+
+vector<Moon> Planet::GetMoons () {
+	return moons;
+}
 ///////////////////////////////////////
 // MUTATORS
 ///////////////////////////////////////
@@ -89,6 +96,13 @@ void Planet::SetGravity (double g) {
 
 void Planet::SetPlanetClass (PlanetClass pc) {
 	classOfPlanet = pc;
+}
+
+void Planet::SetMoons (vector<Moon> mv) {
+	moons = mv;
+}
+void Planet::SetSingleMoon (Moon m) {
+	moons.push_back(m);
 }
 ///////////////////////////////////////
 // OPERATORS

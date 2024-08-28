@@ -6,6 +6,7 @@
 #include "StarSystem.h"
 #include "Star.h"
 #include "Planet.h"
+#include "Moon.h"
 #include "useful.cpp"
 using namespace std;
 
@@ -68,7 +69,7 @@ int main () {
 
 	// mass of the primary star
 	double baseMass = initialMassFunction(engine);
-	//baseMass = 1.2; // for testing
+	baseMass = 1.2; // for testing
 
 	bool isMultiple = isSystemMultiple(baseMass, engine);
 
