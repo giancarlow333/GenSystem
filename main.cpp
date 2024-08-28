@@ -470,12 +470,15 @@ int main () {
 		outFile << "\t\t<h2>" << firstStarName << " planets</h2>\n\n";
 	}
 
+	/*
+   * SUMMARY TABLE
+   */
 	outFile << "\t\t<table class=\"infobox\">\n";
 	outFile << "\t\t\t<colgroup><col width=\"50\" /><col width=\"50\" /><col width=\"300\" /><col width=\"300\" /><col width=\"300\" /><col width=\"300\" /></colgroup>\n";
 	outFile << "\t\t\t<tr><th colspan=\"6\">" << firstStarName << "</th></tr>\n";
 	outFile << "\t\t\t<tr><th>&numero;</th><th colspan=\"2\">Type</th><th>Distance</th><th>Mass</th><th>Radius</th></tr>\n";
 	for (int i = 0; i < dummyStarPlanets.size(); i++) {
-		outFile << "\t\t\t<tr>\n\t\t\t\t<td>" << i + 1 << "</td>\n";
+		outFile << "\t\t\t<tr>\n\t\t\t\t<td><a href=\"#" << firstStarName << " " << i + 1 << "\">" << i + 1 << "</a></td>\n";
 		PlanetClass theClass = dummyStarPlanets[i].GetPlanetClass();
 		string className;
 
@@ -519,7 +522,7 @@ int main () {
 	// FULL DETAILS
 	for (int i = 0; i < dummyStarPlanets.size(); i++) {
 		outFile << "\t\t<p>&nbsp;</p>\n";
-		outFile << "\t\t<table class=\"infobox\" id=\"" << firstStarName << i + 1 << "\">\n";
+		outFile << "\t\t<table class=\"infobox\" id=\"" << firstStarName << " " << i + 1 << "\">\n";
 		outFile << "\t\t\t<colgroup><col width=\"500\" /><col width=\"300\" /><col width=\"300\" /></colgroup>\n";
 		outFile << "\t\t\t<tr>\n\t\t\t\t<th colspan=\"3\">" << firstStarName << " #" << i + 1 << "</th>\n\t\t\t</tr>\n";
 
