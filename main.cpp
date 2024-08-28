@@ -170,18 +170,24 @@ int main () {
 
 			double separationAB =  generateDistanceBetweenStars(engine, baseMass);
 			double eccenAB = generateMultipleStarEccentricity(engine, separationAB);
+			mainSystem.SetPrimaryStar(starA);
+			mainSystem.SetSecondaryStar(starB);
+			mainSystem.SetSeparation(separationAB);
+			mainSystem.SetEccentricity(eccenAB);
 
 			double massRatioAC = generateMassRatio(engine);
 			starC.SetMass(baseMass * massRatioAC);
-			//mainSystem.secondSystem.SetSingleStar(starC);
 
 			double massRatioCD = generateHeavyMassRatio(engine);
 			starD.SetMass(baseMass * massRatioAC * massRatioCD);
-			//mainSystem.secondSystem.SetSingleStar(starD);
 			cout << "massRatioCD: " << massRatioCD << endl;
 
 			double separationCD =  generateDistanceBetweenStars(engine, baseMass * massRatioAC);
 			double eccenCD = generateMultipleStarEccentricity(engine, separationCD);
+			farSystem.SetPrimaryStar(starC);
+			farSystem.SetSecondaryStar(starD);
+			farSystem.SetSeparation(separationCD);
+			farSystem.SetEccentricity(eccenCD);
 
 			double maxAB = separationAB * (1 + eccenAB);
 			double maxCD = separationCD * (1 + eccenCD);
