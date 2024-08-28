@@ -36,7 +36,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 void printPlanetaryClass (PlanetClass pc, string & className, string & imgFileName);
 
 // constants
-const string VERSION_NUMBER = "0.11";
+const string VERSION_NUMBER = "0.12";
 
 // struct for overall separation
 struct OverallSeparation {
@@ -1628,10 +1628,12 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 				}
 				priorMoonDistance = distance;
 			}
-			cout << "distance: " << distance << endl;
+			//cout << "distance: " << distance << endl;
 			Moon temp(distance, moonMass);
 			sPlanets2[i].SetSingleMoon(temp);
 		}
+
+		// TBD: giant impact moons
 	}
 
 	// orbital periods
@@ -1688,6 +1690,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		sPlanets2[i].SetAxialTilt(axis);
 	}
 	// solar day
+	// can do when printing
 
 	// blackbody temp
 
