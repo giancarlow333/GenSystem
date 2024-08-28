@@ -213,8 +213,10 @@ int main () {
 	double systemAge = generateSystemAge(engine);
 	//systemAge = 6.5; // for testing
 	double metallicity = generateMetallicity(engine, systemAge);
+	cout << "metallicity: " << metallicity << endl;
 	starA.SetAge(systemAge);
 	starA.SetMetallicity(metallicity);
+	cout << "starA.SetMetallicity: " << starA.GetMetallicity() << endl;
 
 	// evolve Star A
 	evolveStar(starA, engine);
@@ -366,7 +368,7 @@ int main () {
 		dummyStar.SetAge(starA.GetAge());
 		dummyStar.SetMetallicity(starA.GetMetallicity());
 	}
-
+	cout << "dummyStar: " << dummyStar.GetMass() << endl;
 	// put forbidden zones here
 	double forbiddenZone = 1000000.0;
 	if (multiplicity == 2 && !dummyStarIsCircumbinary) { // A is orbited by B; planets orbit A
@@ -381,13 +383,15 @@ int main () {
 	else if (multiplicity == 4 && dummyStarIsCircumbinary) { // A is orbited by B, both by CD; planets orbit A
 		cout << "multiplicity == 4 && dummyStarIsCircumbinary\n\n";
 		forbiddenZone = getInnerOrbitalExclusionZone (starA.GetMass(), starB.GetMass(), mainSystem.GetSeparation(), mainSystem.GetEccentricity());
+		cout << "forbiddenZone: " << forbiddenZone << endl << endl;
 	}
 	else if (multiplicity == 4 && !dummyStarIsCircumbinary) { // A is orbited by B, both by CD; planets orbit AB
 		cout << "multiplicity == 4 && !dummyStarIsCircumbinary\n\n";
 		forbiddenZone = getInnerOrbitalExclusionZone (starA.GetMass() + starB.GetMass(), starC.GetMass() + starD.GetMass(), overallSeparation.separation, overallSeparation.eccentricity);
 		cout << "forbiddenZone: " << forbiddenZone << endl << endl;
 	}
-
+	cout << "initialLuminosity: " << initialLuminosity << endl;
+	cout << "innerExclusionZone: " << innerExclusionZone << endl;
 	// Planets around primary star
 	vector<Planet> dummyStarPlanets = formPlanets (dummyStar, engine, forbiddenZone, dummyStarIsCircumbinary, initialLuminosity, innerExclusionZone);
 
@@ -852,7 +856,11 @@ double generateMetallicity (default_random_engine & e, double age) {
 
 	int roll = diceRoll(e) + diceRoll(e) + diceRoll(e);
 	
-	return (roll / 10) * (1.2 - age / 13.5);
+	double baseMetal = (roll / 10) * (1.2 - age / 13.5);
+
+	if (baseMetal <= 0.05) { baseMetal = 0.05; }
+
+	return baseMetal;
 }
 
 /* getInitialLuminosity
@@ -1217,17 +1225,20 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	double migrationFactor = generateMigrationFactor(e, diskMassFactor);
 
 	double diskInnerEdge = 0.005 * pow(s.GetMass(), 1.0 / 3.0);
+	cout << "diskInnerEdge: " << diskInnerEdge << endl;
 	double formationIceLine = 4.0 * sqrt(initialLuminosity);
 	double slowAccretionLine = 20.0 * pow(s.GetMass(), 1.0 / 3.0);
 
 	double innerFormationZone = 2.5 * s.GetMass() * s.GetMetallicity() * diskMassFactor;
 	double middleFormationZone = 80.0 * s.GetMass() * s.GetMetallicity() * diskMassFactor;
 	double outerFormationZone = 18.0 * s.GetMass() * s.GetMetallicity() * diskMassFactor;
+	cout << "s.GetMass(): " << s.GetMass() << endl;
 
 	vector<FormingPlanet> sPlanets;
 
 	// place inner planets
 	double planet0Distance = 0.6 * sqrt(initialLuminosity);
+	cout << "planet0Distance: " << planet0Distance << endl;
 	FormingPlanet temp0;
 	temp0.planet.SetDistance(planet0Distance);
 	temp0.planet.SetMass(0.08 * innerFormationZone);
