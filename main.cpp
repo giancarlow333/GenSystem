@@ -5,6 +5,7 @@
 #include <filesystem>       // directories
 #include <iomanip>          // setprecision
 #include <cmath>            // ceil
+#include <unistd.h>         // for command line args
 #include "StarSystem.h"
 #include "Star.h"
 #include "Planet.h"
@@ -61,13 +62,27 @@ struct FormingPlanet {
 void placeRemainingPlanets (vector<FormingPlanet> & pVector, int firstPlanetIndex, int lastPlanetIndex, int countToBePlaced, default_random_engine & e);
 
 /* MAIN */
-int main () {
+int main (int argc, char **argv) {
 	cout << "Hello!\n";
 	cout << "Welcome to GenSystem Version " << VERSION_NUMBER << "!" << endl;
 	cout << "(c) 2024 Giancarlo Whitaker" << endl << endl;
 
+	int seed = 0;
+	// process command line
+	int opt;
+	while ((opt = getopt(argc, argv, "hs:")) != -1) {
+		switch (opt) {
+			case 's':
+				seed = atoi(optarg);
+				break;
+			case 'h':
+			default:
+				cerr << "Usage: " << argv[0] << " [-h] [-s SEED]\n";
+				exit(1);
+		}
+	}
+
 	// construct random engine
-	int seed = 333;  // non-random seed for testing
 	default_random_engine engine(seed);
 
 	// mass of the primary star
@@ -1886,14 +1901,14 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			bool thereWasAnOxygenCatastrophe = false;
 			double atmosphericOxygen = 0.0;
 			double atmosphericWaterVapor = 0.0;
-			if (newPlanetClass != VENUSIAN && (isACarbonSilicateCycle || oceanPctge > 0)) {
-				if (s.GetAge() > 1) { thereIsLife = true; }
-				if (s.GetAge() > 2) { thereWasAnOxygenCatastrophe = true; }
+			if (newPlanetClass != VENUSIAN && (isACarbonSilicateCycle || oceanPctge > 0.0)) {
+				if (s.GetAge() > 1.0) { thereIsLife = true; }
+				if (s.GetAge() > 2.0) { thereWasAnOxygenCatastrophe = true; }
 			}
 			if (thereIsLife) {
 				atmosphericOxygen = threeD6Over100(e) * 0.2;
 			}
-			else if (thereWasAnOxygenCatastrophe) {
+			if (thereWasAnOxygenCatastrophe) {
 				normal_distribution<> oxygenGen(0.256, 0.02958);
 				atmosphericOxygen = oxygenGen(e) * retentionFactor;
 			}
