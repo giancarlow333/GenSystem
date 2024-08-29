@@ -1591,8 +1591,8 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		cout << "Doing planet " << i << endl;
 		cout << "Distance " << temp.GetDistance() << " AU; mass " << temp.GetMass();
 		cout << "; ejected? " << sPlanets[i].planetEjected << "; exclusion? " << sPlanets[i].inExclusionZone;
-		cout << "; class? " << temp.GetPlanetClass() << endl;
-		if (!sPlanets[i].planetEjected && !sPlanets[i].inExclusionZone && temp.GetPlanetClass() != NONE) {
+		cout << "; class? " << sPlanets[i].planet.GetPlanetClass() << endl;
+		if (!sPlanets[i].planetEjected && !sPlanets[i].inExclusionZone && sPlanets[i].planet.GetPlanetClass() != NONE) {
 			sPlanets2.push_back(temp);
 			cout << "Planet " << i << " kept!" << endl;
 		}

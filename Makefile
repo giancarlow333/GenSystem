@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -std=c++17
+CFLAGS = -std=c++17 -g
 
 default:	gensystem
 
@@ -10,16 +10,16 @@ main.o:
 	$(CC) $(CFLAGS) -c main.cpp
 
 Moon.o:
-	$(CC) -c Moon.cpp
+	$(CC) $(CFLAGS) -c Moon.cpp
 
 Planet.o:
-	$(CC) -c Planet.cpp
+	$(CC) $(CFLAGS) -c Planet.cpp
 
 Star.o:
-	$(CC) -c Star.cpp
+	$(CC) $(CFLAGS) -c Star.cpp
 
 StarSystem.o:
-	$(CC) -c StarSystem.cpp
+	$(CC) $(CFLAGS) -c StarSystem.cpp
 
 clean:
 	$(RM) GenSystem *.o *~
