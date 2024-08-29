@@ -634,9 +634,6 @@ int main () {
 			outFile << setprecision(6) << "</td>\n";
 			outFile << "\t\t\t</tr>\n";
 		}
-		else {
-
-		}
 
 		outFile << "\t\t\t<tr>\n";
 		outFile << "\t\t\t\t<td><strong>Surface temperature</strong></td>\n";
@@ -2035,23 +2032,23 @@ void printPlanetaryClass (PlanetClass pc, string & className, string & imgFileNa
 			break;
 		case VENUSIAN:
 			className = "Venusian";
-			imgFileName = "1FacePlanet.gif";
+			imgFileName = "VenusianPlanet.gif";
 			break;
 		case HYCEAN:
 			className = "Hycean";
-			imgFileName = "1FacePlanet.gif";
+			imgFileName = "WaterPlanet.gif";
 			break;
 		case TITANIAN:
 			className = "Titanian";
-			imgFileName = "1FacePlanet.gif";
+			imgFileName = "TitanianPlanet.gif";
 			break;
 		case GAIAN:
 			className = "Gaian";
-			imgFileName = "1FacePlanet.gif";
+			imgFileName = "GaianPlanet.gif";
 			break;
 		case MARTIAN:
 			className = "Martian";
-			imgFileName = "1FacePlanet.gif";
+			imgFileName = "MartianPlanet.gif";
 			break;
 	}
 }
