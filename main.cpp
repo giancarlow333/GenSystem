@@ -4,6 +4,7 @@
 #include <string>           // file names
 #include <filesystem>       // directories
 #include <iomanip>          // setprecision
+#include <cmath>            // ceil
 #include "StarSystem.h"
 #include "Star.h"
 #include "Planet.h"
@@ -1632,6 +1633,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 				priorMoonDistance = distance;
 			}
 			//cout << "distance: " << distance << endl;
+			if (distance > hillSphereInKm) { break; }
 			Moon temp(distance, moonMass);
 			sPlanets2[i].SetSingleMoon(temp);
 		}
@@ -1695,9 +1697,42 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	// solar day
 	// can do when printing
 
-	// blackbody temp
+	// temperature and surface water
+	for (int i = 0; i < sPlanets2.size(); i++) {
+		PlanetClass pc = sPlanets2[i].GetPlanetClass();
+		// blackbody temp
+		double blackBodyTemp = 278.0 * pow(s.GetLuminosity(), 0.25) / sqrt(sPlanets2[i].GetDistance());
+		// minimum molecular weight retained
+		double minMWR = 676300.0 * blackBodyTemp / (sPlanets2[i].GetDensity() * (sPlanets2[i].GetRadius() * 6371.0));
+		minMWR = ceil(minMWR);
 
-	// surface water
+		// ocean formation
+		if (pc == TERRESTRIAL_PLANET || pc == LEFTOVER_OLIGARCH) { 
+			double oceanPctge;
+			if (minMWR <= 2) { oceanPctge = 1.0; }
+			else if (minMWR <= 28) {
+				if (sPlanets2[i].GetDistance() > formationIceLine) { oceanPctge = 1.0; }
+				else { // did not form beyond ice line
+					normal_distribution<> randomNorm(0.55, 0.28); // basically 3d6
+					oceanPctge = randomNorm(e);
+					if (thereIsAGrandTack) {
+						oceanPctge += 0.2;
+					}
+					if (oceanPctge < 0.0) { oceanPctge = 0.0; }
+					if (oceanPctge > 1.0) { oceanPctge = 1.0; }
+				}
+			}
+			else { // MMWR >= 29
+				if (blackBodyTemp >= 125) {
+					// also if major gas giant moon closer than 8 radii
+					oceanPctge = 0.0;
+				}
+				else {
+					oceanPctge = 1.0;
+				}
+			} // close ocean else
+		} // end ocean formation
+	}
 
 	// geophysics and magnetics
 
