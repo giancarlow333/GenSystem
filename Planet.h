@@ -76,7 +76,7 @@ class Planet
 		void SetSingleMoon (Moon m);
 		void SetAtmosphere (Atmosphere a);
 		// Operators
-		//Planet & operator=(const Planet & rhs);
+		Planet & operator=(const Planet & rhs);
 		//bool operator==(Planet b);
 	protected:
 	private:
