@@ -88,6 +88,7 @@ int main (int argc, char **argv) {
 	// mass of the primary star
 	double baseMass = initialMassFunction(engine);
 	//baseMass = 1.02; // for testing
+	cout << "baseMass: " << baseMass << endl;
 
 	bool isMultiple = isSystemMultiple(baseMass, engine);
 
@@ -220,8 +221,10 @@ int main (int argc, char **argv) {
 	cout << "multiplicity: " << multiplicity << endl;
 	// Age, Metallicity, Luminosity, Lifespan
 	double systemAge = generateSystemAge(engine);
+	cout << "systemAge: " << systemAge << endl;
 	//systemAge = 6.5; // for testing
 	double metallicity = generateMetallicity(engine, systemAge);
+	cout << "metallicity: " << metallicity << endl;
 	starA.SetAge(systemAge);
 	starA.SetMetallicity(metallicity);
 
@@ -869,8 +872,10 @@ double generateMetallicity (default_random_engine & e, double age) {
 	uniform_int_distribution<> diceRoll(1, 6);
 
 	int roll = diceRoll(e) + diceRoll(e) + diceRoll(e);
+	double temp = (roll / 10) * (1.2 - age / 13.5);
+	if (temp < 0.05) { temp = 0.05; }
 	
-	return (roll / 10) * (1.2 - age / 13.5);
+	return temp;
 }
 
 /* getInitialLuminosity
@@ -1585,7 +1590,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		cout << "Doing planet " << i << endl;
 		if (!sPlanets[i].planetEjected && !sPlanets[i].inExclusionZone && sPlanets[i].planet.GetPlanetClass() != NONE) {
 			sPlanets2.push_back(sPlanets[i].planet);
-			cout << "Planet " << i << "kept!" << endl;
+			cout << "Planet " << i << " kept!" << endl;
 		}
 		else { cout << "Planet " << i << " eliminated!" << endl; }
 	}
@@ -1593,6 +1598,10 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	cout << "Printing sPlanets2...\n";
 	for (int i = 0; i < sPlanets2.size(); i++) {
 		cout << i << ": " << sPlanets2[i].GetDistance() << endl;
+	}
+
+	if (sPlanets2.size() == 0) {
+		cout << "All planets eliminated!\n\n";
 	}
 
 	// Set orbital eccentricities
