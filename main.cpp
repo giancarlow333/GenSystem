@@ -621,13 +621,17 @@ int main () {
 
 			outFile << "\t\t\t<tr>\n";
 			outFile << "\t\t\t\t<td><strong>Atmosphere</strong></td>\n";
-			outFile << "\t\t\t\t<td>";
+			outFile << setprecision(4) << "\t\t\t\t<td>";
 			Atmosphere a = dummyStarPlanets[i].GetAtmosphere();
-			outFile << "Hydrogen: " << a.hydrogen << "<br />";
-			outFile << "Helium: " << a.helium << "<br />";
-			outFile << "Nitrogen: " << a.nitrogen << "<br />";
-			outFile << "Argon: " << a.argon << "<br />";
-			outFile << "</td>\n";
+			if (a.hydrogen != 0) { outFile << "Hydrogen: " << a.hydrogen * 100.0 << "%<br />"; }
+			if (a.helium != 0) { outFile << "Helium: " << a.helium * 100.0 << "%<br />"; }
+			if (a.nitrogen != 0) { outFile << "Nitrogen: " << a.hydrogen * 100.0 << "%<br />"; }
+			if (a.argon != 0) { outFile << "Argon: " << a.hydrogen * 100.0 << "%<br />"; }
+			if (a.carbonDioxide != 0) { outFile << "Carbon dioxide: " << a.carbonDioxide * 100.0 << "%<br />"; }
+			if (a.oxygen != 0) { outFile << "Oxygen: " << a.oxygen * 100.0 << "%<br />"; }
+			if (a.waterVapor != 0) { outFile << "Water vapor: " << a.waterVapor * 100.0 << "%<br />"; }
+
+			outFile << setprecision(6) << "</td>\n";
 			outFile << "\t\t\t</tr>\n";
 		}
 		else {
@@ -637,6 +641,8 @@ int main () {
 		outFile << "\t\t\t<tr>\n";
 		outFile << "\t\t\t\t<td><strong>Surface temperature</strong></td>\n";
 		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetTemperature() << " K</td>\n";
+		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetTemperature() - 273.15 << " &deg;C<br />";
+		outFile << (dummyStarPlanets[i].GetTemperature() - 273.15) * 1.8 + 32.0 << " &deg;F</td>\n";
 		outFile << "\t\t\t</tr>\n";
 
 		outFile << "\t\t</table>\n\n";
@@ -1972,30 +1978,6 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 
 		} // end if (pc == TERRESTRIAL_PLANET || pc == LEFTOVER_OLIGARCH)
 	}
-
-	// geophysics and magnetics
-
-	// albedo, native life, surface temperatures
-	for (int i = 0; i < sPlanets2.size(); i++) {
-		PlanetClass pc = sPlanets2[i].GetPlanetClass();
-
-
-		// First CO2 estimate
-	} // END albedo, native life, surface temperatures
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	return sPlanets2;
 }
