@@ -645,13 +645,11 @@ int main () {
 		outFile << "\t\t</table>\n\n";
 
 		if (dummyStarPlanets[i].GetNumberOfMoons() != 0) {
-			cout << "Planet " << i << " has " << dummyStarPlanets[i].GetNumberOfMoons() << " moons\n";
 			outFile << "\t\t<table class=\"infobox\">\n";
 			outFile << "\t\t\t<colgroup><col width=\"50\" /><col width=\"300\" /><col width=\"300\" /></colgroup>\n";
 			outFile << "\t\t\t<tr>\n\t\t\t\t<th>&numero;</th><th>Distance</th><th>Mass</th>\n";
 			vector<Moon> theMoons = dummyStarPlanets[i].GetMoons();
 			for (int j = 0; j < theMoons.size(); j++) {
-				cout << "Doing moon " << j << endl;
 				outFile << "\t\t\t<tr>\n\t\t\t\t<td>" << j + 1 << "</td>\n";
 				outFile << "\t\t\t\t<td>" << setprecision(9) << theMoons[j].GetDistance() << " km</td>\n";
 				outFile << "\t\t\t\t<td>" << setprecision(6) << theMoons[j].GetMass() << " M<sub>E</sub><br />";
@@ -1737,7 +1735,6 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		PlanetClass pc = sPlanets2[i].GetPlanetClass();
 		// blackbody temp
 		double blackBodyTemp = 278.0 * pow(s.GetLuminosity(), 0.25) / sqrt(sPlanets2[i].GetDistance());
-		cout << "blackBodyTemp: " << blackBodyTemp << endl;
 		// minimum molecular weight retained
 		double squaredRadius = pow(sPlanets2[i].GetRadius() * 6371.0, 2.0);
 		double minMWR = 676300.0 * (blackBodyTemp / (sPlanets2[i].GetDensity() * squaredRadius));
@@ -1796,13 +1793,11 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			double nitrogen = 0.0;
 			double argon = 0.0;
 			double retentionFactor = 1.0;
-			cout << "minMWR: " << minMWR << endl;
 
 			// BS'd retention factor
 			// Don't really know what to base this on other than AOW's tables, so I'm using mass as a proxy
 			retentionFactor = pow(sPlanets2[i].GetMass(), 2.0);
 			if (retentionFactor > 3.0) { retentionFactor = 3.0; }
-			cout << "retentionFactor: " << retentionFactor << endl;
 			if (minMWR <= 2) {
 				molecularHydrogen = (0.9 + threeD6Over100(e)) * 100.0 * retentionFactor;
 			}
@@ -1930,7 +1925,6 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 
 				// CO2 greenhouse and adjustment
 				if (isACarbonSilicateCycle) {
-					cout << "isACarbonSilicateCycle" << endl;
 					double minC = 260 - averageSurfaceTemperature;
 					if (minC > 8.0) { carbonDioxideGreenhouse = minC; }
 					else { carbonDioxideGreenhouse = 8.0; }
@@ -1940,7 +1934,6 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 				}
 				else {
 					carbonDioxideGreenhouse = 31.8 + (9.97 * log10(firstCO2Estimate));
-					cout << "carbonDioxideGreenhouse: " << carbonDioxideGreenhouse << endl;
 				}
 
 				averageSurfaceTemperature += carbonDioxideGreenhouse;
@@ -1977,6 +1970,9 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 
 
 		} // end if (pc == TERRESTRIAL_PLANET || pc == LEFTOVER_OLIGARCH)
+		else {
+			sPlanets2[i].SetTemperature(blackBodyTemp);
+		}
 	}
 
 	return sPlanets2;
