@@ -607,6 +607,16 @@ int main () {
 		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetAxialTilt() << "&deg;</td>\n";
 		outFile << "\t\t\t</tr>\n";
 
+		if (theClass == TERRESTRIAL_PLANET || theClass == LEFTOVER_OLIGARCH) {
+			outFile << "\t\t\t<tr>\n";
+			outFile << "\t\t\t\t<td><strong>Hydrographic coverage</strong></td>\n";
+			outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetOceanPct() * 100.0 << "%</td>\n";
+			outFile << "\t\t\t</tr>\n";
+		}
+		else {
+
+		}
+
 		outFile << "\t\t</table>\n\n";
 
 		if (dummyStarPlanets[i].GetNumberOfMoons() != 0) {
@@ -1707,13 +1717,14 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		minMWR = ceil(minMWR);
 
 		// ocean formation
+		bool thereWasARunawayGreenhouse = false;
 		if (pc == TERRESTRIAL_PLANET || pc == LEFTOVER_OLIGARCH) { 
 			double oceanPctge;
 			if (minMWR <= 2) { oceanPctge = 1.0; }
 			else if (minMWR <= 28) {
 				if (sPlanets2[i].GetDistance() > formationIceLine) { oceanPctge = 1.0; }
 				else { // did not form beyond ice line
-					normal_distribution<> randomNorm(0.55, 0.28); // basically 3d6
+					normal_distribution<> randomNorm(0.55, 0.33); // basically 3d6
 					oceanPctge = randomNorm(e);
 					if (thereIsAGrandTack) {
 						oceanPctge += 0.2;
@@ -1731,7 +1742,25 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 					oceanPctge = 1.0;
 				}
 			} // close ocean else
-		} // end ocean formation
+			// possible loss of primordial water
+			if (oceanPctge < 0.15 && blackBodyTemp >= 300) {
+				uniform_int_distribution<> diceRoll(1, 6);
+				int roll = diceRoll(e) + diceRoll(e) + diceRoll(e);
+				if (blackBodyTemp + roll > 318) {
+					oceanPctge = 0.0;
+				}
+			}
+			if (oceanPctge > 0.15 && blackBodyTemp >= 300) {
+				uniform_int_distribution<> diceRoll(1, 6);
+				int roll = diceRoll(e) + diceRoll(e) + diceRoll(e);
+				if (blackBodyTemp + roll > 318) { // runaway greenhouse
+					thereWasARunawayGreenhouse = true;
+					oceanPctge = 0.0;
+				}
+			}
+			sPlanets2[i].SetOceanPct(oceanPctge);
+			// end ocean formation
+		} // end if (pc == TERRESTRIAL_PLANET || pc == LEFTOVER_OLIGARCH)
 	}
 
 	// geophysics and magnetics
