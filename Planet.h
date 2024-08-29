@@ -17,6 +17,10 @@ enum PlanetClass {
 	LEFTOVER_OLIGARCH
 };
 
+struct Atmosphere {
+	double hydrogen = 0.0;
+};
+
 class Planet
 {
 	public:

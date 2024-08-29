@@ -1712,8 +1712,10 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		PlanetClass pc = sPlanets2[i].GetPlanetClass();
 		// blackbody temp
 		double blackBodyTemp = 278.0 * pow(s.GetLuminosity(), 0.25) / sqrt(sPlanets2[i].GetDistance());
+		cout << "blackBodyTemp: " << blackBodyTemp << endl;
 		// minimum molecular weight retained
-		double minMWR = 676300.0 * blackBodyTemp / (sPlanets2[i].GetDensity() * (sPlanets2[i].GetRadius() * 6371.0));
+		double squaredRadius = pow(sPlanets2[i].GetRadius() * 6371.0, 2.0);
+		double minMWR = 676300.0 * (blackBodyTemp / (sPlanets2[i].GetDensity() * squaredRadius));
 		minMWR = ceil(minMWR);
 
 		// ocean formation
@@ -1760,6 +1762,39 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			}
 			sPlanets2[i].SetOceanPct(oceanPctge);
 			// end ocean formation
+
+			// Atmosphere
+			normal_distribution<> threeD6Over100(0.106, 0.02958);
+
+			double molecularHydrogen = 0.0;
+			double helium = 0.0;
+			double nitrogen = 0.0;
+			double argon = 0.0;
+			double retentionFactor = 1.0;
+			cout << "minMWR: " << minMWR << endl;
+			if (minMWR <= 2) {
+				molecularHydrogen = (0.9 + threeD6Over100(e)) * 100.0 * retentionFactor;
+			}
+			if (minMWR <= 4) {
+				double kFactor = 1.0;
+				if (minMWR <= 2) { kFactor = 25.0; }
+				else if (minMWR <= 3) { kFactor = 5.0; }
+				helium = (0.9 + threeD6Over100(e)) * kFactor * retentionFactor;
+			}
+			if (minMWR <= 28) {
+				nitrogen = (0.9 + threeD6Over100(e)) * 0.7 * retentionFactor;
+				if (blackBodyTemp <= 125 && oceanPctge == 1.0) {
+					nitrogen *= 15.0;
+				}
+			}
+			if (minMWR <= 40 && blackBodyTemp >= 90) {
+				argon = (0.9 + threeD6Over100(e)) * 0.01 * retentionFactor * s.GetMetallicity();
+			}
+			cout << "Planet " << i << ":\n";
+			cout << "Hydrogen: " << molecularHydrogen << endl;
+			cout << "Helium: " << helium << endl;
+			cout << "Nitrogen: " << nitrogen << endl;
+			cout << "Argon: " << argon << endl;
 		} // end if (pc == TERRESTRIAL_PLANET || pc == LEFTOVER_OLIGARCH)
 	}
 
