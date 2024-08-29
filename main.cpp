@@ -612,6 +612,17 @@ int main () {
 			outFile << "\t\t\t\t<td><strong>Hydrographic coverage</strong></td>\n";
 			outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetOceanPct() * 100.0 << "%</td>\n";
 			outFile << "\t\t\t</tr>\n";
+
+			outFile << "\t\t\t<tr>\n";
+			outFile << "\t\t\t\t<td><strong>Atmosphere</strong></td>\n";
+			outFile << "\t\t\t\t<td>";
+			Atmosphere a = dummyStarPlanets[i].GetAtmosphere();
+			outFile << "Hydrogen: " << a.hydrogen << "<br />";
+			outFile << "Helium: " << a.helium << "<br />";
+			outFile << "Nitrogen: " << a.nitrogen << "<br />";
+			outFile << "Argon: " << a.argon << "<br />";
+			outFile << "</td>\n";
+			outFile << "\t\t\t</tr>\n";
 		}
 		else {
 
@@ -1795,6 +1806,12 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			cout << "Helium: " << helium << endl;
 			cout << "Nitrogen: " << nitrogen << endl;
 			cout << "Argon: " << argon << endl;
+			Atmosphere atmos;
+			atmos.hydrogen = molecularHydrogen;
+			atmos.helium = helium;
+			atmos.nitrogen = nitrogen;
+			atmos.argon = argon;
+			sPlanets2[i].SetAtmosphere(atmos);
 		} // end if (pc == TERRESTRIAL_PLANET || pc == LEFTOVER_OLIGARCH)
 	}
 

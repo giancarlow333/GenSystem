@@ -22,6 +22,7 @@ Planet::Planet(const Planet & other) {
 	oceanPct = other.oceanPct;
 	classOfPlanet = other.classOfPlanet;
 	moons = other.moons;
+	atmosphere = other.atmosphere;
 }
 
 //alternate constructor
@@ -90,6 +91,10 @@ vector<Moon> Planet::GetMoons () {
 int Planet::GetNumberOfMoons () {
 	return moons.size();
 }
+
+Atmosphere Planet::GetAtmosphere () {
+	return atmosphere;
+}
 ///////////////////////////////////////
 // MUTATORS
 ///////////////////////////////////////
@@ -143,6 +148,10 @@ void Planet::SetMoons (vector<Moon> mv) {
 }
 void Planet::SetSingleMoon (Moon m) {
 	moons.push_back(m);
+}
+
+void Planet::SetAtmosphere (Atmosphere a) {
+	atmosphere = a;
 }
 ///////////////////////////////////////
 // OPERATORS

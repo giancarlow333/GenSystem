@@ -19,6 +19,9 @@ enum PlanetClass {
 
 struct Atmosphere {
 	double hydrogen = 0.0;
+	double helium = 0.0;
+	double nitrogen = 0.0;
+	double argon = 0.0;
 };
 
 class Planet
@@ -43,6 +46,7 @@ class Planet
 		PlanetClass GetPlanetClass ();
 		vector<Moon> GetMoons ();
 		int GetNumberOfMoons ();
+		Atmosphere GetAtmosphere ();
 		// Mutators
 		void SetDistance (double d);
 		void SetEccentricity (double e);
@@ -57,6 +61,7 @@ class Planet
 		void SetPlanetClass (PlanetClass pc);
 		void SetMoons (vector<Moon> mv);
 		void SetSingleMoon (Moon m);
+		void SetAtmosphere (Atmosphere a);
 		// Operators
 		Planet & operator=(const Planet & rhs);
 		bool operator==(Planet b);
@@ -74,6 +79,7 @@ class Planet
 		double oceanPct;
 		PlanetClass classOfPlanet;
 		vector<Moon> moons;
+		Atmosphere atmosphere;
 };
 
 #endif // PLANET_H
