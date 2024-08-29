@@ -21,6 +21,7 @@ Planet::Planet(const Planet & other) {
 	axialTilt = other.axialTilt;
 	oceanPct = other.oceanPct;
 	albedo = other.albedo;
+	temperature = other.temperature;
 	classOfPlanet = other.classOfPlanet;
 	moons = other.moons;
 	atmosphere = other.atmosphere;
@@ -85,6 +86,10 @@ double Planet::GetAlbedo () {
 	return albedo;
 }
 
+double Planet::GetTemperature () {
+	return temperature;
+}
+
 PlanetClass Planet::GetPlanetClass () {
 	return classOfPlanet;
 }
@@ -146,6 +151,10 @@ void Planet::SetOceanPct (double o) {
 
 void Planet::SetAlbedo (double ab) {
 	albedo = ab;
+}
+
+void Planet::SetTemperature (double t) {
+	temperature = t;
 }
 
 void Planet::SetPlanetClass (PlanetClass pc) {

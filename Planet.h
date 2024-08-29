@@ -27,6 +27,10 @@ struct Atmosphere {
 	double helium = 0.0;
 	double nitrogen = 0.0;
 	double argon = 0.0;
+	double carbonDioxide = 0.0;
+	double oxygen = 0.0;
+	double waterVapor = 0.0;
+	double pressure = 0.0;
 };
 
 class Planet
@@ -49,6 +53,7 @@ class Planet
 		double GetAxialTilt ();
 		double GetOceanPct ();
 		double GetAlbedo ();
+		double GetTemperature ();
 		PlanetClass GetPlanetClass ();
 		vector<Moon> GetMoons ();
 		int GetNumberOfMoons ();
@@ -65,6 +70,7 @@ class Planet
 		void SetAxialTilt (double a);
 		void SetOceanPct (double o);
 		void SetAlbedo (double ab);
+		void SetTemperature (double t);
 		void SetPlanetClass (PlanetClass pc);
 		void SetMoons (vector<Moon> mv);
 		void SetSingleMoon (Moon m);
@@ -85,6 +91,7 @@ class Planet
 		double axialTilt; // in degrees
 		double oceanPct;
 		double albedo;
+		double temperature;
 		PlanetClass classOfPlanet;
 		vector<Moon> moons;
 		Atmosphere atmosphere;

@@ -634,6 +634,11 @@ int main () {
 
 		}
 
+		outFile << "\t\t\t<tr>\n";
+		outFile << "\t\t\t\t<td><strong>Surface temperature</strong></td>\n";
+		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetTemperature() << " K</td>\n";
+		outFile << "\t\t\t</tr>\n";
+
 		outFile << "\t\t</table>\n\n";
 
 		if (dummyStarPlanets[i].GetNumberOfMoons() != 0) {
@@ -1813,17 +1818,6 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			if (minMWR <= 40 && blackBodyTemp >= 90) {
 				argon = (0.9 + threeD6Over100(e)) * 0.01 * retentionFactor * s.GetMetallicity();
 			}
-			cout << "Planet " << i << ":\n";
-			cout << "Hydrogen: " << molecularHydrogen << endl;
-			cout << "Helium: " << helium << endl;
-			cout << "Nitrogen: " << nitrogen << endl;
-			cout << "Argon: " << argon << endl;
-			Atmosphere atmos;
-			atmos.hydrogen = molecularHydrogen;
-			atmos.helium = helium;
-			atmos.nitrogen = nitrogen;
-			atmos.argon = argon;
-			sPlanets2[i].SetAtmosphere(atmos);
 
 			// Reassign world classes
 			// I'm assuming "significant" atmosphere is between Mars and Venus, or mass 0.07 (geomean), which is retentionFactor 0.005
@@ -1831,16 +1825,16 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			if (thereWasARunawayGreenhouse) {
 				newPlanetClass = VENUSIAN;
 			}
-			else if (atmos.hydrogen > 0 && retentionFactor > 0.005) {
+			else if (molecularHydrogen > 0 && retentionFactor > 0.005) {
 				newPlanetClass = HYCEAN;
 			}
-			else if (atmos.hydrogen == 0 && atmos.nitrogen > 0 && blackBodyTemp >= 80 && blackBodyTemp <= 125 && retentionFactor > 0.005) {
+			else if (molecularHydrogen == 0 && nitrogen > 0 && blackBodyTemp >= 80 && blackBodyTemp <= 125 && retentionFactor > 0.005) {
 				newPlanetClass = TITANIAN;
 			}
-			else if (atmos.hydrogen == 0 && atmos.nitrogen > 0 && blackBodyTemp > 125 && retentionFactor > 0.005) {
+			else if (molecularHydrogen == 0 && nitrogen > 0 && blackBodyTemp > 125 && retentionFactor > 0.005) {
 				newPlanetClass = GAIAN;
 			}
-			else if (atmos.hydrogen == 0 && atmos.nitrogen == 0 && atmos.helium == 0 && blackBodyTemp > 195 && retentionFactor > 0.005) {
+			else if (molecularHydrogen == 0 && nitrogen == 0 && helium == 0 && blackBodyTemp > 195 && retentionFactor > 0.005) {
 				newPlanetClass = MARTIAN;
 			}
 			sPlanets2[i].SetPlanetClass(newPlanetClass);
@@ -1893,6 +1887,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			bool thereIsLife = false;
 			bool thereWasAnOxygenCatastrophe = false;
 			double atmosphericOxygen = 0.0;
+			double atmosphericWaterVapor = 0.0;
 			if (newPlanetClass != VENUSIAN && (isACarbonSilicateCycle || oceanPctge > 0)) {
 				if (s.GetAge() > 1) { thereIsLife = true; }
 				if (s.GetAge() > 2) { thereWasAnOxygenCatastrophe = true; }
@@ -1947,20 +1942,32 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 				// Water vapor greenhouse
 				if (minMWR <= 18 && blackBodyTemp > 260 && oceanPctge > 0.15) {
 					waterGreenhouse = getWaterGreenhouse(averageSurfaceTemperature, oceanPctge);
+
+					atmosphericWaterVapor = 2.93e-5 * pow(10.0, waterGreenhouse / 9.97);
 				}
 				averageSurfaceTemperature += waterGreenhouse;
 			} // END Gaian, etc surface temp
 			// set surface temperature here
+			sPlanets2[i].SetTemperature(averageSurfaceTemperature);
 
+			// finalize atmosphere
+			double atmosphericMass = molecularHydrogen + helium + nitrogen + argon + firstCO2Estimate + atmosphericOxygen + atmosphericWaterVapor;
 
+			//double componentK = (1.0 / atmosphericMass) * ((2.0 * molecularHydrogen) + (4.0 * helium) + (18.0 * atmosphericWaterVapor) + (28.0 * nitrogen) + (32.0 * atmosphericOxygen) + (40.0 * argon) + (44.0 * firstCO2Estimate));
+			//double scaleHeight = 0.856 * (averageSurfaceTemperature / (componentK * sPlanets2[i].GetGravity()));
 
+			double atmosphericPressure = atmosphericMass * sPlanets2[i].GetGravity();
 
-
-
-
-
-
-
+			Atmosphere atmos;
+			atmos.hydrogen = molecularHydrogen / atmosphericMass;
+			atmos.helium = helium / atmosphericMass;
+			atmos.nitrogen = nitrogen / atmosphericMass;
+			atmos.argon = argon / atmosphericMass;
+			atmos.carbonDioxide = firstCO2Estimate / atmosphericMass;
+			atmos.waterVapor = atmosphericWaterVapor / atmosphericMass;
+			atmos.oxygen = atmosphericOxygen / atmosphericMass;
+			atmos.pressure = atmosphericPressure;
+			sPlanets2[i].SetAtmosphere(atmos);
 
 
 		} // end if (pc == TERRESTRIAL_PLANET || pc == LEFTOVER_OLIGARCH)
