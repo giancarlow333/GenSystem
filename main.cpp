@@ -866,7 +866,7 @@ double generateMetallicity (default_random_engine & e, double age) {
 
 	int roll = diceRoll(e) + diceRoll(e) + diceRoll(e);
 	cout << "metalroll: " << roll << endl;
-	double temp = (roll / 10) * (1.2 - age / 13.5);
+	double temp = (roll / 10.0) * (1.2 - age / 13.5);
 	if (temp < 0.05) { temp = 0.05; }
 	
 	return temp;
