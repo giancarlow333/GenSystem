@@ -76,8 +76,8 @@ class Planet
 		void SetSingleMoon (Moon m);
 		void SetAtmosphere (Atmosphere a);
 		// Operators
-		Planet & operator=(const Planet & rhs);
-		bool operator==(Planet b);
+		//Planet & operator=(const Planet & rhs);
+		//bool operator==(Planet b);
 	protected:
 	private:
 		double distance; // distance from star in AU

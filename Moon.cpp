@@ -90,7 +90,7 @@ void Moon::SetGravity (double g) {
 // OPERATORS
 ///////////////////////////////////////
 
-Moon & Moon::operator=(const Moon & rhs) {
+/*Moon & Moon::operator=(const Moon & rhs) {
 	if (this == &rhs) return *this; // handle self assignment
 	//assignment operator
 	return *this;
