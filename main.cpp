@@ -1745,7 +1745,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 
 		// ocean formation
 		bool thereWasARunawayGreenhouse = false;
-		if (pc == TERRESTRIAL_PLANET || pc == LEFTOVER_OLIGARCH) { 
+		if (pc == TERRESTRIAL_PLANET) { 
 			double oceanPctge;
 			if (minMWR <= 2) { oceanPctge = 1.0; }
 			else if (minMWR <= 28) {
