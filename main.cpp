@@ -1876,6 +1876,89 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			}
 			sPlanets2[i].SetAlbedo(albedo);
 
+			// First CO2 estimate
+			double firstCO2Estimate = (0.90 + threeD6Over100(e)) * 10.0 * retentionFactor;
+			if (newPlanetClass == VENUSIAN) {
+				firstCO2Estimate = (0.90 + threeD6Over100(e)) * 100.0 * retentionFactor;
+			}
+
+			bool isACarbonSilicateCycle = false;
+			int tValue = (blackBodyTemp * pow(1 - albedo, 0.25)) + (9.97 * log10(firstCO2Estimate)) + 31.8;
+			if (tValue >= 260) { isACarbonSilicateCycle = true; }
+
+			// life
+			// I feel guilty for slavishly following AOW, so I'm only gonna do partial here
+			// TBD: a better algorithm!
+			bool thereIsLife = false;
+			bool thereWasAnOxygenCatastrophe = false;
+			double atmosphericOxygen = 0.0;
+			if (newPlanetClass != VENUSIAN && (isACarbonSilicateCycle || oceanPctge > 0)) {
+				if (s.GetAge() > 1) { thereIsLife = true; }
+				if (s.GetAge() > 2) { thereWasAnOxygenCatastrophe = true; }
+			}
+			if (thereIsLife) {
+				atmosphericOxygen = threeD6Over100(e) * 0.2;
+			}
+			else if (thereWasAnOxygenCatastrophe) {
+				atmosphericOxygen = (threeD6Over100(e) + 0.15) * retentionFactor;
+			}
+
+			// surface temperature
+			double averageSurfaceTemperature;
+			if (newPlanetClass == VENUSIAN) {
+				averageSurfaceTemperature = blackBodyTemp * pow(1.0 - albedo, 0.25) + (250.0 * log10(firstCO2Estimate));
+			}
+			else if (newPlanetClass == TERRESTRIAL_PLANET || retentionFactor == 0) {
+				averageSurfaceTemperature = blackBodyTemp * pow(1.0 - albedo, 0.25);
+			}
+			else { // Gaian, etc surface temp
+				averageSurfaceTemperature = blackBodyTemp * pow(1.0 - albedo, 0.25);
+
+				double methaneGreenhouse = 0.0;
+				double ozoneGreenhouse = 0.0;
+				double carbonDioxideGreenhouse = 0.0;
+				double waterGreenhouse = 0.0;
+
+				if (newPlanetClass == HYCEAN || newPlanetClass == TITANIAN || (newPlanetClass == GAIAN && thereIsLife)) {
+					methaneGreenhouse = 2.1 + (9.97 * log10(retentionFactor));
+				}
+				if (thereWasAnOxygenCatastrophe) {
+					ozoneGreenhouse = 1.7 + (9.97 * log10(retentionFactor));
+				}
+				averageSurfaceTemperature += methaneGreenhouse;
+				averageSurfaceTemperature += ozoneGreenhouse;
+
+				// CO2 greenhouse and adjustment
+				if (isACarbonSilicateCycle) {
+					double minC = 260 - averageSurfaceTemperature;
+					if (minC > 8.0) { carbonDioxideGreenhouse = minC; }
+					else { carbonDioxideGreenhouse = 8.0; }
+
+					// revise CO2 mass fraction
+					firstCO2Estimate = 6.46e-4 * pow(10.0, carbonDioxideGreenhouse / 9.97);
+				}
+				else {
+					carbonDioxideGreenhouse = 31.8 + (9.97 * log10(firstCO2Estimate));
+				}
+
+				averageSurfaceTemperature += carbonDioxideGreenhouse;
+
+				// Water vapor greenhouse
+				if (minMWR <= 18 && blackBodyTemp > 260 && oceanPctge > 0.15) {
+					// water greenhouse
+				}
+			} // END Gaian, etc surface temp
+			// set surface temperature here
+
+
+
+
+
+
+
+
+
+
 
 
 		} // end if (pc == TERRESTRIAL_PLANET || pc == LEFTOVER_OLIGARCH)
