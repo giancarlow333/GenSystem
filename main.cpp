@@ -35,6 +35,7 @@ double getInnerOrbitalExclusionZone (double pMass, double sMass, double separati
 double getOuterOrbitalExclusionZone (double pMass, double sMass, double separation, double eccentricity);
 vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbiddenZone, bool starIsCircumbinary, double initialLuminosity, double innerExclusionZone);
 void printPlanetaryClass (PlanetClass pc, string & className, string & imgFileName);
+double getWaterGreenhouse (double temp, double ocean);
 
 // constants
 const string VERSION_NUMBER = "0.13";
@@ -1945,8 +1946,9 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 
 				// Water vapor greenhouse
 				if (minMWR <= 18 && blackBodyTemp > 260 && oceanPctge > 0.15) {
-					// water greenhouse
+					waterGreenhouse = getWaterGreenhouse(averageSurfaceTemperature, oceanPctge);
 				}
+				averageSurfaceTemperature += waterGreenhouse;
 			} // END Gaian, etc surface temp
 			// set surface temperature here
 
@@ -2063,4 +2065,28 @@ void printPlanetaryClass (PlanetClass pc, string & className, string & imgFileNa
 			imgFileName = "1FacePlanet.gif";
 			break;
 	}
+}
+
+/* getWaterGreenhouse
+ * This is my own regression on AOW's tables on p. 102.
+ * Moderate: -430.418 + 80.4529 * ln(temp); r^2 = 0.99352
+ * Excessive: -427.418 + 80.4529 * ln(temp)
+ * Massive: -426.418 + 80.452917 * ln(temp)
+ */
+double getWaterGreenhouse (double temp, double ocean) {
+	double returnThis;
+	if (ocean < 0.65) {
+		returnThis = -430.418 + 80.4529 * log(temp);
+		if (temp > 334) { returnThis = 37.0; }
+	}
+	else if (ocean < 1) {
+		returnThis = -427.418 + 80.4529 * log(temp);
+		if (temp > 334) { returnThis = 40.0; }
+	}
+	else {
+		returnThis = -426.418 + 80.4529 * log(temp);
+		if (temp > 334) { returnThis = 41.0; }
+	}
+
+	return returnThis;
 }
