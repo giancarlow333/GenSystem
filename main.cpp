@@ -217,7 +217,7 @@ int main (int argc, char **argv) {
 			double eccenABCD = generateMultipleStarEccentricity(engine, separationABCD);
 		}
 	} // END IS_MULTIPLE
-
+	cout << "multiplicity: " << multiplicity << endl;
 	// Age, Metallicity, Luminosity, Lifespan
 	double systemAge = generateSystemAge(engine);
 	//systemAge = 6.5; // for testing
@@ -344,6 +344,7 @@ int main (int argc, char **argv) {
 
 	// Planets around primary star
 	vector<Planet> dummyStarPlanets = formPlanets (dummyStar, engine, forbiddenZone, dummyStarIsCircumbinary, initialLuminosity, innerExclusionZone);
+	cout << "Planets formed!\n";
 
 	cout << "\nFinal layout...:\n";
 	for (int i = 0; i < dummyStarPlanets.size(); i++) {
@@ -1320,6 +1321,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	sPlanets.push_back(temp11);
 
 	// work exclusion zones
+	cout << "Working exclusion zones...\n";
 	for (int i = 0; i < sPlanets.size(); i++) {
 		double distance = sPlanets[i].planet.GetDistance();
 		if (distance < diskInnerEdge || distance > slowAccretionLine || distance > forbiddenZone || (distance < innerExclusionZone && starIsCircumbinary)) {
@@ -1343,6 +1345,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	}
 
 	// Outer Planetary System
+	cout << "Working outer system...\n";
 	double massToInnerSystem;
 	for (int i = 5; i < 12; i++) {
 		double planetesimalMass = sPlanets[i].planet.GetMass();
@@ -1493,6 +1496,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 
 
 	// INNER PLANETARY SYSTEM
+	cout << "Working inner system...\n";
 	innerFormationZone += 0;
 	for (int i = 0; i < 5; i++) {
 		double planetesimalMass = innerFormationZone * sPlanets[i].planet.GetMass();
@@ -1575,14 +1579,24 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	}
 
 	// Remove eliminated orbits
+	cout << "Removing eliminated orbits...\n";
 	vector<Planet> sPlanets2;
 	for (int i = 0; i < sPlanets.size(); i++) {
-		if (!sPlanets[i].orbitDisrupted && !sPlanets[i].planetEjected && !sPlanets[i].inExclusionZone && sPlanets[i].planet.GetPlanetClass() != NONE) {
+		cout << "Doing planet " << i << endl;
+		if (!sPlanets[i].planetEjected && !sPlanets[i].inExclusionZone && sPlanets[i].planet.GetPlanetClass() != NONE) {
 			sPlanets2.push_back(sPlanets[i].planet);
+			cout << "Planet " << i << "kept!" << endl;
 		}
+		else { cout << "Planet " << i << " eliminated!" << endl; }
+	}
+
+	cout << "Printing sPlanets2...\n";
+	for (int i = 0; i < sPlanets2.size(); i++) {
+		cout << i << ": " << sPlanets2[i].GetDistance() << endl;
 	}
 
 	// Set orbital eccentricities
+	cout << "Setting orbital eccentricities...\n";
 	int totalNumberOfPlanets = sPlanets2.size();
 	double typicalEccen = getTypicalEccentricity(totalNumberOfPlanets);
 	for (int i = 0; i < sPlanets2.size(); i++) {
@@ -1593,6 +1607,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	}
 
 	// Density, Radius, and Surface Gravity
+	cout << "Determining densities, radii, and surface gravities...\n";
 	for (int i = 0; i < sPlanets2.size(); i++) {
 		PlanetClass pc = sPlanets2[i].GetPlanetClass();
 		double density;
@@ -1634,6 +1649,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	}
 
 	// place moons
+	cout << "Placing moons...\n";
 	for (int i = 0; i < sPlanets2.size(); i++) {
 		double apastron = sPlanets2[i].GetDistance() * (1.0 - sPlanets2[i].GetEccentricity());
 		double hillSphereInKm = 2.17e6 * apastron * pow(sPlanets2[i].GetMass() / s.GetMass(), 1.0/3.0);
@@ -1690,12 +1706,14 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	}
 
 	// orbital periods
+	cout << "Doing orbital periods...\n";
 	for (int i = 0; i < sPlanets2.size(); i++) {
 		double period = sqrt(pow(sPlanets2[i].GetDistance(), 3.0) / s.GetMass());
 		sPlanets2[i].SetOrbitalPeriod(period);
 	}
 
 	// rotation periods and obliquity
+	cout << "Doing rotation periods...\n";
 	for (int i = 0; i < sPlanets2.size(); i++) {
 		double rotationPeriod;
 		double tideLockRadius = pow(s.GetAge() * pow(s.GetMass(), 2.0) / 479.0, 1.0 / 6.0);
@@ -1746,6 +1764,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	// can do when printing
 
 	// temperature and surface water
+	cout << "Doing surface properties...\n";
 	for (int i = 0; i < sPlanets2.size(); i++) {
 		PlanetClass pc = sPlanets2[i].GetPlanetClass();
 		// blackbody temp
@@ -1990,6 +2009,10 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		}
 	}
 
+	cout << "Returning...\n";
+	for (int i = 0; i < sPlanets2.size(); i++) {
+		cout << i << ": " << sPlanets2[i].GetDistance() << endl;
+	}
 	return sPlanets2;
 }
 
