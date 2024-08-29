@@ -607,7 +607,7 @@ int main () {
 		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetAxialTilt() << "&deg;</td>\n";
 		outFile << "\t\t\t</tr>\n";
 
-		if (theClass == TERRESTRIAL_PLANET || theClass == LEFTOVER_OLIGARCH) {
+		if (theClass == TERRESTRIAL_PLANET || theClass == LEFTOVER_OLIGARCH || theClass == VENUSIAN || theClass == HYCEAN || theClass == TITANIAN || theClass == GAIAN || theClass == MARTIAN) {
 			outFile << "\t\t\t<tr>\n";
 			outFile << "\t\t\t\t<td><strong>Hydrographic coverage</strong></td>\n";
 			outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetOceanPct() * 100.0 << "%</td>\n";
@@ -1812,6 +1812,25 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			atmos.nitrogen = nitrogen;
 			atmos.argon = argon;
 			sPlanets2[i].SetAtmosphere(atmos);
+
+			// Reassign world classes
+			PlanetClass newPlanetClass = pc;
+			if (thereWasARunawayGreenhouse) {
+				newPlanetClass = VENUSIAN;
+			}
+			else if (atmos.hydrogen > 0) {
+				newPlanetClass = HYCEAN;
+			}
+			else if (atmos.hydrogen == 0 && atmos.nitrogen > 0 && blackBodyTemp >= 80 && blackBodyTemp <= 125) {
+				newPlanetClass = TITANIAN;
+			}
+			else if (atmos.hydrogen == 0 && atmos.nitrogen > 0 && blackBodyTemp > 125) {
+				newPlanetClass = GAIAN;
+			}
+			else if (atmos.hydrogen == 0 && atmos.nitrogen == 0 && atmos.helium == 0 && blackBodyTemp > 195) {
+				newPlanetClass = MARTIAN;
+			}
+			sPlanets2[i].SetPlanetClass(newPlanetClass);
 		} // end if (pc == TERRESTRIAL_PLANET || pc == LEFTOVER_OLIGARCH)
 	}
 
