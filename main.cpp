@@ -248,7 +248,7 @@ int main (int argc, char **argv) {
 		starC.SetMetallicity(metallicity);
 		evolveStar(starC, engine);
 	}
-	else {
+	else if (multiplicity == 4) {
 		cout << "Not yet implemented (2)!\n\n";
 	}
 
@@ -1587,9 +1587,11 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 	cout << "Removing eliminated orbits...\n";
 	vector<Planet> sPlanets2;
 	for (int i = 0; i < sPlanets.size(); i++) {
+		Planet temp = sPlanets[i].planet;
 		cout << "Doing planet " << i << endl;
+		cout << "Distance " << temp.GetDistance() << "; mass " << temp.GetMass() << endl;
 		if (!sPlanets[i].planetEjected && !sPlanets[i].inExclusionZone && sPlanets[i].planet.GetPlanetClass() != NONE) {
-			sPlanets2.push_back(sPlanets[i].planet);
+			sPlanets2.push_back(temp);
 			cout << "Planet " << i << " kept!" << endl;
 		}
 		else { cout << "Planet " << i << " eliminated!" << endl; }
