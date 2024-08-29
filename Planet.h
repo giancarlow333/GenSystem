@@ -2,7 +2,7 @@
 #define PLANET_H
 
 #include <iostream>
-#include <vector>
+#include <array>
 #include "Moon.h"
 using namespace std;
 
@@ -55,7 +55,7 @@ class Planet
 		double GetAlbedo ();
 		double GetTemperature ();
 		PlanetClass GetPlanetClass ();
-		vector<Moon> GetMoons ();
+		std::array<Moon, 10> GetMoons ();
 		int GetNumberOfMoons ();
 		Atmosphere GetAtmosphere ();
 		// Mutators
@@ -72,7 +72,7 @@ class Planet
 		void SetAlbedo (double ab);
 		void SetTemperature (double t);
 		void SetPlanetClass (PlanetClass pc);
-		void SetMoons (vector<Moon> mv);
+		void SetMoons (std::array<Moon, 10> mv);
 		void SetSingleMoon (Moon m);
 		void SetAtmosphere (Atmosphere a);
 		// Operators
@@ -93,7 +93,8 @@ class Planet
 		double albedo;
 		double temperature;
 		PlanetClass classOfPlanet;
-		vector<Moon> moons;
+		std::array<Moon, 10> moons;
+		int numberOfMoons;
 		Atmosphere atmosphere;
 };
 

@@ -1,5 +1,5 @@
 #include <iostream>
-#include <vector>
+#include <array>
 #include "Moon.h"
 #include "Planet.h"
 using namespace std;
@@ -114,12 +114,12 @@ PlanetClass Planet::GetPlanetClass () {
 	return classOfPlanet;
 }
 
-vector<Moon> Planet::GetMoons () {
+std::array<Moon, 10> Planet::GetMoons () {
 	return moons;
 }
 
 int Planet::GetNumberOfMoons () {
-	return moons.size();
+	return numberOfMoons;
 }
 
 Atmosphere Planet::GetAtmosphere () {
@@ -181,11 +181,12 @@ void Planet::SetPlanetClass (PlanetClass pc) {
 	classOfPlanet = pc;
 }
 
-void Planet::SetMoons (vector<Moon> mv) {
+void Planet::SetMoons (std::array<Moon, 10> mv) {
 	moons = mv;
 }
+
 void Planet::SetSingleMoon (Moon m) {
-	moons.push_back(m);
+	moons[numberOfMoons] = m;
 }
 
 void Planet::SetAtmosphere (Atmosphere a) {
