@@ -3,8 +3,8 @@ CFLAGS = -std=c++17 -g
 
 default:	gensystem
 
-gensystem:	main.o Moon.o Planet.o Star.o StarSystem.o
-	$(CC) -o GenSystem main.o Moon.o Planet.o Star.o StarSystem.o
+gensystem:	main.o Moon.o Planet.o Star.o
+	$(CC) -o GenSystem main.o Moon.o Planet.o Star.o
 
 main.o:
 	$(CC) $(CFLAGS) -c main.cpp
@@ -17,9 +17,6 @@ Planet.o:
 
 Star.o:
 	$(CC) $(CFLAGS) -c Star.cpp
-
-StarSystem.o:
-	$(CC) $(CFLAGS) -c StarSystem.cpp
 
 clean:
 	$(RM) GenSystem *.o *~

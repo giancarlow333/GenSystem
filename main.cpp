@@ -6,7 +6,6 @@
 #include <iomanip>          // setprecision
 #include <cmath>            // ceil
 #include <unistd.h>         // for command line args
-#include "StarSystem.h"
 #include "Star.h"
 #include "Planet.h"
 #include "Moon.h"
@@ -104,12 +103,14 @@ int main (int argc, char **argv) {
 	starA.SetMass(baseMass);
 
 	// Create star systems
-	StarSystem mainSystem, farSystem; // for trinaries and quaternaries
-	OverallSeparation overallSeparation;
 
 	// If the star is multiple, determine components
 	int multiplicity = 1;
 	bool systemArrangement;
+	OverallSeparation abSeparation;
+	OverallSeparation bcSeparation;
+	OverallSeparation abcSeparation;
+
 	if (isMultiple) {
 		multiplicity = generateSystemMultiplicity(engine);
 		//multiplicity = 4; // for testing
@@ -125,10 +126,8 @@ int main (int argc, char **argv) {
 			double separation = generateDistanceBetweenStars(engine, baseMass);
 			double eccen = generateMultipleStarEccentricity(engine, separation);
 
-			mainSystem.SetPrimaryStar(starA);
-			mainSystem.SetSecondaryStar(starB);
-			mainSystem.SetSeparation(separation);
-			mainSystem.SetEccentricity(eccen);
+			abSeparation.separation = separation;
+			abSeparation.eccentricity = eccen;
 		}
 		else if (multiplicity == 3) {
 			// flip coin; if heads, C orbits AB, else BC orbits A
@@ -143,12 +142,8 @@ int main (int argc, char **argv) {
 				starB.SetMass(baseMass * massRatioAB);
 				starC.SetMass(baseMass * massRatioAC);
 
-				mainSystem.SetSecondaryStar(starB);
-
 				double separationAB = generateDistanceBetweenStars(engine, baseMass);
-				mainSystem.SetSeparation(separationAB);
 				double eccenAB = generateMultipleStarEccentricity(engine, separationAB);
-				mainSystem.SetEccentricity(eccenAB);
 
 				// Set separation of (AB)C
 				double exclusionZoneAB = getOuterOrbitalExclusionZone(baseMass, baseMass * massRatioAB, separationAB, eccenAB);
@@ -158,8 +153,12 @@ int main (int argc, char **argv) {
 				while ((1 - eccenABC) * separationABC < exclusionZoneAB) {
 					separationABC =  generateDistanceBetweenStars(engine, baseMass);
 				}
-				overallSeparation.separation = separationABC;
-				overallSeparation.eccentricity = eccenABC;
+
+				abSeparation.separation = separationAB;
+				abSeparation.eccentricity = eccenAB;
+
+				abcSeparation.separation = separationABC;
+				abcSeparation.eccentricity = eccenABC;
 			}
 			// A orbits close pair BC
 			else {
@@ -169,11 +168,7 @@ int main (int argc, char **argv) {
 				starB.SetMass(baseMass * massRatioAB);
 				starC.SetMass(baseMass * massRatioAB * massRatioBC);
 
-				farSystem.SetPrimaryStar(starB);
-				farSystem.SetSecondaryStar(starC);
-
 				double separationBC =  generateDistanceBetweenStars(engine, baseMass * massRatioAB);
-				farSystem.SetSeparation(separationBC);
 				double eccenBC = generateMultipleStarEccentricity(engine, separationBC);
 
 				// Set separation of A(BC)
@@ -181,10 +176,14 @@ int main (int argc, char **argv) {
 				while (separationABC < 3 * (separationBC * (1 + eccenBC))) {
 					separationABC =  generateDistanceBetweenStars(engine, baseMass);
 				}
-				overallSeparation.separation = separationABC;
 				double eccenABC = generateMultipleStarEccentricity(engine, separationABC);
-				overallSeparation.eccentricity = eccenABC;
-			}
+
+				bcSeparation.separation = separationBC;
+				bcSeparation.eccentricity = eccenBC;
+
+				abcSeparation.separation = separationABC;
+				abcSeparation.eccentricity = eccenABC;
+			} // close A orbits close pair BC
 		} // close trinary
 		else { // quaternary
 			double massRatioAB = generateHeavyMassRatio(engine);
@@ -195,11 +194,9 @@ int main (int argc, char **argv) {
 
 			double massRatioAC = generateMassRatio(engine);
 			starC.SetMass(baseMass * massRatioAC);
-			//mainSystem.secondSystem.SetSingleStar(starC);
 
 			double massRatioCD = generateHeavyMassRatio(engine);
 			starD.SetMass(baseMass * massRatioAC * massRatioCD);
-			//mainSystem.secondSystem.SetSingleStar(starD);
 
 			double separationCD =  generateDistanceBetweenStars(engine, baseMass * massRatioAC);
 			double eccenCD = generateMultipleStarEccentricity(engine, separationCD);
@@ -219,6 +216,7 @@ int main (int argc, char **argv) {
 		}
 	} // END IS_MULTIPLE
 	cout << "multiplicity: " << multiplicity << endl;
+
 	// Age, Metallicity, Luminosity, Lifespan
 	double systemAge = generateSystemAge(engine);
 	cout << "systemAge: " << systemAge << endl;
@@ -235,9 +233,6 @@ int main (int argc, char **argv) {
 		starB.SetAge(systemAge);
 		starB.SetMetallicity(metallicity);
 		evolveStar(starB, engine);
-
-		mainSystem.SetPrimaryStar(starA);
-		mainSystem.SetSecondaryStar(starB);
 	}
 	else if (multiplicity == 3) {
 		starB.SetAge(systemAge);
@@ -249,7 +244,7 @@ int main (int argc, char **argv) {
 		evolveStar(starC, engine);
 	}
 	else if (multiplicity == 4) {
-		cout << "Not yet implemented (2)!\n\n";
+		cout << "Quaternary not yet implemented!\n\n";
 	}
 
 	/* PLANETARY DISK FOR MAIN STAR(S)
@@ -263,11 +258,10 @@ int main (int argc, char **argv) {
 
 	if (multiplicity > 1) { // determine if the planets are circumbinary or not
 		if (multiplicity == 2) {
-			// data is held in overallSeparation
 			// get AB outer exclusion zone
-			double exclusionZone = getOuterOrbitalExclusionZone(starA.GetMass(), starB.GetMass(), overallSeparation.separation, overallSeparation.eccentricity);
+			double exclusionZone = getOuterOrbitalExclusionZone(starA.GetMass(), starB.GetMass(), abSeparation.separation, abSeparation.eccentricity);
 			// if the separation of AB is SMALLER than this, it's circumbinary
-			if (overallSeparation.separation < exclusionZone) {
+			if (abSeparation.separation < 1.0) {
 				dummyStarIsCircumbinary = true;
 				dummyStar.SetMass(starA.GetMass() + starB.GetMass());
 				dummyStar.SetLuminosity(starA.GetLuminosity() + starB.GetLuminosity());
@@ -288,11 +282,10 @@ int main (int argc, char **argv) {
 			}
 		} // close multiplicity == 3
 		else if (multiplicity == 3 && systemArrangement == 1) { // C orbits AB
-			// data is held in mainSystem
 			// get AB outer exclusion zone
-			double exclusionZone = getOuterOrbitalExclusionZone(starA.GetMass(), starB.GetMass(), mainSystem.GetSeparation(), mainSystem.GetEccentricity());
+			double exclusionZone = getOuterOrbitalExclusionZone(starA.GetMass(), starB.GetMass(), abSeparation.separation, abSeparation.eccentricity);
 			// if the separation of AB is SMALLER than this, it's circumbinary
-			if (mainSystem.GetSeparation()  < exclusionZone) {
+			if (abSeparation.separation  < 1.0) {
 				dummyStarIsCircumbinary = true;
 				dummyStar.SetMass(starA.GetMass() + starB.GetMass());
 				dummyStar.SetLuminosity(starA.GetLuminosity() + starB.GetLuminosity());
@@ -336,17 +329,17 @@ int main (int argc, char **argv) {
 	// put forbidden zones here
 	double forbiddenZone = 1000000.0;
 	if (multiplicity == 2 && !dummyStarIsCircumbinary) { // A is orbited by B; planets orbit A
-		forbiddenZone = getInnerOrbitalExclusionZone (starA.GetMass(), starB.GetMass(), overallSeparation.separation, overallSeparation.eccentricity);
+		forbiddenZone = getInnerOrbitalExclusionZone (starA.GetMass(), starB.GetMass(), abSeparation.separation, abSeparation.eccentricity);
 	}
 	else if (multiplicity == 3 && systemArrangement && dummyStarIsCircumbinary) { // AB is orbited by C; planets orbit AB
-		forbiddenZone = getInnerOrbitalExclusionZone (starA.GetMass() + starB.GetMass(), starC.GetMass(), overallSeparation.separation, overallSeparation.eccentricity);
+		forbiddenZone = getInnerOrbitalExclusionZone (starA.GetMass() + starB.GetMass(), starC.GetMass(), abSeparation.separation, abSeparation.eccentricity);
 	}
 	else if (multiplicity == 3 && !systemArrangement) { // A is orbited by BC; planets orbit A
-		forbiddenZone = getInnerOrbitalExclusionZone (starA.GetMass(), starC.GetMass() + starB.GetMass(), overallSeparation.separation, overallSeparation.eccentricity);
+		forbiddenZone = getInnerOrbitalExclusionZone (starA.GetMass(), starC.GetMass() + starB.GetMass(), abcSeparation.separation, abcSeparation.eccentricity);
 	}
 
 	// Planets around primary star
-	vector<Planet> dummyStarPlanets = formPlanets (dummyStar, engine, forbiddenZone, dummyStarIsCircumbinary, initialLuminosity, innerExclusionZone);
+	vector<Planet> dummyStarPlanets = formPlanets(dummyStar, engine, forbiddenZone, dummyStarIsCircumbinary, initialLuminosity, innerExclusionZone);
 	cout << "Planets formed!\n";
 
 	cout << "\nFinal layout...:\n";
@@ -453,8 +446,8 @@ int main (int argc, char **argv) {
 			outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Period</strong></td>\n";
 
 			double separation, eccentricity;
-			separation = mainSystem.GetSeparation();
-			eccentricity = mainSystem.GetEccentricity();
+			separation = abSeparation.separation;
+			eccentricity = abSeparation.eccentricity;
 
 			double period = sqrt(pow(separation, 3.0) / (starA.GetMass() + starB.GetMass()));
 
@@ -473,8 +466,8 @@ int main (int argc, char **argv) {
 				outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Period</strong></td>\n";
 
 				double separation, eccentricity;
-				separation = overallSeparation.separation;
-				eccentricity = overallSeparation.eccentricity;
+				separation = abcSeparation.separation;
+				eccentricity = abcSeparation.eccentricity;
 
 				double period = sqrt(pow(separation, 3.0) / (starA.GetMass() + starB.GetMass() + starC.GetMass()));
 
@@ -494,8 +487,8 @@ int main (int argc, char **argv) {
 			outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Period</strong></td>\n";
 
 			double separation, eccentricity;
-			separation = overallSeparation.separation;
-			eccentricity = overallSeparation.eccentricity;
+			separation = abcSeparation.separation;
+			eccentricity = abcSeparation.eccentricity;
 
 			double period = sqrt(pow(separation, 3.0) / (starA.GetMass() + starB.GetMass() + starC.GetMass()));
 
@@ -512,8 +505,8 @@ int main (int argc, char **argv) {
 			outFile << "\t\t\t\t<td>C</td>\n\t\t\t</tr>\n";
 			outFile << "\t\t\t<tr>\n\t\t\t\t<td><strong>Period</strong></td>\n";
 
-			separation = farSystem.GetSeparation();
-			eccentricity = farSystem.GetEccentricity();
+			separation = bcSeparation.separation;
+			eccentricity = bcSeparation.eccentricity;
 			period = sqrt(pow(separation, 3.0) / (starC.GetMass() + starB.GetMass()));
 
 			outFile << "\t\t\t\t<td>" << period << " a</td>\n\t\t\t</tr>\n";
@@ -872,6 +865,7 @@ double generateMetallicity (default_random_engine & e, double age) {
 	uniform_int_distribution<> diceRoll(1, 6);
 
 	int roll = diceRoll(e) + diceRoll(e) + diceRoll(e);
+	cout << "metalroll: " << roll << endl;
 	double temp = (roll / 10) * (1.2 - age / 13.5);
 	if (temp < 0.05) { temp = 0.05; }
 	

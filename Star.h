@@ -22,7 +22,6 @@ class Star
 		double GetRadius ();
 		string GetSpectralType ();
 		string GetLuminosityClass ();
-		vector<Planet> GetPlanets ();
 		// Mutators
 		void SetMass (double m);
 		void SetAge (double a);
@@ -32,8 +31,6 @@ class Star
 		void SetRadius (double r);
 		void SetSpectralType (string st);
 		void SetLuminosityClass (string lc);
-		void SetPlanet (Planet p);
-		void SetPlanets (vector<Planet> vp);
 		// Operators
 		Star & operator=(const Star & rhs);
 		//bool operator==(Star a, Star b)
@@ -47,7 +44,6 @@ class Star
 		double radius;
 		string spectralType;
 		string luminosityClass;
-		vector<Planet> planets;
 };
 
 #endif // STAR_H
