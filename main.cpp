@@ -72,7 +72,7 @@ int main () {
 
 	// mass of the primary star
 	double baseMass = initialMassFunction(engine);
-	baseMass = 1.02; // for testing
+	//baseMass = 1.02; // for testing
 
 	bool isMultiple = isSystemMultiple(baseMass, engine);
 
