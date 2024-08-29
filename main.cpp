@@ -1891,5 +1891,25 @@ void printPlanetaryClass (PlanetClass pc, string & className, string & imgFileNa
 			className = "Leftover oligarch";
 			imgFileName = "1FacePlanet.gif";
 			break;
+		case VENUSIAN:
+			className = "Venusian";
+			imgFileName = "1FacePlanet.gif";
+			break;
+		case HYCEAN:
+			className = "Hycean";
+			imgFileName = "1FacePlanet.gif";
+			break;
+		case TITANIAN:
+			className = "Titanian";
+			imgFileName = "1FacePlanet.gif";
+			break;
+		case GAIAN:
+			className = "Gaian";
+			imgFileName = "1FacePlanet.gif";
+			break;
+		case MARTIAN:
+			className = "Martian";
+			imgFileName = "1FacePlanet.gif";
+			break;
 	}
 }
