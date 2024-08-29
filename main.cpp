@@ -621,16 +621,16 @@ int main () {
 
 			outFile << "\t\t\t<tr>\n";
 			outFile << "\t\t\t\t<td><strong>Atmosphere</strong></td>\n";
-			outFile << setprecision(4) << "\t\t\t\t<td>";
 			Atmosphere a = dummyStarPlanets[i].GetAtmosphere();
+			outFile << "\t\t\t\t<td>" << a.pressure << " atm</td>\n";
+			outFile << setprecision(4) << "\t\t\t\t<td>";
 			if (a.hydrogen != 0) { outFile << "Hydrogen: " << a.hydrogen * 100.0 << "%<br />"; }
 			if (a.helium != 0) { outFile << "Helium: " << a.helium * 100.0 << "%<br />"; }
-			if (a.nitrogen != 0) { outFile << "Nitrogen: " << a.hydrogen * 100.0 << "%<br />"; }
-			if (a.argon != 0) { outFile << "Argon: " << a.hydrogen * 100.0 << "%<br />"; }
+			if (a.nitrogen != 0) { outFile << "Nitrogen: " << a.nitrogen * 100.0 << "%<br />"; }
+			if (a.argon != 0) { outFile << "Argon: " << a.argon * 100.0 << "%<br />"; }
 			if (a.carbonDioxide != 0) { outFile << "Carbon dioxide: " << a.carbonDioxide * 100.0 << "%<br />"; }
 			if (a.oxygen != 0) { outFile << "Oxygen: " << a.oxygen * 100.0 << "%<br />"; }
 			if (a.waterVapor != 0) { outFile << "Water vapor: " << a.waterVapor * 100.0 << "%<br />"; }
-
 			outFile << setprecision(6) << "</td>\n";
 			outFile << "\t\t\t</tr>\n";
 		}
