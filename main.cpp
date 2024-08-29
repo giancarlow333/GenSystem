@@ -1783,6 +1783,12 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			double argon = 0.0;
 			double retentionFactor = 1.0;
 			cout << "minMWR: " << minMWR << endl;
+
+			// BS'd retention factor
+			// Don't really know what to base this on other than AOW's tables, so I'm using mass as a proxy
+			retentionFactor = pow(sPlanets2[i].GetMass(), 2.0);
+			if (retentionFactor > 3.0) { retentionFactor = 3.0; }
+			cout << "retentionFactor: " << retentionFactor << endl;
 			if (minMWR <= 2) {
 				molecularHydrogen = (0.9 + threeD6Over100(e)) * 100.0 * retentionFactor;
 			}
@@ -1814,20 +1820,21 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			sPlanets2[i].SetAtmosphere(atmos);
 
 			// Reassign world classes
+			// I'm assuming "significant" atmosphere is between Mars and Venus, or mass 0.07 (geomean), which is retentionFactor 0.005
 			PlanetClass newPlanetClass = pc;
 			if (thereWasARunawayGreenhouse) {
 				newPlanetClass = VENUSIAN;
 			}
-			else if (atmos.hydrogen > 0) {
+			else if (atmos.hydrogen > 0 && retentionFactor > 0.005) {
 				newPlanetClass = HYCEAN;
 			}
-			else if (atmos.hydrogen == 0 && atmos.nitrogen > 0 && blackBodyTemp >= 80 && blackBodyTemp <= 125) {
+			else if (atmos.hydrogen == 0 && atmos.nitrogen > 0 && blackBodyTemp >= 80 && blackBodyTemp <= 125 && retentionFactor > 0.005) {
 				newPlanetClass = TITANIAN;
 			}
-			else if (atmos.hydrogen == 0 && atmos.nitrogen > 0 && blackBodyTemp > 125) {
+			else if (atmos.hydrogen == 0 && atmos.nitrogen > 0 && blackBodyTemp > 125 && retentionFactor > 0.005) {
 				newPlanetClass = GAIAN;
 			}
-			else if (atmos.hydrogen == 0 && atmos.nitrogen == 0 && atmos.helium == 0 && blackBodyTemp > 195) {
+			else if (atmos.hydrogen == 0 && atmos.nitrogen == 0 && atmos.helium == 0 && blackBodyTemp > 195 && retentionFactor > 0.005) {
 				newPlanetClass = MARTIAN;
 			}
 			sPlanets2[i].SetPlanetClass(newPlanetClass);
