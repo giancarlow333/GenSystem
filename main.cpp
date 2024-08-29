@@ -1899,7 +1899,8 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 				atmosphericOxygen = threeD6Over100(e) * 0.2;
 			}
 			else if (thereWasAnOxygenCatastrophe) {
-				atmosphericOxygen = (threeD6Over100(e) + 0.15) * retentionFactor;
+				normal_distribution<> oxygenGen(0.256, 0.02958);
+				atmosphericOxygen = oxygenGen(e) * retentionFactor;
 			}
 
 			// surface temperature
@@ -1929,6 +1930,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 
 				// CO2 greenhouse and adjustment
 				if (isACarbonSilicateCycle) {
+					cout << "isACarbonSilicateCycle" << endl;
 					double minC = 260 - averageSurfaceTemperature;
 					if (minC > 8.0) { carbonDioxideGreenhouse = minC; }
 					else { carbonDioxideGreenhouse = 8.0; }
@@ -1938,6 +1940,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 				}
 				else {
 					carbonDioxideGreenhouse = 31.8 + (9.97 * log10(firstCO2Estimate));
+					cout << "carbonDioxideGreenhouse: " << carbonDioxideGreenhouse << endl;
 				}
 
 				averageSurfaceTemperature += carbonDioxideGreenhouse;
