@@ -609,6 +609,11 @@ int main () {
 
 		if (theClass == TERRESTRIAL_PLANET || theClass == LEFTOVER_OLIGARCH || theClass == VENUSIAN || theClass == HYCEAN || theClass == TITANIAN || theClass == GAIAN || theClass == MARTIAN) {
 			outFile << "\t\t\t<tr>\n";
+			outFile << "\t\t\t\t<td><strong>Albedo</strong></td>\n";
+			outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetAlbedo() << " (Bond)</td>\n";
+			outFile << "\t\t\t</tr>\n";
+
+			outFile << "\t\t\t<tr>\n";
 			outFile << "\t\t\t\t<td><strong>Hydrographic coverage</strong></td>\n";
 			outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetOceanPct() * 100.0 << "%</td>\n";
 			outFile << "\t\t\t</tr>\n";
@@ -1838,16 +1843,53 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 				newPlanetClass = MARTIAN;
 			}
 			sPlanets2[i].SetPlanetClass(newPlanetClass);
+
+			// albedo
+			double albedo;
+			albedo = threeD6Over100(e);
+
+			if (newPlanetClass == VENUSIAN) {
+				albedo += 0.65;
+			}
+			if (newPlanetClass == HYCEAN) {
+				albedo += 0.20;
+			}
+			if (newPlanetClass == TITANIAN) {
+				albedo += 0.10;
+			}
+			if (newPlanetClass == GAIAN || newPlanetClass == MARTIAN) {
+				double oceans = sPlanets2[i].GetOceanPct();
+				if (oceans = 0) { albedo += 0.15; }
+				else if (oceans < 0.15) { albedo += 0.16; }
+				else if (oceans < 0.65) { albedo += 0.19; }
+				else if (oceans < 1.0) { albedo += 0.22; }
+				else { albedo += 0.25; }
+			}
+			if (newPlanetClass == TERRESTRIAL_PLANET) {
+				double oceans = sPlanets2[i].GetOceanPct();
+				if (oceans = 0) { albedo += 0.01; }
+				else if (oceans < 0.15) { albedo += 0.02; }
+				else if (oceans < 0.65) { albedo += 0.08; }
+				else if (oceans < 1.0) { albedo += 0.14; }
+				else { albedo += 0.20; }
+				// if temp < 80K add 0.3
+			}
+			sPlanets2[i].SetAlbedo(albedo);
+
+
+
 		} // end if (pc == TERRESTRIAL_PLANET || pc == LEFTOVER_OLIGARCH)
 	}
 
 	// geophysics and magnetics
 
-	// atmosphere, world class, and albedo
+	// albedo, native life, surface temperatures
+	for (int i = 0; i < sPlanets2.size(); i++) {
+		PlanetClass pc = sPlanets2[i].GetPlanetClass();
 
-	// native life
 
-	// surface temperatures
+		// First CO2 estimate
+	} // END albedo, native life, surface temperatures
 
 
 

@@ -48,6 +48,7 @@ class Planet
 		double GetRotationPeriod ();
 		double GetAxialTilt ();
 		double GetOceanPct ();
+		double GetAlbedo ();
 		PlanetClass GetPlanetClass ();
 		vector<Moon> GetMoons ();
 		int GetNumberOfMoons ();
@@ -63,6 +64,7 @@ class Planet
 		void SetRotationPeriod (double r);
 		void SetAxialTilt (double a);
 		void SetOceanPct (double o);
+		void SetAlbedo (double ab);
 		void SetPlanetClass (PlanetClass pc);
 		void SetMoons (vector<Moon> mv);
 		void SetSingleMoon (Moon m);
@@ -82,6 +84,7 @@ class Planet
 		double rotationPeriod; // day length in HOURS
 		double axialTilt; // in degrees
 		double oceanPct;
+		double albedo;
 		PlanetClass classOfPlanet;
 		vector<Moon> moons;
 		Atmosphere atmosphere;
