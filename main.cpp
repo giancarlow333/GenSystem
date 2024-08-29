@@ -37,7 +37,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 void printPlanetaryClass (PlanetClass pc, string & className, string & imgFileName);
 
 // constants
-const string VERSION_NUMBER = "0.12";
+const string VERSION_NUMBER = "0.13";
 
 // struct for overall separation
 struct OverallSeparation {
