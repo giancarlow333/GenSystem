@@ -1,12 +1,32 @@
 #include <iostream>
-#include <vector>
+#include <array>
 #include "Moon.h"
 #include "Planet.h"
 using namespace std;
 
 Planet::Planet()
 {
-	//ctor
+	distance = 0.0;
+	eccentricity = 0.0;
+	mass = 0.0;
+	radius = 0.0;
+	density = 0.0;
+	gravity = 0.0;
+	orbitalPeriod = 0.0;
+	rotationPeriod = 0.0;
+	axialTilt = 0.0;
+	oceanPct = 0.0;
+	albedo = 0.0;
+	temperature = 0.0;
+	classOfPlanet = NONE;
+	atmosphere.hydrogen = 0.0;
+	atmosphere.helium = 0.0;
+	atmosphere.nitrogen = 0.0;
+	atmosphere.argon = 0.0;
+	atmosphere.carbonDioxide = 0.0;
+	atmosphere.oxygen = 0.0;
+	atmosphere.waterVapor = 0.0;
+	atmosphere.pressure = 0.0;
 }
 
 Planet::Planet(const Planet & other) {
@@ -94,12 +114,12 @@ PlanetClass Planet::GetPlanetClass () {
 	return classOfPlanet;
 }
 
-vector<Moon> Planet::GetMoons () {
+std::array<Moon, 10> Planet::GetMoons () {
 	return moons;
 }
 
 int Planet::GetNumberOfMoons () {
-	return moons.size();
+	return numberOfMoons;
 }
 
 Atmosphere Planet::GetAtmosphere () {
@@ -161,11 +181,12 @@ void Planet::SetPlanetClass (PlanetClass pc) {
 	classOfPlanet = pc;
 }
 
-void Planet::SetMoons (vector<Moon> mv) {
+void Planet::SetMoons (std::array<Moon, 10> mv) {
 	moons = mv;
 }
-void Planet::SetSingleMoon (Moon m) {
-	moons.push_back(m);
+
+void Planet::SetNumberOfMoons (int m) {
+	numberOfMoons = m;
 }
 
 void Planet::SetAtmosphere (Atmosphere a) {

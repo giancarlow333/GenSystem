@@ -53,10 +53,6 @@ double Star::GetRadius () {
 	return radius;
 }
 
-vector<Planet> Star::GetPlanets () {
-	return planets;
-}
-
 string Star::GetSpectralType () {
 	return spectralType;
 }
@@ -138,16 +134,6 @@ void Star::SetSpectralType (string st) {
 void Star::SetLuminosityClass (string lc) {
 	luminosityClass = lc;
 }
-
-void Star::SetPlanet (Planet p) {
-	planets.push_back(p);
-}
-
-void Star::SetPlanets (vector<Planet> vp) {
-	planets = vp;
-}
-
-
 ///////////////////////////////////////
 // OPERATORS
 ///////////////////////////////////////

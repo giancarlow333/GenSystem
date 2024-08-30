@@ -4,7 +4,12 @@ using namespace std;
 
 Moon::Moon()
 {
-	//ctor
+	distance = 0.0;
+	eccentricity = 0.0;
+	mass = 0.0;
+	radius = 0.0;
+	density = 0.0;
+	gravity = 0.0;
 }
 
 Moon::Moon(const Moon & other) {

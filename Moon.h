@@ -28,7 +28,7 @@ class Moon
 		void SetGravity (double g);
 		// Operators
 		Moon & operator=(const Moon & rhs);
-		bool operator==(Moon m);
+		//bool operator==(Moon m);
 	protected:
 	private:
 		double distance; // distance from star in *km*
