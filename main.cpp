@@ -1,4 +1,5 @@
 #include <iostream>
+#include <array>
 #include <random>
 #include <fstream>          // file output
 #include <string>           // file names
@@ -660,8 +661,9 @@ int main (int argc, char **argv) {
 			outFile << "\t\t<table class=\"infobox\">\n";
 			outFile << "\t\t\t<colgroup><col width=\"50\" /><col width=\"300\" /><col width=\"300\" /></colgroup>\n";
 			outFile << "\t\t\t<tr>\n\t\t\t\t<th>&numero;</th><th>Distance</th><th>Mass</th>\n";
-			vector<Moon> theMoons = dummyStarPlanets[i].GetMoons();
-			for (int j = 0; j < theMoons.size(); j++) {
+			std::array<Moon, 10> theMoons = dummyStarPlanets[i].GetMoons();
+			int moonCount = dummyStarPlanets[i].GetNumberOfMoons();
+			for (int j = 0; j < moonCount; j++) {
 				outFile << "\t\t\t<tr>\n\t\t\t\t<td>" << j + 1 << "</td>\n";
 				outFile << "\t\t\t\t<td>" << setprecision(9) << theMoons[j].GetDistance() << " km</td>\n";
 				outFile << "\t\t\t\t<td>" << setprecision(6) << theMoons[j].GetMass() << " M<sub>E</sub><br />";
@@ -1672,10 +1674,12 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		if (numberOfMajorMoons < 0) {
 			numberOfMajorMoons = 0;
 		}
-		//cout << "Planet " << i << " has " << numberOfMajorMoons << " major moons." << endl;
+		cout << "Planet " << i << " has " << numberOfMajorMoons << " major moons." << endl;
+		sPlanets2[i].SetNumberOfMoons(numberOfMajorMoons);
 
 		int laplaceResonanceCount = 0;
 		double priorMoonDistance = 0;
+		std::array<Moon, 10> moonArray;
 		for (int j = 0; j < numberOfMajorMoons; j++) {
 			uniform_int_distribution<> rollDice(1, 6);
 			normal_distribution<> randomNorm(10.5, 2.958);
@@ -1706,10 +1710,13 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			//cout << "distance: " << distance << endl;
 			if (distance > hillSphereInKm) { break; }
 			Moon temp(distance, moonMass);
-			sPlanets2[i].SetSingleMoon(temp);
+			moonArray[j] = temp;
 		}
 
 		// TBD: giant impact moons
+
+		// place moons
+		sPlanets2[i].SetMoons(moonArray);
 	}
 
 	// orbital periods

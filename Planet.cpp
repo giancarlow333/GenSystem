@@ -185,8 +185,8 @@ void Planet::SetMoons (std::array<Moon, 10> mv) {
 	moons = mv;
 }
 
-void Planet::SetSingleMoon (Moon m) {
-	moons[numberOfMoons] = m;
+void Planet::SetNumberOfMoons (int m) {
+	numberOfMoons = m;
 }
 
 void Planet::SetAtmosphere (Atmosphere a) {

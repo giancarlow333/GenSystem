@@ -73,7 +73,7 @@ class Planet
 		void SetTemperature (double t);
 		void SetPlanetClass (PlanetClass pc);
 		void SetMoons (std::array<Moon, 10> mv);
-		void SetSingleMoon (Moon m);
+		void SetNumberOfMoons (int m);
 		void SetAtmosphere (Atmosphere a);
 		// Operators
 		Planet & operator=(const Planet & rhs);
