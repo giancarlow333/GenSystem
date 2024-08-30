@@ -4,7 +4,7 @@ This is a C++ console application which randomly generates a solar system.
 
 ## Warning!
 
-The program currently crashes (returns a ```X``` error) while attempting to return from the ```formPlanets()``` function.  This only happens some of the time, and seems to depend on the formed system architecture (and thus ultimately on the seed).  I am roughly 90% certain that the cause of the crash is the program attempting to destruct the ```vector<FormingPlanet> sPlanets``` object.  However, I have *no idea* why this would cause a crash.  Until I resolve this issue, development is kinda paused.
+The program currently crashes (returns a ```malloc(): invalid next size (unsorted)``` error) while attempting to return from the ```formPlanets()``` function.  This only happens some of the time, and seems to depend on the formed system architecture (and thus ultimately on the seed).  I am roughly 90% certain that the cause of the crash is the program attempting to destruct the ```vector<FormingPlanet> sPlanets``` object.  However, I have *no idea* why this would cause a crash.  Until I resolve this issue, development is kinda paused.
 
 Use the software at your own risk!
 
