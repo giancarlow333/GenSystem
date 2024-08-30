@@ -14,8 +14,8 @@ TBD
 
 ## Usage
 
-TBD.  Program is invoked from the command line once compiled.
-https://stackoverflow.com/questions/11246779/vector-push-back-not-working-in-class-object
+The program is compiled using the ```make``` command.  It is invoked from the command line once compiled.  Currently, the only way to change the output is to invoke with the **-s** command: ```./GenSystem -s SEED```, where SEED is an integer.
+
 ## Future Development
 
 Paths for future development include:
@@ -26,6 +26,10 @@ Paths for future development include:
 * A better algorithm to determine the presence of life (currently just age)
 * Orbital resonances between planets (not just moons)
 * Forcing the appearance of a habitable planet ("-H command flag")
+
+## Sources
+
+The overall procedure is generally taken from [*Architect of Worlds*](https://www.adastragames.com/products/architect-of-worlds), an RPG system by [Jon F. Zeigler](https://wordpress.sharrukinspalace.com/about-me/)—in some cases loosely, in others slavishly.  Indeed, AOW was the ultimate inspiration for this project.  However, it does not exactly duplictate is rules and is not intended for direct use with it.  No infringement is intended, and I hope to move away from it further in the future.
 
 ## License
 
