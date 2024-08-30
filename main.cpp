@@ -1900,7 +1900,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			}
 			if (newPlanetClass == GAIAN || newPlanetClass == MARTIAN) {
 				double oceans = sPlanets2[i].GetOceanPct();
-				if (oceans = 0) { albedo += 0.15; }
+				if (oceans == 0) { albedo += 0.15; }
 				else if (oceans < 0.15) { albedo += 0.16; }
 				else if (oceans < 0.65) { albedo += 0.19; }
 				else if (oceans < 1.0) { albedo += 0.22; }
@@ -1908,7 +1908,7 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 			}
 			if (newPlanetClass == TERRESTRIAL_PLANET) {
 				double oceans = sPlanets2[i].GetOceanPct();
-				if (oceans = 0) { albedo += 0.01; }
+				if (oceans == 0) { albedo += 0.01; }
 				else if (oceans < 0.15) { albedo += 0.02; }
 				else if (oceans < 0.65) { albedo += 0.08; }
 				else if (oceans < 1.0) { albedo += 0.14; }
@@ -2023,10 +2023,12 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		}
 	}
 
-	cout << "Returning...\n";
+	cout << "Final planets...\n";
+	cout << "sPlanets2.size(): " << sPlanets2.size() << endl;
 	for (int i = 0; i < sPlanets2.size(); i++) {
 		cout << i << ": " << sPlanets2[i].GetDistance() << endl;
 	}
+	cout << "Returning...\n";
 	return sPlanets2;
 }
 
