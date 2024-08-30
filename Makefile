@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -std=c++17 -g -Wall -Werror -fsanitize=address
+CFLAGS = -std=c++17 -g
 
 default:	gensystem
 

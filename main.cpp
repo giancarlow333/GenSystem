@@ -2029,6 +2029,8 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 		cout << i << ": " << sPlanets2[i].GetDistance() << endl;
 	}
 	cout << "Returning...\n";
+	sPlanets.resize(0);
+	cout << "sPlanets cleared...\n";
 	return sPlanets2;
 }
 
