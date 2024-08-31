@@ -838,7 +838,6 @@ double generateSystemAge (default_random_engine & e) {
 	uniform_real_distribution<> randU(0, 1);
 
 	int roll = percentileRoll(e);
-	double age;
 
 	if (roll <= 5) { // Extreme Population I
 		return 0.0 + randU(e) * 0.5;
@@ -1757,7 +1756,6 @@ vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbidde
 
 		// axial tilt
 		double axis = 0;
-		PlanetClass pc;
 		if (sPlanets2[i].GetNumberOfMoons() > 0) { // has major moon(s), is terrestrial, leftover oligarch, failed core
 			normal_distribution<> randomNorm(30.0, 9.0); // basically 4d6
 			axis = randomNorm(e);
