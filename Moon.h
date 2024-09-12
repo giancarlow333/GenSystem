@@ -9,7 +9,7 @@ class Moon
 	public:
 		// Constructors
 		Moon();
-		Moon(const Moon & other);
+		//Moon(const Moon & other);
 		Moon(double d);
 		Moon(double d, double m);
 		// Accessors
@@ -27,7 +27,7 @@ class Moon
 		void SetDensity (double rho);
 		void SetGravity (double g);
 		// Operators
-		Moon & operator=(const Moon & rhs);
+		//Moon & operator=(const Moon & rhs);
 		//bool operator==(Moon m);
 	protected:
 	private:

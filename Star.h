@@ -12,7 +12,7 @@ class Star
 		// Constructors
 		Star();
 		Star(double m);
-		Star(const Star & other);
+		//Star(const Star & other);
 		// Accessors
 		double GetMass ();
 		double GetAge ();
@@ -32,7 +32,7 @@ class Star
 		void SetSpectralType (string st);
 		void SetLuminosityClass (string lc);
 		// Operators
-		Star & operator=(const Star & rhs);
+		//Star & operator=(const Star & rhs);
 		//bool operator==(Star a, Star b)
 	protected:
 	private:

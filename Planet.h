@@ -38,7 +38,7 @@ class Planet
 	public:
 		// Constructors
 		Planet();
-		Planet(const Planet & other);
+		//Planet(const Planet & other);
 		Planet(double d);
 		Planet(double d, double m);
 		// Accessors
@@ -76,7 +76,7 @@ class Planet
 		void SetNumberOfMoons (int m);
 		void SetAtmosphere (Atmosphere a);
 		// Operators
-		Planet & operator=(const Planet & rhs);
+		//Planet & operator=(const Planet & rhs);
 		//bool operator==(Planet b);
 	protected:
 	private:

@@ -29,24 +29,6 @@ Planet::Planet()
 	atmosphere.pressure = 0.0;
 }
 
-Planet::Planet(const Planet & other) {
-	distance = other.distance;
-	eccentricity = other.eccentricity;
-	mass = other.mass;
-	radius = other.radius;
-	density = other.density;
-	gravity = other.gravity;
-	orbitalPeriod = other.orbitalPeriod;
-	rotationPeriod = other.rotationPeriod;
-	axialTilt = other.axialTilt;
-	oceanPct = other.oceanPct;
-	albedo = other.albedo;
-	temperature = other.temperature;
-	classOfPlanet = other.classOfPlanet;
-	moons = other.moons;
-	atmosphere = other.atmosphere;
-}
-
 //alternate constructor
 Planet::Planet(double d) {
 	distance = d;
@@ -195,12 +177,6 @@ void Planet::SetAtmosphere (Atmosphere a) {
 ///////////////////////////////////////
 // OPERATORS
 ///////////////////////////////////////
-
-Planet & Planet::operator=(const Planet & rhs) {
-	if (this == &rhs) return *this; // handle self assignment
-	//assignment operator
-	return *this;
-}
 
 /*bool operator==(Planet a, Planet b) {
 	return (a.mass == b.mass) && (a.age == b.age) && (a.metallicity == b.metallicity) && (a.temperature == b.temperature) && (a.luminosity == b.luminosity) && (a.radius == b.radius);

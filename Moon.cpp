@@ -12,15 +12,6 @@ Moon::Moon()
 	gravity = 0.0;
 }
 
-Moon::Moon(const Moon & other) {
-	distance = other.distance;
-	eccentricity = other.eccentricity;
-	mass = other.mass;
-	radius = other.radius;
-	density = other.density;
-	gravity = other.gravity;
-}
-
 //alternate constructor
 Moon::Moon(double d) {
 	distance = d;
@@ -89,12 +80,6 @@ void Moon::SetGravity (double g) {
 ///////////////////////////////////////
 // OPERATORS
 ///////////////////////////////////////
-
-Moon & Moon::operator=(const Moon & rhs) {
-	if (this == &rhs) return *this; // handle self assignment
-	//assignment operator
-	return *this;
-}
 
 /*bool operator==(Moon a, Moon b) {
 	return (a.mass == b.mass) && (a.age == b.age) && (a.metallicity == b.metallicity) && (a.temperature == b.temperature) && (a.luminosity == b.luminosity) && (a.radius == b.radius);

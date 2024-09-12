@@ -10,14 +10,14 @@ Star::Star()
 	//ctor
 }
 
-Star::Star(const Star& other) {
+/*Star::Star(const Star& other) {
 	mass = other.mass;
 	age = other.age;
 	metallicity = other.metallicity;
 	temperature = other.temperature;
 	luminosity = other.luminosity;
 	radius = other.radius;
-}
+}*/
 
 //alternate constructor
 Star::Star(double m)
@@ -137,8 +137,7 @@ void Star::SetLuminosityClass (string lc) {
 ///////////////////////////////////////
 // OPERATORS
 ///////////////////////////////////////
-
-Star & Star::operator=(const Star & rhs) {
+/*Star & Star::operator=(const Star & rhs) {
 	if (this == &rhs) return *this; // handle self assignment
 	//assignment operator
 	return *this;
