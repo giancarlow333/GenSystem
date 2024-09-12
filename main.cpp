@@ -34,7 +34,7 @@ double generateMigrationFactor (default_random_engine & e, double diskMassFactor
 double getOuterSystemProperties(Planet & p, int mod, int pNumber, default_random_engine & e);
 double getInnerOrbitalExclusionZone (double pMass, double sMass, double separation, double eccentricity);
 double getOuterOrbitalExclusionZone (double pMass, double sMass, double separation, double eccentricity);
-vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbiddenZone, bool starIsCircumbinary, double initialLuminosity, double innerExclusionZone);
+vector<Planet> formPlanets (Star s, default_random_engine & e, double forbiddenZone, bool starIsCircumbinary, double initialLuminosity, double innerExclusionZone);
 void printPlanetaryClass (PlanetClass pc, string & className, string & imgFileName);
 double getWaterGreenhouse (double temp, double ocean);
 
@@ -1230,7 +1230,7 @@ double getOuterOrbitalExclusionZone (double pMass, double sMass, double separati
 // ////////////////////////////////////
 // ////////////////////////////////////
 
-vector<Planet> formPlanets (Star & s, default_random_engine & e, double forbiddenZone, bool starIsCircumbinary, double initialLuminosity, double innerExclusionZone) {
+vector<Planet> formPlanets (Star s, default_random_engine & e, double forbiddenZone, bool starIsCircumbinary, double initialLuminosity, double innerExclusionZone) {
 	double diskMassFactor = generateDiskMassFactor(e);
 	double migrationFactor = generateMigrationFactor(e, diskMassFactor);
 
