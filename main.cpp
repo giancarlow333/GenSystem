@@ -1612,6 +1612,10 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 	int totalNumberOfPlanets = sPlanets2.size();
 	double typicalEccen = getTypicalEccentricity(totalNumberOfPlanets);
 	for (int i = 0; i < sPlanets2.size(); i++) {
+		PlanetClass pc = sPlanets2[i].GetPlanetClass();
+		if (pc == NONE) { // Don't place if planet doesn't
+			continue;
+		}
 		normal_distribution<> randomNorm(-0.035, 0.02415); // 2d6-7 / 100
 		double eccen = typicalEccen + randomNorm(e);
 		if (eccen < 0) { eccen = 0; }
@@ -1622,6 +1626,9 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 	cout << "Determining densities, radii, and surface gravities...\n";
 	for (int i = 0; i < sPlanets2.size(); i++) {
 		PlanetClass pc = sPlanets2[i].GetPlanetClass();
+		if (pc == NONE) { // Don't place if planet doesn't
+			continue;
+		}
 		double density;
 		if (pc == SMALL_GAS_GIANT || pc == MEDIUM_GAS_GIANT || pc == LARGE_GAS_GIANT) {
 			if (sPlanets2[i].GetMass() <= 200) {
@@ -1664,8 +1671,8 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 	cout << "Placing moons...\n";
 	for (int i = 0; i < sPlanets2.size(); i++) {
 		PlanetClass pc = sPlanets2[i].GetPlanetClass();
-		if (pc == NONE || pc == PLANETOID_BELT) {
-			break;
+		if (pc == NONE || pc == PLANETOID_BELT) { // Don't place if planet doesn't
+			continue;
 		}
 		double apastron = sPlanets2[i].GetDistance() * (1.0 - sPlanets2[i].GetEccentricity());
 		double hillSphereInKm = 2.17e6 * apastron * pow(sPlanets2[i].GetMass() / s.GetMass(), 1.0/3.0);
@@ -1730,6 +1737,10 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 	// orbital periods
 	cout << "Doing orbital periods...\n";
 	for (int i = 0; i < sPlanets2.size(); i++) {
+		PlanetClass pc = sPlanets2[i].GetPlanetClass();
+		if (pc == NONE) { // Don't place if planet doesn't
+			continue;
+		}
 		double period = sqrt(pow(sPlanets2[i].GetDistance(), 3.0) / s.GetMass());
 		sPlanets2[i].SetOrbitalPeriod(period);
 	}
@@ -1737,6 +1748,11 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 	// rotation periods and obliquity
 	cout << "Doing rotation periods...\n";
 	for (int i = 0; i < sPlanets2.size(); i++) {
+		PlanetClass pc = sPlanets2[i].GetPlanetClass();
+		if (pc == NONE) { // Don't place if planet doesn't
+			continue;
+		}
+
 		double rotationPeriod;
 		double tideLockRadius = pow(s.GetAge() * pow(s.GetMass(), 2.0) / 479.0, 1.0 / 6.0);
 		bool isTidallyLocked = false;
@@ -1788,6 +1804,9 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 	cout << "Doing surface properties...\n";
 	for (int i = 0; i < sPlanets2.size(); i++) {
 		PlanetClass pc = sPlanets2[i].GetPlanetClass();
+		if (pc == NONE) { // Don't place if planet doesn't
+			continue;
+		}
 		// blackbody temp
 		double blackBodyTemp = 278.0 * pow(s.GetLuminosity(), 0.25) / sqrt(sPlanets2[i].GetDistance());
 		// minimum molecular weight retained
