@@ -1663,6 +1663,10 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 	// place moons
 	cout << "Placing moons...\n";
 	for (int i = 0; i < sPlanets2.size(); i++) {
+		PlanetClass pc = sPlanets2[i].GetPlanetClass();
+		if (pc == NONE || pc == PLANETOID_BELT) {
+			break;
+		}
 		double apastron = sPlanets2[i].GetDistance() * (1.0 - sPlanets2[i].GetEccentricity());
 		double hillSphereInKm = 2.17e6 * apastron * pow(sPlanets2[i].GetMass() / s.GetMass(), 1.0/3.0);
 		int numberOfMajorMoons = 2e-15 * pow(hillSphereInKm, 2.0) / sqrt(sPlanets2[i].GetDistance());
@@ -1677,6 +1681,7 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 		if (numberOfMajorMoons < 0) {
 			numberOfMajorMoons = 0;
 		}
+		cout << "moonModifier: " << moonModifier << endl;
 		cout << "Planet " << i << " has " << numberOfMajorMoons << " major moons." << endl;
 		sPlanets2[i].SetNumberOfMoons(numberOfMajorMoons);
 
