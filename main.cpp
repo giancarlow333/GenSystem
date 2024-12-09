@@ -1330,7 +1330,8 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 
 	cout << "\n\nInitial allocation...\n";
 	for (int i = 0; i < sPlanets.size(); i++) {
-		cout << "Planet " << i << ": Distance " << sPlanets[i].planet.GetDistance() << endl;
+		cout << "Planet " << i << ": Distance " << sPlanets[i].planet.GetDistance() << "; ";
+		cout << "class: " << sPlanets[i].planet.GetPlanetClass() << endl;
 	}
 
 	// work exclusion zones
@@ -1349,12 +1350,14 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 			if (distance < slowAccretionLine && sPlanets[i + 1].planet.GetDistance() > slowAccretionLine) {
 				sPlanets[i].lastBeforeSlowAccretion = true;
 				sPlanets[i - 1].penultBeforeSlowAccretion = true;
+				cout << "Planet " << i - 1 << " is penultBeforeSlowAccretion" << endl;
 				break;
 			}
 		}
 		else {
 			sPlanets[i].lastBeforeSlowAccretion = true;
 			sPlanets[i - 1].penultBeforeSlowAccretion = true;
+				cout << "Planet " << i - 1 << " is penultBeforeSlowAccretion" << endl;
 		}
 	}
 
@@ -1365,6 +1368,7 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 		double planetesimalMass = sPlanets[i].planet.GetMass();
 
 		int accretionModifier = getAccretionModifier(planetesimalMass);
+		cout << "accretionModifier " << i << ": " << accretionModifier << endl;
 
 		// modifier if close to slow accretion line
 		if (sPlanets[i].penultBeforeSlowAccretion) { accretionModifier -= 8; }
@@ -1375,6 +1379,7 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 			massToInnerSystem = temp;
 		}
 	}
+	cout << "massToInnerSystem: " << massToInnerSystem << endl;
 	middleFormationZone *= (1 - massToInnerSystem);
 	innerFormationZone += (massToInnerSystem * middleFormationZone);
 
@@ -1397,7 +1402,7 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 			gasGiantCount++;
 		}
 	}
-
+	cout << "gasGiantCount: " << gasGiantCount << endl;
 	// Dominant Gas Giant Inward Migration
 	bool thereWasInwardMigration = false;
 	double orbitAfterInwardMigration = 0;
@@ -1435,7 +1440,7 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 
 	// Grand Tack
 	bool thereIsAGrandTack = false;
-	if (thereIsADominantGasGiant && gasGiantCount > 1) {
+	if (thereIsADominantGasGiant == true && gasGiantCount > 1) {
 		PlanetClass nextPlanet = sPlanets[dominantGasGiantIndex].planet.GetPlanetClass();
 		if (nextPlanet == SMALL_GAS_GIANT || nextPlanet == MEDIUM_GAS_GIANT || nextPlanet == LARGE_GAS_GIANT) { // Grand Tack is *possible*
 			uniform_int_distribution<> diceRoll(1, 6);
@@ -1513,16 +1518,17 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 	// INNER PLANETARY SYSTEM
 	cout << "Working inner system...\n";
 	innerFormationZone += 0;
+	cout << "innerFormationZone: " << innerFormationZone << endl;
 	for (int i = 0; i < 5; i++) {
 		double planetesimalMass = innerFormationZone * sPlanets[i].planet.GetMass();
 		if (sPlanets[i].orbitDisrupted) { planetesimalMass *= 0.5; }
-
+		cout << "planetesimalMass " << i << ": " << planetesimalMass << "; ";
 		normal_distribution<> randomNorm(1.05, 0.2958); // 3d6 / 10
 		double newMass = planetesimalMass * randomNorm(e);
+		cout << "newMass " << i << ": " << newMass << endl;
 
 		if (newMass < 0.03) {
 			sPlanets[i].planet.SetPlanetClass(NONE);
-			cout << "Planet " << i << " has no mass!\n\n";
 		}
 		else if (newMass < 0.18) {
 			if (i + 1 == dominantGasGiantIndex) {
@@ -1613,6 +1619,7 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 			cout << "Planet " << i << " kept!" << endl;
 		}
 		else {
+			temp.SetPlanetClass(NONE);
 			sPlanets2[i] = temp;
 			cout << "Planet " << i << " eliminated!" << endl;
 		}
