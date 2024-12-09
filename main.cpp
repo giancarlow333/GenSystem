@@ -34,7 +34,7 @@ double generateMigrationFactor (default_random_engine & e, double diskMassFactor
 double getOuterSystemProperties(Planet & p, int mod, int pNumber, default_random_engine & e);
 double getInnerOrbitalExclusionZone (double pMass, double sMass, double separation, double eccentricity);
 double getOuterOrbitalExclusionZone (double pMass, double sMass, double separation, double eccentricity);
-vector<Planet> formPlanets (Star s, default_random_engine & e, double forbiddenZone, bool starIsCircumbinary, double initialLuminosity, double innerExclusionZone);
+std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double forbiddenZone, bool starIsCircumbinary, double initialLuminosity, double innerExclusionZone);
 void printPlanetaryClass (PlanetClass pc, string & className, string & imgFileName);
 double getWaterGreenhouse (double temp, double ocean);
 
@@ -340,7 +340,7 @@ int main (int argc, char **argv) {
 	}
 
 	// Planets around primary star
-	vector<Planet> dummyStarPlanets = formPlanets(dummyStar, engine, forbiddenZone, dummyStarIsCircumbinary, initialLuminosity, innerExclusionZone);
+	std::array<Planet, 12> dummyStarPlanets = formPlanets(dummyStar, engine, forbiddenZone, dummyStarIsCircumbinary, initialLuminosity, innerExclusionZone);
 	cout << "Planets formed!\n";
 
 	cout << "\nFinal layout...:\n";
@@ -1230,7 +1230,7 @@ double getOuterOrbitalExclusionZone (double pMass, double sMass, double separati
 // ////////////////////////////////////
 // ////////////////////////////////////
 
-vector<Planet> formPlanets (Star s, default_random_engine & e, double forbiddenZone, bool starIsCircumbinary, double initialLuminosity, double innerExclusionZone) {
+std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double forbiddenZone, bool starIsCircumbinary, double initialLuminosity, double innerExclusionZone) {
 	double diskMassFactor = generateDiskMassFactor(e);
 	double migrationFactor = generateMigrationFactor(e, diskMassFactor);
 
@@ -1580,7 +1580,7 @@ vector<Planet> formPlanets (Star s, default_random_engine & e, double forbiddenZ
 
 	// Remove eliminated orbits
 	cout << "Removing eliminated orbits...\n";
-	vector<Planet> sPlanets2;
+	std::array<Planet, 12> sPlanets2;
 	for (int i = 0; i < sPlanets.size(); i++) {
 		Planet temp = sPlanets[i].planet;
 		cout << "Doing planet " << i << endl;
@@ -1588,10 +1588,13 @@ vector<Planet> formPlanets (Star s, default_random_engine & e, double forbiddenZ
 		cout << "; ejected? " << sPlanets[i].planetEjected << "; exclusion? " << sPlanets[i].inExclusionZone;
 		cout << "; class? " << sPlanets[i].planet.GetPlanetClass() << endl;
 		if (!sPlanets[i].planetEjected && !sPlanets[i].inExclusionZone && sPlanets[i].planet.GetPlanetClass() != NONE) {
-			sPlanets2.push_back(temp);
+			sPlanets2[i] = temp;
 			cout << "Planet " << i << " kept!" << endl;
 		}
-		else { cout << "Planet " << i << " eliminated!" << endl; }
+		else {
+			sPlanets2[i] = temp;
+			cout << "Planet " << i << " eliminated!" << endl;
+		}
 	}
 
 	cout << "Printing sPlanets2...\n";
