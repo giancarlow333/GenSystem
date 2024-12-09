@@ -529,10 +529,12 @@ int main (int argc, char **argv) {
 	outFile << "\t\t\t<colgroup><col width=\"50\" /><col width=\"50\" /><col width=\"300\" /><col width=\"300\" /><col width=\"300\" /><col width=\"300\" /></colgroup>\n";
 	outFile << "\t\t\t<tr><th colspan=\"6\">" << firstStarName << "</th></tr>\n";
 	outFile << "\t\t\t<tr><th>&numero;</th><th colspan=\"2\">Type</th><th>Distance</th><th>Mass</th><th>Radius</th></tr>\n";
+	int ctr = 0;
 	for (int i = 0; i < dummyStarPlanets.size(); i++) {
-		char planetNo = i + 98;
-		outFile << "\t\t\t<tr>\n\t\t\t\t<td><a href=\"#" << firstStarName << " " << planetNo << "\">" << planetNo << "</a></td>\n";
 		PlanetClass theClass = dummyStarPlanets[i].GetPlanetClass();
+		if (theClass == NONE) { continue; } // skip nonexistent planets
+		char planetNo = ctr + 98;
+		outFile << "\t\t\t<tr>\n\t\t\t\t<td><a href=\"#" << firstStarName << " " << planetNo << "\">" << planetNo << "</a></td>\n";
 		string className, imgFileName;
 
 		printPlanetaryClass (theClass, className, imgFileName);
@@ -543,6 +545,7 @@ int main (int argc, char **argv) {
 		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetMass() << " M<sub>E</sub></td>\n";
 		outFile << "\t\t\t\t<td>" << dummyStarPlanets[i].GetRadius() << " R<sub>E</sub></td>\n";
 		outFile << "\t\t\t</tr>\n";
+		ctr++;
 	}
 	outFile << "\t\t\t</table>\n";
 
@@ -550,14 +553,16 @@ int main (int argc, char **argv) {
 	/*
 	 * FULL DETAILS
 	 */
+	ctr = 0;
 	for (int i = 0; i < dummyStarPlanets.size(); i++) {
-		char planetNo = i + 98;
+		PlanetClass theClass = dummyStarPlanets[i].GetPlanetClass();
+		if (theClass == NONE) { continue; } // skip nonexistent planets
+		char planetNo = ctr + 98;
 		outFile << "\t\t<p>&nbsp;</p>\n";
 		outFile << "\t\t<table class=\"infobox\" id=\"" << firstStarName << " " << planetNo << "\">\n";
 		outFile << "\t\t\t<colgroup><col width=\"500\" /><col width=\"300\" /><col width=\"300\" /></colgroup>\n";
 		outFile << "\t\t\t<tr>\n\t\t\t\t<th colspan=\"3\">" << firstStarName << " " << planetNo << "</th>\n\t\t\t</tr>\n";
 
-		PlanetClass theClass = dummyStarPlanets[i].GetPlanetClass();
 		string className, imgFileName;
 
 		printPlanetaryClass (theClass, className, imgFileName);
@@ -672,6 +677,8 @@ int main (int argc, char **argv) {
 			}
 			outFile << "\t\t</table>\n\n";
 		}
+
+		ctr++;
 	}
 
 
