@@ -1328,12 +1328,18 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 	temp11.planet.SetMass(0.1 * outerFormationZone);
 	sPlanets[11] = temp11;
 
+	cout << "\n\nInitial allocation...\n";
+	for (int i = 0; i < sPlanets.size(); i++) {
+		cout << "Planet " << i << ": Distance " << sPlanets[i].planet.GetDistance() << endl;
+	}
+
 	// work exclusion zones
 	cout << "Working exclusion zones...\n";
 	for (int i = 0; i < sPlanets.size(); i++) {
 		double distance = sPlanets[i].planet.GetDistance();
 		if (distance < diskInnerEdge || distance > slowAccretionLine || distance > forbiddenZone || (distance < innerExclusionZone && starIsCircumbinary)) {
 			sPlanets[i].inExclusionZone = true;
+			cout << "Planet " << i << " in exclusion zone!" << endl;
 		}
 	}
 	// Mark last before slow accretiong
@@ -1500,8 +1506,9 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 		if (!sPlanets[i].finalPlacement) { countToBePlaced++; }
 		else { break; }
 	}
-	placeRemainingPlanets (sPlanets, dominantGasGiantIndex, finalPlanetIndex, countToBePlaced, e);
-
+	if (dominantGasGiantIndex >= 0) { // there IS such a gas giant
+		placeRemainingPlanets (sPlanets, dominantGasGiantIndex, finalPlanetIndex, countToBePlaced, e);
+	}
 
 	// INNER PLANETARY SYSTEM
 	cout << "Working inner system...\n";
@@ -1515,6 +1522,7 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 
 		if (newMass < 0.03) {
 			sPlanets[i].planet.SetPlanetClass(NONE);
+			cout << "Planet " << i << " has no mass!\n\n";
 		}
 		else if (newMass < 0.18) {
 			if (i + 1 == dominantGasGiantIndex) {
@@ -1572,11 +1580,16 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 	// Place remaining inner system
 	// count how many objects remain to be placed between innermost surviving object and either the dominant gas giant or, if no such, the outermost planet
 	countToBePlaced = 0;
+	cout << "innermostPlanetIndex: " << innermostPlanetIndex << endl;
+	cout << "dominantGasGiantIndex: " << dominantGasGiantIndex << endl;
 	for (int i = innermostPlanetIndex + 1; i < dominantGasGiantIndex; i++) { // NOT QUITE RIGHT!
 		if (!sPlanets[i].finalPlacement) { countToBePlaced++; }
 		else { break; }
 	}
-	placeRemainingPlanets (sPlanets, innermostPlanetIndex, dominantGasGiantIndex, countToBePlaced, e);
+	cout << "countToBePlaced: " << countToBePlaced << endl;
+	if (dominantGasGiantIndex >= 0) { // there IS such a gas giant
+		placeRemainingPlanets (sPlanets, innermostPlanetIndex, dominantGasGiantIndex, countToBePlaced, e);
+	}
 
 	// Make sure there aren't any in exclusion zones after migration!
 	for (int i = 0; i < sPlanets.size(); i++) {
@@ -1587,7 +1600,7 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 	}
 
 	// Remove eliminated orbits
-	cout << "Removing eliminated orbits...\n";
+	cout << "\n\nRemoving eliminated orbits...\n";
 	std::array<Planet, 12> sPlanets2;
 	for (int i = 0; i < sPlanets.size(); i++) {
 		Planet temp = sPlanets[i].planet;
@@ -2071,6 +2084,8 @@ void placeRemainingPlanets (std::array<FormingPlanet, 12> & pVector, int firstPl
 	double expectedRatio = pow(pVector[lastPlanetIndex].planet.GetDistance() / pVector[firstPlanetIndex].planet.GetDistance(), 1.0 / (countToBePlaced + 1));
 
 	normal_distribution<> randomOrbitalRatio(1.025, 0.22); // TBD AOW p. 48
+	cout << "firstPlanetIndex: " << firstPlanetIndex << endl;
+	cout << "lastPlanetIndex: " << lastPlanetIndex << endl;
 	for (int i = firstPlanetIndex + 1; i < lastPlanetIndex; i++) {
 		// place planet
 		double baseOrbitRatio = randomOrbitalRatio(e);
@@ -2080,6 +2095,7 @@ void placeRemainingPlanets (std::array<FormingPlanet, 12> & pVector, int firstPl
 		pVector[i].planet.SetDistance(finalOrbitRatio * lastDistance);
 		pVector[i].finalPlacement = true;
 		// TBD: orbital resonance
+		cout << "Planet " << i << " last distance: " << lastDistance << endl;
 	}
 	return;
 }
