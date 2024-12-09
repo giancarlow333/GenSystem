@@ -59,7 +59,7 @@ struct FormingPlanet {
 	bool planetEjected = false;
 	bool finalPlacement = false;
 };
-void placeRemainingPlanets (vector<FormingPlanet> & pVector, int firstPlanetIndex, int lastPlanetIndex, int countToBePlaced, default_random_engine & e);
+void placeRemainingPlanets (std::array<FormingPlanet, 12> & pVector, int firstPlanetIndex, int lastPlanetIndex, int countToBePlaced, default_random_engine & e);
 
 /* MAIN */
 int main (int argc, char **argv) {
@@ -1243,82 +1243,83 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 	double outerFormationZone = 18.0 * s.GetMass() * s.GetMetallicity() * diskMassFactor;
 	cout << "diskMassFactor: " << diskMassFactor << endl;
 
-	vector<FormingPlanet> sPlanets;
+	//vector<FormingPlanet> sPlanets;
+	std::array<FormingPlanet, 12> sPlanets;
 
 	// place inner planets
 	double planet0Distance = 0.6 * sqrt(initialLuminosity);
 	FormingPlanet temp0;
 	temp0.planet.SetDistance(planet0Distance);
 	temp0.planet.SetMass(0.08 * innerFormationZone);
-	sPlanets.push_back(temp0);
+	sPlanets[0] = temp0;
 
 	double planet1Distance = 0.8 * sqrt(initialLuminosity);
 	FormingPlanet temp1;
 	temp1.planet.SetDistance(planet1Distance);
 	temp1.planet.SetMass(0.41 * innerFormationZone);
-	sPlanets.push_back(temp1);
+	sPlanets[1] = temp1;
 
 	double planet2Distance = 1.2 * sqrt(initialLuminosity);
 	FormingPlanet temp2;
 	temp2.planet.SetDistance(planet2Distance);
 	temp2.planet.SetMass(0.39 * innerFormationZone);
-	sPlanets.push_back(temp2);
+	sPlanets[2] = temp2;
 
 	double planet3Distance = 1.8 * sqrt(initialLuminosity);
 	FormingPlanet temp3;
 	temp3.planet.SetDistance(planet3Distance);
 	temp3.planet.SetMass(0.08 * innerFormationZone);
-	sPlanets.push_back(temp3);
+	sPlanets[3] = temp3;
 	
 	double planet4Distance = 2.7 * sqrt(initialLuminosity);
 	FormingPlanet temp4;
 	temp4.planet.SetDistance(planet4Distance);
 	temp4.planet.SetMass(0.04 * innerFormationZone);
-	sPlanets.push_back(temp4);
+	sPlanets[4] = temp4;
 
 	// place middle planets
 	double planet5Distance = 4.0 * sqrt(initialLuminosity);
 	FormingPlanet temp5;
 	temp5.planet.SetDistance(planet5Distance);
 	temp5.planet.SetMass(0.4 * middleFormationZone);
-	sPlanets.push_back(temp5);
+	sPlanets[5] = temp5;
 
 	double planet6Distance = 6.0 * sqrt(initialLuminosity);
 	FormingPlanet temp6;
 	temp6.planet.SetDistance(planet6Distance);
 	temp6.planet.SetMass(0.25 * middleFormationZone);
-	sPlanets.push_back(temp6);
+	sPlanets[6] = temp6;
 
 	double planet7Distance = 9.0 * sqrt(initialLuminosity);
 	FormingPlanet temp7;
 	temp7.planet.SetDistance(planet7Distance);
 	temp7.planet.SetMass(0.18 * middleFormationZone);
-	sPlanets.push_back(temp7);
+	sPlanets[7] = temp7;
 
 	double planet8Distance = 13.5 * sqrt(initialLuminosity);
 	FormingPlanet temp8;
 	temp8.planet.SetDistance(planet8Distance);
 	temp8.planet.SetMass(0.17 * middleFormationZone);
-	sPlanets.push_back(temp8);
+	sPlanets[8] = temp8;
 
 	// place outer planets
 	double planet9Distance = 20.0 * sqrt(initialLuminosity);
 	FormingPlanet temp9;
 	temp9.planet.SetDistance(planet9Distance);
 	temp9.planet.SetMass(0.6 * outerFormationZone);
-	sPlanets.push_back(temp9);
+	sPlanets[9] = temp9;
 
 	double planet10Distance = 30.0 * sqrt(initialLuminosity);
 	FormingPlanet temp10;
 	temp10.planet.SetDistance(planet10Distance);
 	temp10.planet.SetMass(0.3 * outerFormationZone);
-	sPlanets.push_back(temp10);
+	sPlanets[10] = temp10;
 
 	double planet11Distance = 45.0 * sqrt(initialLuminosity);
 	FormingPlanet temp11;
 	temp11.planet.SetDistance(planet11Distance);
 	temp11.planet.SetMass(0.1 * outerFormationZone);
-	sPlanets.push_back(temp11);
+	sPlanets[11] = temp11;
 
 	// work exclusion zones
 	cout << "Working exclusion zones...\n";
@@ -2030,12 +2031,12 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 		cout << i << ": " << sPlanets2[i].GetDistance() << endl;
 	}
 	cout << "Returning...\n";
-	sPlanets.resize(0);
+	//sPlanets.resize(0);
 	cout << "sPlanets cleared...\n";
 	return sPlanets2;
 }
 
-void placeRemainingPlanets (vector<FormingPlanet> & pVector, int firstPlanetIndex, int lastPlanetIndex, int countToBePlaced, default_random_engine & e) {
+void placeRemainingPlanets (std::array<FormingPlanet, 12> & pVector, int firstPlanetIndex, int lastPlanetIndex, int countToBePlaced, default_random_engine & e) {
 	double expectedRatio = pow(pVector[lastPlanetIndex].planet.GetDistance() / pVector[firstPlanetIndex].planet.GetDistance(), 1.0 / (countToBePlaced + 1));
 
 	normal_distribution<> randomOrbitalRatio(1.025, 0.22); // TBD AOW p. 48
