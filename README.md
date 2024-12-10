@@ -12,7 +12,7 @@ The program is compiled using the ```make``` command.  It is invoked from the co
 
 ## Known Issues
 
-* A distressingly common occurrence is the creation of low-mass M-type systems where the only planets are asteroid belts.  While perhaps "realistic" this isn't necessarily desirable.  This is due to the ```accretionModifier``` code in ```useful.cpp``` and thus is a design flaw in the algorithm.
+* TBD
 
 ## Future Development
 
