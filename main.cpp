@@ -2147,7 +2147,7 @@ void printPlanetaryClass (PlanetClass pc, string & className, string & imgFileNa
 			break;
 		case HYCEAN:
 			className = "Hycean";
-			imgFileName = "WaterPlanet.gif";
+			imgFileName = "HyceanPlanet.gif";
 			break;
 		case TITANIAN:
 			className = "Titanian";
