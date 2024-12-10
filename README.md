@@ -28,7 +28,8 @@ Paths for future development include:
 
 ## Sources
 
-The overall procedure is generally borrowed from [*Architect of Worlds*](https://www.adastragames.com/products/architect-of-worlds), an RPG system by [Jon F. Zeigler](https://wordpress.sharrukinspalace.com/about-me/)—in some cases loosely, in others slavishly.  Indeed, AOW was the ultimate inspiration for this project.  However, it does not exactly duplictate is rules and is not intended for direct use with it.  No infringement is intended, and I hope to move away from it further in the future.
+* The overall procedure is generally borrowed from [*Architect of Worlds*](https://www.adastragames.com/products/architect-of-worlds), an RPG system by [Jon F. Zeigler](https://wordpress.sharrukinspalace.com/about-me/)—in some cases loosely, in others slavishly.  Indeed, AOW was the ultimate inspiration for this project.  However, it does not exactly duplictate is rules and is not intended for direct use with it.  No infringement is intended, and I hope to move away from it further in the future.
+* Most of the icons for planets found in the system tables (and the ```/misc``` folder) are from [*StarGen*](https://www.eldacur.com/~brons/NerdCorner/StarGen/StarGen.html), an older solar system generation program written by [Jim Burrows](https://www.eldacur.com/~brons/) in 2003.  StarGen was a secondary inspiration for this project.
 
 ## License
 
