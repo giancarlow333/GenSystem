@@ -1532,11 +1532,11 @@ std::array<Planet, 12> formPlanets (Star s, default_random_engine & e, double fo
 		}
 		else if (newMass < 0.18) {
 			if (i + 1 == dominantGasGiantIndex) {
-				sPlanets[i].planet.SetPlanetClass(LEFTOVER_OLIGARCH);
-				sPlanets[i].planet.SetMass(randomNorm(e) / 10.0);
+				sPlanets[i].planet.SetPlanetClass(PLANETOID_BELT);
 			}
 			else {
-				sPlanets[i].planet.SetPlanetClass(PLANETOID_BELT);
+				sPlanets[i].planet.SetPlanetClass(LEFTOVER_OLIGARCH);
+				sPlanets[i].planet.SetMass(randomNorm(e) / 10.0);
 			}
 		}
 		else {
