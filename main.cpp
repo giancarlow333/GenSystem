@@ -68,16 +68,22 @@ int main (int argc, char **argv) {
 	cout << "(c) 2024 Giancarlo Whitaker" << endl << endl;
 
 	int seed = 0;
+	double baseMass;
+	bool massInput = false;
 	// process command line
 	int opt;
-	while ((opt = getopt(argc, argv, "hs:")) != -1) {
+	while ((opt = getopt(argc, argv, "hs:m:")) != -1) {
 		switch (opt) {
 			case 's':
 				seed = atoi(optarg);
 				break;
+			case 'm':
+				baseMass = atof(optarg);
+				massInput = true;
+				break;
 			case 'h':
 			default:
-				cerr << "Usage: " << argv[0] << " [-h] [-s SEED]\n";
+				cerr << "Usage: " << argv[0] << " [-h] [-s SEED] [-m MASS]\n";
 				exit(1);
 		}
 	}
@@ -86,7 +92,9 @@ int main (int argc, char **argv) {
 	default_random_engine engine(seed);
 
 	// mass of the primary star
-	double baseMass = initialMassFunction(engine);
+	if (!massInput) {
+		baseMass = initialMassFunction(engine);
+	}
 	//baseMass = 1.02; // for testing
 	cout << "baseMass: " << baseMass << endl;
 
